@@ -261,6 +261,62 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 .tl-today { stroke: var(--signal); stroke-width: 2; stroke-dasharray: 3 3; } .tl-tt { fill: var(--signal); font: 600 10px var(--mono); }
 @media (max-width: 720px) { .psec.has-vis, .psec.has-vis:nth-of-type(even) { grid-template-columns: 1fr; } .pvis { order: -1; } .lessons { grid-template-columns: 1fr; } .lessons svg { max-width: 160px; } }
 
+/* v2 interactive diagrams */
+.v2fig { margin: 0 calc((100% - min(100vw - 32px, 1400px)) / 2); display: flex; flex-direction: column; gap: 10px; }
+#v2A .v2-cap, #v2B .v2-cap { font-size: 18px; } #v2A .v2-num, #v2B .v2-num { font-size: 19px; } #v2A .v2-lab { font-size: 19px; }
+#v2A .v2-lanek { font-size: 22px; } #v2A .v2-lanet { font-size: 19px; } #v2B .v2-toolname { font-size: 20px; } #v2B .v2-stoptx { font-size: 17px; }
+#v2C .v2-cap { font-size: 14px; } #v2C .v2-lab { font-size: 15px; }
+.v2host svg { min-width: 1100px; }
+.v2scroll { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; -webkit-overflow-scrolling: touch; }
+.v2host svg { display: block; width: 100%; min-width: 980px; height: auto; }
+#v2C svg { min-width: 760px; max-width: 1180px; margin: 0 auto; }
+.v2info { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; min-height: 56px; font-size: 15px; display: flex; flex-direction: column; gap: 8px; }
+.v2info > b { font: 600 19px var(--display); }
+.v2dl { display: grid; grid-template-columns: max-content 1fr; gap: 4px 14px; margin: 0; }
+.v2dl dt { font-weight: 600; } .v2dl dd { margin: 0; color: var(--muted); }
+@media (max-width: 560px) { .v2dl { grid-template-columns: 1fr; } .v2dl dd { margin-bottom: 6px; } }
+.v2host .v2-pic { transition: opacity .2s; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .v2host .v2-pic { filter: invert(1) hue-rotate(180deg); } }
+:root[data-theme="dark"] .v2host .v2-pic { filter: invert(1) hue-rotate(180deg); }
+.v2-hit { fill: transparent; } .v2host [role=button] { cursor: pointer; outline: none; }
+.v2host [role=button]:focus-visible .v2-hit { stroke: var(--signal); stroke-width: 2; }
+.v2-ground { stroke: var(--ink); stroke-width: 2.5; }
+.v2-main { stroke: var(--ink); stroke-width: 7; fill: none; stroke-linecap: round; }
+.v2-ink-f { fill: var(--ink); } .v2-acc-f { fill: var(--signal); }
+.v2-loop { stroke: var(--signal); stroke-width: 1.8; stroke-dasharray: 6 5; fill: none; }
+.v2-ring { stroke: var(--ink); stroke-width: 3.5; fill: none; }
+.v2-bracket { stroke: var(--muted); fill: none; stroke-width: 1.2; }
+.v2-cap { fill: var(--muted); font: 500 13px var(--body); } .v2-cap.acc { fill: var(--signal); font-weight: 600; }
+.v2-num { fill: var(--ink); font: 600 14px var(--mono); }
+.v2-lab { fill: var(--ink); font: 600 14px var(--display); }
+.v2-who-p { fill: var(--signal); stroke: var(--sheet); stroke-width: 2.5; } .v2-who-t { fill: var(--sheet); stroke: var(--harbour); stroke-width: 2.5; }
+.v2-lanek { fill: var(--signal); font: 700 16px var(--mono); } .v2-lanet { fill: var(--ink); font: 500 14px var(--body); }
+.v2-laneline { stroke: var(--ink); stroke-width: 2; opacity: .55; }
+.v2-drop { stroke: var(--line); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0; }
+.v2-node { fill: var(--sheet); stroke: var(--ink); stroke-width: 2; }
+.v2host svg.v2-focus .v2-step, .v2host svg.v2-focus .v2-lane, .v2host svg.v2-focus .v2-tool, .v2host svg.v2-focus .v2-cnode, .v2host svg.v2-focus .v2-col { opacity: .22; transition: opacity .2s; }
+.v2host svg.v2-focus .on { opacity: 1 !important; }
+.v2host svg.v2-focus .v2-lane.on .v2-laneline { stroke: var(--signal); opacity: 1; stroke-width: 3.5; }
+.v2host svg.v2-focus .v2-lane.on .v2-node { fill: var(--signal); stroke: var(--signal); }
+.v2host svg.v2-focus .v2-drop.on { opacity: 1; stroke: var(--signal); stroke-width: 1.5; }
+.v2-colline { stroke: var(--line); stroke-dasharray: 2 5; }
+.v2-cityband { fill: var(--signal-soft); opacity: .7; }
+.v2-sep { stroke: var(--line); }
+.v2-toolname { fill: var(--ink); font: 600 15px var(--display); }
+.v2-tool.team .v2-toolname, .v2-tool.mate .v2-toolname { fill: var(--harbour); } .v2-tool.hub .v2-toolname { fill: var(--signal); }
+.v2-track { stroke: var(--ink); stroke-width: 6; stroke-linecap: round; } .v2-track.part { stroke-width: 2; stroke-dasharray: 3 5; }
+.v2-stop-full { fill: var(--ink); } .v2-stop-part { fill: var(--sheet); stroke: var(--ink); stroke-width: 2; }
+.v2-tool.hub .v2-track, .v2-tool.hub .v2-stop-full { stroke: var(--signal); fill: var(--signal); }
+.v2-end { stroke: var(--stop); stroke-width: 4; stroke-linecap: round; } .v2-stoptx { fill: var(--stop); font: 500 13px var(--body); }
+.v2host svg.v2-focus .v2-tool.on .v2-track { stroke: var(--signal); } .v2host svg.v2-focus .v2-tool.on .v2-stop-full { fill: var(--signal); }
+.v2-hub { fill: var(--signal-soft); stroke: var(--signal); stroke-width: 1.5; } .v2-hubt { fill: var(--ink); font: 700 18px var(--display); }
+.v2-cbg { fill: var(--sheet); stroke-width: 2.5; }
+.v2-cbg, .v2-cnode.code .v2-cbg { stroke: var(--ink); } .v2-cnode.you .v2-cbg, .v2-cbg.you { stroke: var(--signal); fill: var(--signal-soft); }
+.v2-cnode.ai .v2-cbg, .v2-cbg.ai { stroke: var(--violet); fill: var(--violet-soft); stroke-dasharray: 5 4; } .v2-cnode.tool .v2-cbg, .v2-cbg.tool { stroke: var(--harbour); fill: var(--harbour-soft); }
+.v2-lab.you { fill: var(--signal); } .v2-lab.ai { fill: var(--violet); }
+@media (prefers-reduced-motion: no-preference) { .v2host .v2-main { stroke-dasharray: 1600; animation: v2draw 1.6s ease-out both; } }
+@keyframes v2draw { from { stroke-dashoffset: 1600; } to { stroke-dashoffset: 0; } }
+
 /* image bands */
 .gallery { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
 .gallery figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; background: var(--sheet); border: 1px solid var(--line); min-width: 0; }
@@ -448,13 +504,10 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
     <!-- 1 -->
     <div class="chapter">
       <div class="ch-head"><span class="ch-n">1</span><div><h2>How a tower is designed today</h2><p class="muted">Ten steps from brief to City decision, with a lot of going back and forth between people and tools.</p></div></div>
-      <figure class="dg big" id="dgA"><div class="scroll"><!--DIAGRAM:01-as-is-workflow--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 560" role="img" aria-label="As-is workflow of early-stage high-rise design in Vancouver, steps 1 to 10, with pain points a to g"><rect class="lane" x="0" y="30" width="1240" height="130" rx="6"/><text class="lanelab" x="10" y="46">PEOPLE (YOU)</text><rect class="lane" x="0" y="170" width="1240" height="290" rx="6"/><text class="lanelab" x="10" y="186">TOOLS, FILES, ENGINES</text><rect class="lane" x="0" y="470" width="1240" height="80" rx="6"/><text class="lanelab" x="10" y="486">CHECKS AND STOPS</text><g class="node" data-p="b,c"><rect class="you" x="20" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="80.0" y="91.0" text-anchor="middle">1 Team frames the</text><text class="tx" x="80.0" y="104.0" text-anchor="middle">brief</text><text class="sub" x="80.0" y="117.0" text-anchor="middle">owner + architect</text><circle class="pain" cx="138" cy="70" r="6"/><text class="paintx" x="138" y="73" text-anchor="middle">c</text><circle class="pain" cx="125" cy="70" r="6"/><text class="paintx" x="125" y="73" text-anchor="middle">b</text></g><g class="node" data-p="b"><rect class="tool" x="20" y="200" width="120" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="80.0" y="219.0" text-anchor="middle">Brief, criteria,</text><text class="tx" x="80.0" y="232.0" text-anchor="middle">unknowns</text><circle class="pain" cx="138" cy="200" r="6"/><text class="paintx" x="138" y="203" text-anchor="middle">b</text></g><g class="node" data-p="a,d"><rect class="you" x="160" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="220.0" y="91.0" text-anchor="middle">2 Establish site</text><text class="tx" x="220.0" y="104.0" text-anchor="middle">truth</text><text class="sub" x="220.0" y="117.0" text-anchor="middle">architect, surveyor</text><circle class="pain" cx="278" cy="70" r="6"/><text class="paintx" x="278" y="73" text-anchor="middle">d</text><circle class="pain" cx="265" cy="70" r="6"/><text class="paintx" x="265" y="73" text-anchor="middle">a</text></g><g class="node" data-p="a,d"><rect class="tool" x="160" y="200" width="120" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="220.0" y="219.0" text-anchor="middle">Survey, parcel,</text><text class="tx" x="220.0" y="232.0" text-anchor="middle">dated sources</text><circle class="pain" cx="278" cy="200" r="6"/><text class="paintx" x="278" y="203" text-anchor="middle">d</text><circle class="pain" cx="265" cy="200" r="6"/><text class="paintx" x="265" y="203" text-anchor="middle">a</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="220.0,476 265,510.0 220.0,544 175,510.0"/><text class="tx" x="220.0" y="507.0" text-anchor="middle">Units, CRS,</text><text class="tx" x="220.0" y="520.0" text-anchor="middle">datum, date?</text></g><g class="node" data-p="a,d,f"><rect class="stop" x="20" y="500" width="130" height="36" rx="3" stroke-width="1.4"/><text class="tx stoptx" x="85.0" y="521.5" text-anchor="middle">CANNOT DETERMINE</text><circle class="pain" cx="148" cy="500" r="6"/><text class="paintx" x="148" y="503" text-anchor="middle">f</text><circle class="pain" cx="135" cy="500" r="6"/><text class="paintx" x="135" y="503" text-anchor="middle">d</text><circle class="pain" cx="122" cy="500" r="6"/><text class="paintx" x="122" y="503" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="196" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="219.5" text-anchor="middle">3a View-cone screen</text><circle class="pain" cx="458" cy="196" r="6"/><text class="paintx" x="458" y="199" text-anchor="middle">f</text><circle class="pain" cx="445" cy="196" r="6"/><text class="paintx" x="445" y="199" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="248" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="271.5" text-anchor="middle">3b Solar access test</text><circle class="pain" cx="458" cy="248" r="6"/><text class="paintx" x="458" y="251" text-anchor="middle">f</text><circle class="pain" cx="445" cy="248" r="6"/><text class="paintx" x="445" y="251" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="300" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="323.5" text-anchor="middle">3c Floorplate test</text><circle class="pain" cx="458" cy="300" r="6"/><text class="paintx" x="458" y="303" text-anchor="middle">f</text><circle class="pain" cx="445" cy="300" r="6"/><text class="paintx" x="445" y="303" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="352" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="375.5" text-anchor="middle">3d Tower separation</text><circle class="pain" cx="458" cy="352" r="6"/><text class="paintx" x="458" y="355" text-anchor="middle">f</text><circle class="pain" cx="445" cy="352" r="6"/><text class="paintx" x="445" y="355" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="404" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="427.5" text-anchor="middle">3e FSR on stated bases</text><circle class="pain" cx="458" cy="404" r="6"/><text class="paintx" x="458" y="407" text-anchor="middle">f</text><circle class="pain" cx="445" cy="404" r="6"/><text class="paintx" x="445" y="407" text-anchor="middle">a</text></g><g class="node" data-p="b,c,e"><rect class="you" x="490" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="550.0" y="97.0" text-anchor="middle">4 Architect</text><text class="tx" x="550.0" y="110.0" text-anchor="middle">authors options</text><circle class="pain" cx="608" cy="70" r="6"/><text class="paintx" x="608" y="73" text-anchor="middle">e</text><circle class="pain" cx="595" cy="70" r="6"/><text class="paintx" x="595" y="73" text-anchor="middle">c</text><circle class="pain" cx="582" cy="70" r="6"/><text class="paintx" x="582" y="73" text-anchor="middle">b</text></g><g class="node" data-p="d,e"><rect class="tool" x="560" y="290" width="140" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="630.0" y="307.0" text-anchor="middle">Options, results,</text><text class="tx" x="630.0" y="320.0" text-anchor="middle">assumptions</text><text class="sub" x="630.0" y="333.0" text-anchor="middle">Rhino / GH / sheets</text><circle class="pain" cx="698" cy="290" r="6"/><text class="paintx" x="698" y="293" text-anchor="middle">e</text><circle class="pain" cx="685" cy="290" r="6"/><text class="paintx" x="685" y="293" text-anchor="middle">d</text></g><g class="node" data-p="d,e,f"><rect class="you" x="630" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="690.0" y="91.5" text-anchor="middle">5 Consultants test</text><text class="sub" x="690.0" y="104.5" text-anchor="middle">structure, energy,</text><text class="sub" x="690.0" y="116.5" text-anchor="middle">cost</text><circle class="pain" cx="748" cy="70" r="6"/><text class="paintx" x="748" y="73" text-anchor="middle">f</text><circle class="pain" cx="735" cy="70" r="6"/><text class="paintx" x="735" y="73" text-anchor="middle">e</text><circle class="pain" cx="722" cy="70" r="6"/><text class="paintx" x="722" y="73" text-anchor="middle">d</text></g><g class="node" data-p="b,c,g"><rect class="you" x="770" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="830.0" y="91.0" text-anchor="middle">6 Compare and</text><text class="tx" x="830.0" y="104.0" text-anchor="middle">reframe</text><text class="sub" x="830.0" y="117.0" text-anchor="middle">team</text><circle class="pain" cx="888" cy="70" r="6"/><text class="paintx" x="888" y="73" text-anchor="middle">g</text><circle class="pain" cx="875" cy="70" r="6"/><text class="paintx" x="875" y="73" text-anchor="middle">c</text><circle class="pain" cx="862" cy="70" r="6"/><text class="paintx" x="862" y="73" text-anchor="middle">b</text></g><g class="node" data-p="a,b,f,g"><rect class="you" x="910" y="70" width="110" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="965.0" y="97.5" text-anchor="middle">7 City enquiry</text><text class="sub" x="965.0" y="110.5" text-anchor="middle">applicant + City</text><circle class="pain" cx="1018" cy="70" r="6"/><text class="paintx" x="1018" y="73" text-anchor="middle">g</text><circle class="pain" cx="1005" cy="70" r="6"/><text class="paintx" x="1005" y="73" text-anchor="middle">f</text><circle class="pain" cx="992" cy="70" r="6"/><text class="paintx" x="992" y="73" text-anchor="middle">b</text><circle class="pain" cx="979" cy="70" r="6"/><text class="paintx" x="979" y="73" text-anchor="middle">a</text></g><g class="node" data-p="b,e"><rect class="tool" x="905" y="290" width="120" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="965.0" y="313.0" text-anchor="middle">Advice, studies,</text><text class="tx" x="965.0" y="326.0" text-anchor="middle">version</text><circle class="pain" cx="1023" cy="290" r="6"/><text class="paintx" x="1023" y="293" text-anchor="middle">e</text><circle class="pain" cx="1010" cy="290" r="6"/><text class="paintx" x="1010" y="293" text-anchor="middle">b</text></g><g class="node" data-p="b,e,g"><rect class="you" x="1040" y="70" width="90" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1085.0" y="97.5" text-anchor="middle">8 Freeze</text><text class="sub" x="1085.0" y="110.5" text-anchor="middle">team (G6)</text><circle class="pain" cx="1128" cy="70" r="6"/><text class="paintx" x="1128" y="73" text-anchor="middle">g</text><circle class="pain" cx="1115" cy="70" r="6"/><text class="paintx" x="1115" y="73" text-anchor="middle">e</text><circle class="pain" cx="1102" cy="70" r="6"/><text class="paintx" x="1102" y="73" text-anchor="middle">b</text></g><g class="node" data-p="d,e"><rect class="tool" x="1040" y="380" width="180" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="1130.0" y="403.5" text-anchor="middle">9 Frozen submission package</text><text class="sub" x="1130.0" y="416.5" text-anchor="middle">consultants</text><circle class="pain" cx="1218" cy="380" r="6"/><text class="paintx" x="1218" y="383" text-anchor="middle">e</text><circle class="pain" cx="1205" cy="380" r="6"/><text class="paintx" x="1205" y="383" text-anchor="middle">d</text></g><g class="node" data-p="a,b,f,g"><rect class="you" x="1145" y="70" width="85" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1187.5" y="97.0" text-anchor="middle">10 City</text><text class="tx" x="1187.5" y="110.0" text-anchor="middle">decides</text><circle class="pain" cx="1228" cy="70" r="6"/><text class="paintx" x="1228" y="73" text-anchor="middle">g</text><circle class="pain" cx="1215" cy="70" r="6"/><text class="paintx" x="1215" y="73" text-anchor="middle">f</text><circle class="pain" cx="1202" cy="70" r="6"/><text class="paintx" x="1202" y="73" text-anchor="middle">b</text><circle class="pain" cx="1189" cy="70" r="6"/><text class="paintx" x="1189" y="73" text-anchor="middle">a</text></g><path class="edge" d="M80.0,130 L80.0,200"/><polygon class="ah" points="80.0,200 76.9,192.6 83.1,192.6"/><path class="edge" d="M140,222.0 L150,222 L150,100 L160,100.0"/><polygon class="ah" points="160,100.0 152.6,103.1 152.6,96.9"/><path class="edge" d="M220.0,130 L220.0,200"/><polygon class="ah" points="220.0,200 216.9,192.6 223.1,192.6"/><path class="edge" d="M220.0,244 L220.0,476"/><polygon class="ah" points="220.0,476 216.9,468.6 223.1,468.6"/><path class="edge" d="M175,510.0 L150,518.0"/><polygon class="ah" points="150,518.0 156.1,512.8 158.0,518.7"/><text class="sub" x="166.5" y="510.0">fail</text><path class="edge" d="M265,510 L290,510 L290,216.0 L310,216.0"/><polygon class="ah" points="310,216.0 302.6,219.1 302.6,212.9"/><path class="edge" d="M460,216.0 L520,216.0"/><polygon class="ah" points="520,216.0 512.6,219.1 512.6,212.9"/><path class="edge" d="M265,510 L290,510 L290,268.0 L310,268.0"/><polygon class="ah" points="310,268.0 302.6,271.1 302.6,264.9"/><path class="edge" d="M460,268.0 L520,268.0"/><polygon class="ah" points="520,268.0 512.6,271.1 512.6,264.9"/><path class="edge" d="M265,510 L290,510 L290,320.0 L310,320.0"/><polygon class="ah" points="310,320.0 302.6,323.1 302.6,316.9"/><path class="edge" d="M460,320.0 L520,320.0"/><polygon class="ah" points="520,320.0 512.6,323.1 512.6,316.9"/><path class="edge" d="M265,510 L290,510 L290,372.0 L310,372.0"/><polygon class="ah" points="310,372.0 302.6,375.1 302.6,368.9"/><path class="edge" d="M460,372.0 L520,372.0"/><polygon class="ah" points="520,372.0 512.6,375.1 512.6,368.9"/><path class="edge" d="M265,510 L290,510 L290,424.0 L310,424.0"/><polygon class="ah" points="310,424.0 302.6,427.1 302.6,420.9"/><path class="edge" d="M460,424.0 L520,424.0"/><polygon class="ah" points="520,424.0 512.6,427.1 512.6,420.9"/><path class="edge" d="M520,216 L520,424"/><path class="edge" d="M520,216 L550.0,130"/><polygon class="ah" points="550.0,130 550.5,138.0 544.6,135.9"/><path class="edge" d="M560,130 L560,200 L630,200 L630.0,290"/><polygon class="ah" points="630.0,290 626.9,282.6 633.1,282.6"/><path class="edge" d="M700,316.0 L720,316 L720,160 L690,160 L690.0,130"/><polygon class="ah" points="690.0,130 693.1,137.4 686.9,137.4"/><path class="loop" d="M660,130 L660,290"/><polygon class="ahl" points="660,290 656.9,282.6 663.1,282.6"/><text class="sub" x="664.0" y="206.0">results</text><path class="edge" d="M750,100.0 L770,100.0"/><polygon class="ah" points="770,100.0 762.6,103.1 762.6,96.9"/><path class="edge" d="M890,100.0 L910,100.0"/><polygon class="ah" points="910,100.0 902.6,103.1 902.6,96.9"/><path class="edge" d="M965.0,130 L965.0,290"/><polygon class="ah" points="965.0,290 961.9,282.6 968.1,282.6"/><path class="loop" d="M905,316.0 L860,316 L860,360 L600,360 L600,342"/><polygon class="ahl" points="600,342 603.1,349.4 596.9,349.4"/><text class="sub" x="864" y="356">revise option / study</text><path class="edge" d="M1020,100.0 L1040,100.0"/><polygon class="ah" points="1040,100.0 1032.6,103.1 1032.6,96.9"/><path class="edge" d="M1085.0,130 L1130.0,380"/><polygon class="ah" points="1130.0,380 1125.6,373.3 1131.8,372.2"/><path class="edge" d="M1220,406.0 L1228,406 L1228,150 L1187,150 L1187.5,130"/><polygon class="ah" points="1187.5,130 1190.4,137.4 1184.2,137.3"/><path class="loop" d="M830,70 L830,46 L80,46 L80,70"/><polygon class="ahl" points="80,70 76.9,62.6 83.1,62.6"/><text class="sub" x="420" y="42">reframe brief or option (G4)</text><path class="loop" d="M1187,70 L1187,52 L1085,52 L1085,70"/><polygon class="ahl" points="1085,70 1081.9,62.6 1088.1,62.6"/><text class="sub" x="1089" y="48">revise</text><rect class="you" x="330" y="488" width="22" height="14" rx="7"/><text class="sub" x="358" y="499">person decides</text><rect class="tool" x="460" y="488" width="22" height="14"/><text class="sub" x="488" y="499">tool, file or engine</text><path class="loop" d="M610,495 h26"/><text class="sub" x="642" y="499">loop back (rework)</text><circle class="pain" cx="768" cy="495" r="6"/><text class="paintx" x="768" y="498" text-anchor="middle">a</text><text class="sub" x="780" y="499">pain point (see table)</text><text class="sub" x="330" y="524">a authority and dates · b iteration lost · c option narrowing · d semantic transfer · e divergent versions · f false certainty · g responsibility</text></svg><!--/DIAGRAM--></div>
-        <figcaption>Orange = a person decides · blue = a tool, file or engine · diamond = a check · dashed = rework. <a href="diagrams/01-as-is-workflow.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
-      <div class="pains">
-        <p class="ql">Where it breaks <span class="hint">Tap a letter to light up the steps it affects.</span></p>
-        <div class="chips" id="painChips" role="group" aria-label="Pain points"></div>
-        <div class="paininfo" id="painInfo" aria-live="polite"><span class="muted">Seven pain points, a to g. Each one marks steps in the diagram above.</span></div>
-      </div>
+      <figure class="v2fig"><div class="v2scroll"><div id="v2A" class="v2host"></div></div>
+        <div class="v2info" id="v2Ainfo" aria-live="polite"><span class="muted">Tap a step to see who does it and where it breaks, or tap a lane (a to g) to see every step it touches.</span></div>
+        <figcaption class="small muted">Pictograms drawn with GPT image generation for this site. On a phone, swipe sideways.</figcaption></figure>
+      <div hidden><div id="dgA"></div><div id="painChips"></div><div id="painInfo"></div></div>
       <div class="shelf" aria-label="Documents the rules come from" style="grid-auto-columns:minmax(130px, 170px)">
         <figure><img src="images/doc-public-views.jpg" alt="Public Views Guidelines cover" loading="lazy"><figcaption><b>Step 3a</b><span>Public Views Guidelines</span></figcaption></figure>
         <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy" style="object-position:center"><figcaption><b>Step 1</b><span>Competition brief</span></figcaption></figure>
@@ -466,9 +519,10 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
     <!-- 2 -->
     <div class="chapter">
       <div class="ch-head"><span class="ch-n">2</span><div><h2>Where today's tools stop</h2><p class="muted">Each tool covers part of the process, and none of them gets as far as the City enquiry or decision.</p></div></div>
-      <figure class="dg big"><div class="scroll"><!--DIAGRAM:02-case-study--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1114 470" role="img" aria-label="Case study: where each existing tool sits on the workflow steps and where it stops"><text class="sub" transform="translate(253.0,62) rotate(-40)">1 Brief</text><text class="sub" transform="translate(299.0,62) rotate(-40)">2 Site</text><text class="sub" transform="translate(345.0,62) rotate(-40)">3a Views</text><text class="sub" transform="translate(391.0,62) rotate(-40)">3b Solar</text><text class="sub" transform="translate(437.0,62) rotate(-40)">3c Plate</text><text class="sub" transform="translate(483.0,62) rotate(-40)">3d Sep.</text><text class="sub" transform="translate(529.0,62) rotate(-40)">3e FSR</text><text class="sub" transform="translate(575.0,62) rotate(-40)">4 Options</text><text class="sub" transform="translate(621.0,62) rotate(-40)">5 Studies</text><text class="sub" transform="translate(667.0,62) rotate(-40)">6 Compare</text><text class="sub" transform="translate(713.0,62) rotate(-40)">7 Enquiry</text><text class="sub" transform="translate(759.0,62) rotate(-40)">8 Freeze</text><text class="sub" transform="translate(805.0,62) rotate(-40)">9 Submit</text><text class="sub" transform="translate(851.0,62) rotate(-40)">10 Decide</text><text class="lanelab" x="886" y="60">STOPS HERE</text><g class="trow" data-tool="0"><rect class="lane" x="0" y="70" width="1114" height="30"/><text class="tx" x="8" y="89">Autodesk Forma</text><rect class="cell" x="279" y="77" width="40" height="16" rx="2"/><rect class="cell" x="371" y="77" width="40" height="16" rx="2"/><rect class="cell" x="555" y="77" width="40" height="16" rx="2"/><rect class="cell" x="601" y="77" width="40" height="16" rx="2"/><rect class="cell" x="647" y="77" width="40" height="16" rx="2"/><rect class="cell" x="785" y="77" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="75" width="4" height="20"/><text class="sub" x="886" y="89">No Vancouver permit logic [UNVERIFIED]</text></g><g class="trow" data-tool="1"><text class="tx" x="8" y="119">Rhino + Grasshopper + Ladybug + Speckle</text><rect class="cellp" x="279" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="325" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="371" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="417" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="463" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="107" width="40" height="16" rx="2"/><rect class="cell" x="555" y="107" width="40" height="16" rx="2"/><rect class="cell" x="601" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="107" width="40" height="16" rx="2"/><rect class="cell" x="785" y="107" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="105" width="4" height="20"/><text class="sub" x="886" y="119">Needs scripting expertise; no judgment</text></g><g class="trow" data-tool="2"><rect class="lane" x="0" y="130" width="1114" height="30"/><text class="tx" x="8" y="149">TestFit</text><rect class="cell" x="279" y="137" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="137" width="40" height="16" rx="2"/><rect class="cell" x="555" y="137" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="137" width="40" height="16" rx="2"/><rect class="cell" x="647" y="137" width="40" height="16" rx="2"/><rect class="cell" x="785" y="137" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="135" width="4" height="20"/><text class="sub" x="886" y="149">Vancouver zoning data [UNVERIFIED]</text></g><g class="trow" data-tool="3"><text class="tx" x="8" y="179">Vista (Ruijie)</text><rect class="cell" x="325" y="167" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="167" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="167" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="165" width="4" height="20"/><text class="sub" x="886" y="179">Approximate, study-only views</text></g><g class="trow" data-tool="4"><rect class="lane" x="0" y="190" width="1114" height="30"/><text class="tx" x="8" y="209">Downtown Massing Tool (Sinnie)</text><rect class="cellp" x="279" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="555" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="197" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="195" width="4" height="20"/><text class="sub" x="886" y="209">Hub adapter schema pending</text></g><g class="trow" data-tool="5"><text class="tx" x="8" y="239">Program Value Visualizer</text><rect class="cellp" x="555" y="227" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="227" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="227" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="225" width="4" height="20"/><text class="sub" x="886" y="239">Value is not feasibility</text></g><g class="trow" data-tool="6"><rect class="lane" x="0" y="250" width="1114" height="30"/><text class="tx" x="8" y="269">Solar Shading Explorer (W. Girard)</text><rect class="cellp" x="371" y="257" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="257" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="257" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="255" width="4" height="20"/><text class="sub" x="886" y="269">Facade only; no City shadow test</text></g><g class="trow" data-tool="7"><text class="tx" x="8" y="299">Form Studio export</text><rect class="cellp" x="555" y="287" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="287" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="285" width="4" height="20"/><text class="sub" x="886" y="299">Reference design, not policy</text></g><g class="trow" data-tool="8"><rect class="lane" x="0" y="310" width="1114" height="30"/><text class="tx" x="8" y="329">Structure Lab export</text><rect class="cellp" x="601" y="317" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="317" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="315" width="4" height="20"/><text class="sub" x="886" y="329">No structural adequacy</text></g><g class="trow" data-tool="9"><text class="tx" x="8" y="359">Concept Lab export</text><rect class="cellp" x="555" y="347" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="347" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="347" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="345" width="4" height="20"/><text class="sub" x="886" y="359">Units / frame undeclared</text></g><g class="trow" data-tool="10"><rect class="lane" x="0" y="370" width="1114" height="30"/><text class="tx" x="8" y="389">Tower Studio hub v0.5</text><rect class="cell" x="279" y="377" width="40" height="16" rx="2"/><rect class="cell" x="325" y="377" width="40" height="16" rx="2"/><rect class="cell" x="555" y="377" width="40" height="16" rx="2"/><rect class="cell" x="601" y="377" width="40" height="16" rx="2"/><rect class="cell" x="647" y="377" width="40" height="16" rx="2"/><rect class="cell" x="739" y="377" width="40" height="16" rx="2"/><rect class="stopmk" x="784" y="375" width="4" height="20"/><text class="sub" x="886" y="389">No AI, compliance or submission</text></g><line class="grid" x1="230" y1="70" x2="230" y2="400"/><line class="grid" x1="276" y1="70" x2="276" y2="400"/><line class="grid" x1="322" y1="70" x2="322" y2="400"/><line class="grid" x1="368" y1="70" x2="368" y2="400"/><line class="grid" x1="414" y1="70" x2="414" y2="400"/><line class="grid" x1="460" y1="70" x2="460" y2="400"/><line class="grid" x1="506" y1="70" x2="506" y2="400"/><line class="grid" x1="552" y1="70" x2="552" y2="400"/><line class="grid" x1="598" y1="70" x2="598" y2="400"/><line class="grid" x1="644" y1="70" x2="644" y2="400"/><line class="grid" x1="690" y1="70" x2="690" y2="400"/><line class="grid" x1="736" y1="70" x2="736" y2="400"/><line class="grid" x1="782" y1="70" x2="782" y2="400"/><line class="grid" x1="828" y1="70" x2="828" y2="400"/><line class="grid" x1="874" y1="70" x2="874" y2="400"/><rect class="cell" x="8" y="414" width="24" height="12"/><text class="sub" x="38" y="424">covers the step</text><rect class="cellp" x="140" y="414" width="24" height="12"/><text class="sub" x="170" y="424">partial, only if scripted, or planned</text><rect class="stopmk" x="380" y="413" width="4" height="14"/><text class="sub" x="392" y="424">last step reached; the reason it stops is on the right</text><text class="sub" x="8" y="446">From draft_r2 §4 and §7.2 (vendor docs graded B; team tools graded T). No tool covers steps 7 and 10: City enquiry and decision stay with people.</text></svg><!--/DIAGRAM--></div>
-        <figcaption>Dark = covers the step · light = partly, only if scripted, or planned · red bar = where it stops. <a href="diagrams/02-case-study.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
-      <div class="cards3" id="extTools"></div>
+      <figure class="v2fig"><div class="v2scroll"><div id="v2B" class="v2host"></div></div>
+        <div class="v2info" id="v2Binfo" aria-live="polite"><span class="muted">Tap a tool's line to see what it does and where it stops.</span></div>
+        <figcaption class="small muted">Solid dots: the tool covers the step. Hollow dots: partly, only if scripted, or planned.</figcaption></figure>
+      <details class="more"><summary>All tool cards</summary><div class="cards3" id="extTools"></div></details>
     </div>
 
     <!-- 3 -->
@@ -490,8 +544,9 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
     <!-- 4 -->
     <div class="chapter">
       <div class="ch-head"><span class="ch-n">4</span><div><h2>How our workbench runs</h2><p class="muted">The steps run in a fixed order, and code picks what runs next.</p></div></div>
-      <figure class="dg big"><div class="scroll"><!--DIAGRAM:03-tool-logic--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 600" role="img" aria-label="Tool logic of the proposed workbench in the Session 4 notation: people, the AI, harness hooks, tools and files, loops with limits, and stops"><rect class="lane" x="0" y="30" width="1240" height="110" rx="6"/><text class="lanelab" x="10" y="46">YOU</text><rect class="lane" x="0" y="150" width="1240" height="100" rx="6"/><text class="lanelab" x="10" y="166">THE AI</text><rect class="lane" x="0" y="260" width="1240" height="120" rx="6"/><text class="lanelab" x="10" y="276">HARNESS: HOOKS AND LIMITS (CODE)</text><rect class="lane" x="0" y="390" width="1240" height="190" rx="6"/><text class="lanelab" x="10" y="406">TOOLS, FILES, ENGINE</text><g class="node" data-p="a,b,f,g"><rect class="you" x="30" y="62" width="170" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="115.0" y="89.5" text-anchor="middle">Architect states intent</text><text class="sub" x="115.0" y="102.5" text-anchor="middle">owns gates G1–G7</text><circle class="pain" cx="198" cy="62" r="6"/><text class="paintx" x="198" y="65" text-anchor="middle">g</text><circle class="pain" cx="185" cy="62" r="6"/><text class="paintx" x="185" y="65" text-anchor="middle">f</text><circle class="pain" cx="172" cy="62" r="6"/><text class="paintx" x="172" y="65" text-anchor="middle">b</text><circle class="pain" cx="159" cy="62" r="6"/><text class="paintx" x="159" y="65" text-anchor="middle">a</text></g><g class="node" data-p="f"><rect class="ai" x="30" y="180" width="170" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="115.0" y="202.0" text-anchor="middle">Parse text to a</text><text class="tx" x="115.0" y="215.0" text-anchor="middle">structured request</text><circle class="pain" cx="198" cy="180" r="6"/><text class="paintx" x="198" y="183" text-anchor="middle">f</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="300.0,278 360,320.0 300.0,362 240,320.0"/><text class="tx" x="300.0" y="317.0" text-anchor="middle">PreToolUse: input</text><text class="tx" x="300.0" y="330.0" text-anchor="middle">guard</text></g><g class="node" data-p="d,g"><rect class="tool" x="390" y="296" width="130" height="48" rx="3" stroke-width="1.4"/><text class="tx" x="455.0" y="311.0" text-anchor="middle">Fixed chain +</text><text class="tx" x="455.0" y="324.0" text-anchor="middle">router</text><text class="sub" x="455.0" y="337.0" text-anchor="middle">code decides route</text><circle class="pain" cx="518" cy="296" r="6"/><text class="paintx" x="518" y="299" text-anchor="middle">g</text><circle class="pain" cx="505" cy="296" r="6"/><text class="paintx" x="505" y="299" text-anchor="middle">d</text></g><g class="node" data-p="a,b,d,e"><rect class="tool" x="30" y="420" width="190" height="56" rx="3" stroke-width="1.4"/><text class="tx" x="125.0" y="445.5" text-anchor="middle">Project file</text><text class="sub" x="125.0" y="458.5" text-anchor="middle">sources, versions, frames</text><circle class="pain" cx="218" cy="420" r="6"/><text class="paintx" x="218" y="423" text-anchor="middle">e</text><circle class="pain" cx="205" cy="420" r="6"/><text class="paintx" x="205" y="423" text-anchor="middle">d</text><circle class="pain" cx="192" cy="420" r="6"/><text class="paintx" x="192" y="423" text-anchor="middle">b</text><circle class="pain" cx="179" cy="420" r="6"/><text class="paintx" x="179" y="423" text-anchor="middle">a</text></g><g class="node" data-p="a"><rect class="tool" x="400" y="420" width="150" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="475.0" y="439.0" text-anchor="middle">Approved-source</text><text class="tx" x="475.0" y="452.0" text-anchor="middle">retrieval</text><circle class="pain" cx="548" cy="420" r="6"/><text class="paintx" x="548" y="423" text-anchor="middle">a</text></g><g class="node" data-p="d,e"><rect class="tool" x="400" y="500" width="150" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="475.0" y="519.5" text-anchor="middle">Tool adapters</text><text class="sub" x="475.0" y="532.5" text-anchor="middle">Vista, DMT, PVV…</text><circle class="pain" cx="548" cy="500" r="6"/><text class="paintx" x="548" y="503" text-anchor="middle">e</text><circle class="pain" cx="535" cy="500" r="6"/><text class="paintx" x="535" y="503" text-anchor="middle">d</text></g><g class="node" data-p="d,f"><rect class="tool" x="590" y="460" width="150" height="48" rx="3" stroke-width="1.4"/><text class="tx" x="665.0" y="481.0" text-anchor="middle">Deterministic metric</text><text class="tx" x="665.0" y="494.0" text-anchor="middle">engine</text><circle class="pain" cx="738" cy="460" r="6"/><text class="paintx" x="738" y="463" text-anchor="middle">f</text><circle class="pain" cx="725" cy="460" r="6"/><text class="paintx" x="725" y="463" text-anchor="middle">d</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="830.0,278 890,320.0 830.0,362 770,320.0"/><text class="tx" x="830.0" y="317.0" text-anchor="middle">PostToolUse:</text><text class="tx" x="830.0" y="330.0" text-anchor="middle">result guard</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="980.0,278 1050,320.0 980.0,362 910,320.0"/><text class="tx" x="980.0" y="323.5" text-anchor="middle">Round limit: max 3</text></g><g class="node" data-p="c,f"><rect class="ai" x="640" y="180" width="190" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="735.0" y="202.5" text-anchor="middle">Propose a permitted revision</text><text class="sub" x="735.0" y="215.5" text-anchor="middle">evaluator-optimiser</text><circle class="pain" cx="828" cy="180" r="6"/><text class="paintx" x="828" y="183" text-anchor="middle">f</text><circle class="pain" cx="815" cy="180" r="6"/><text class="paintx" x="815" y="183" text-anchor="middle">c</text></g><g class="node" data-p="f"><rect class="ai" x="880" y="180" width="170" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="965.0" y="202.5" text-anchor="middle">Draft the explanation</text><text class="sub" x="965.0" y="215.5" text-anchor="middle">evaluator-optimiser</text><circle class="pain" cx="1048" cy="180" r="6"/><text class="paintx" x="1048" y="183" text-anchor="middle">f</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="1140.0,278 1200,320.0 1140.0,362 1080,320.0"/><text class="tx" x="1140.0" y="317.0" text-anchor="middle">Stop hook:</text><text class="tx" x="1140.0" y="330.0" text-anchor="middle">citation + basis</text></g><g class="node" data-p="b,e"><rect class="tool" x="1050" y="470" width="150" height="56" rx="3" stroke-width="1.4"/><text class="tx" x="1125.0" y="488.5" text-anchor="middle">Comparison,</text><text class="tx" x="1125.0" y="501.5" text-anchor="middle">uncertainty,</text><text class="tx" x="1125.0" y="514.5" text-anchor="middle">transcript</text><circle class="pain" cx="1198" cy="470" r="6"/><text class="paintx" x="1198" y="473" text-anchor="middle">e</text><circle class="pain" cx="1185" cy="470" r="6"/><text class="paintx" x="1185" y="473" text-anchor="middle">b</text></g><g class="node" data-p="b,f,g"><rect class="you" x="1000" y="62" width="220" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1110.0" y="89.5" text-anchor="middle">Review, select, freeze, submit</text><text class="sub" x="1110.0" y="102.5" text-anchor="middle">G3–G7 stay with people</text><circle class="pain" cx="1218" cy="62" r="6"/><text class="paintx" x="1218" y="65" text-anchor="middle">g</text><circle class="pain" cx="1205" cy="62" r="6"/><text class="paintx" x="1205" y="65" text-anchor="middle">f</text><circle class="pain" cx="1192" cy="62" r="6"/><text class="paintx" x="1192" y="65" text-anchor="middle">b</text></g><g class="node" data-p=""><rect class="stop" x="600" y="540" width="150" height="34" rx="3" stroke-width="1.4"/><text class="tx stoptx" x="675.0" y="554.0" text-anchor="middle">CANNOT DETERMINE /</text><text class="tx stoptx" x="675.0" y="567.0" text-anchor="middle">limit</text></g><path class="edge" d="M115.0,122 L115.0,180"/><polygon class="ah" points="115.0,180 111.9,172.6 118.1,172.6"/><path class="edge" d="M200,205.0 L300,205 L300.0,278"/><polygon class="ah" points="300.0,278 296.9,270.6 303.1,270.6"/><path class="edge" d="M125.0,420 L125,400 L240,400 L240,340 L260,340"/><polygon class="ah" points="260,340 252.6,343.1 252.6,336.9"/><text class="sub" x="244" y="396">state</text><path class="edge" d="M360,320.0 L390,320.0"/><polygon class="ah" points="390,320.0 382.6,323.1 382.6,316.9"/><path class="edge" d="M300.0,362 L300,557 L600,557.0"/><polygon class="ah" points="600,557.0 592.6,560.1 592.6,553.9"/><text class="sub" x="304" y="553">invalid input</text><path class="edge" d="M455.0,344 L455,400 L475,400 L475.0,420"/><polygon class="ah" points="475.0,420 471.9,412.6 478.1,412.6"/><path class="edge" d="M500,344 L500,380 L580,380 L580,490 L475,490 L475.0,500"/><polygon class="ah" points="475.0,500 471.9,492.6 478.1,492.6"/><path class="edge" d="M550,442.0 L570,442 L570,484 L590,484.0"/><polygon class="ah" points="590,484.0 582.6,487.1 582.6,480.9"/><path class="edge" d="M550,522.0 L570,522 L570,500 L590,500"/><polygon class="ah" points="590,500 582.6,503.1 582.6,496.9"/><path class="edge" d="M740,484.0 L830,484 L830.0,362"/><polygon class="ah" points="830.0,362 833.1,369.4 826.9,369.4"/><path class="loop" d="M890,320.0 L910,320.0"/><polygon class="ahl" points="910,320.0 902.6,323.1 902.6,316.9"/><text class="sub" x="912" y="378">rejects from both guards count here</text><path class="loop" d="M980.0,278 L980,250 L850,250 L850,205 L830,205.0"/><polygon class="ahl" points="830,205.0 837.4,201.9 837.4,208.1"/><text class="sub" x="854" y="246">round &lt; 3</text><path class="loop" d="M640,205.0 L320,205 L320,290"/><polygon class="ahl" points="320,290 316.9,282.6 323.1,282.6"/><text class="sub" x="324" y="201">revised request</text><path class="edge" d="M980.0,362 L980,557 L750,557.0"/><polygon class="ah" points="750,557.0 757.4,553.9 757.4,560.1"/><text class="sub" x="984" y="553">max 3 or budget → stop</text><path class="edge" d="M830.0,278 L830,205 L880,205.0"/><polygon class="ah" points="880,205.0 872.6,208.1 872.6,201.9"/><text class="sub" x="834" y="201">pass</text><path class="edge" d="M965.0,230 L965,260 L1140,260 L1140.0,278"/><polygon class="ah" points="1140.0,278 1136.9,270.6 1143.1,270.6"/><path class="loop" d="M1080,320 L1050,320"/><polygon class="ahl" points="1050,320 1057.4,316.9 1057.4,323.1"/><path class="edge" d="M220,448.0 L250,448 L250,590 L1030,590 L1030,420 L1110,420 L1110,341"/><polygon class="ah" points="1110,341 1113.1,348.4 1106.9,348.4"/><text class="sub" x="1034" y="586">citation oracle</text><path class="edge" d="M1140,362 L1140,470"/><polygon class="ah" points="1140,470 1136.9,462.6 1143.1,462.6"/><text class="sub" x="1144.0" y="412.0">pass</text><path class="edge" d="M1200,498.0 L1225,498 L1225,135 L1210,135 L1210,122"/><polygon class="ah" points="1210,122 1213.1,129.4 1206.9,129.4"/><path class="loop" d="M1000,92.0 L200,92.0"/><polygon class="ahl" points="200,92.0 207.4,88.9 207.4,95.1"/><text class="sub" x="604.0" y="88.0">new run / reframe (G4)</text><text class="sub" x="380" y="135">Who decides the next step: code (router, hooks, counter) chooses computation; people reframe, select, freeze and submit. The AI is not an open agent.</text></svg><!--/DIAGRAM--></div>
-        <figcaption>Drawn in the Session 4 notation: You · The AI · harness hooks · tools and files. <a href="diagrams/03-tool-logic.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
+      <figure class="v2fig"><div class="v2scroll"><div id="v2C" class="v2host"></div></div>
+        <div class="v2info" id="v2Cinfo" aria-live="polite"><span class="muted">Tap any step in the cycle to see who does it and what is checked.</span></div>
+        <figcaption class="small muted">Orange: you decide. Violet: the AI writes words. Black: code checks. Blue: tools compute.</figcaption></figure>
       <div class="rules3">
         <div><b>Code chooses</b><span>A router, not the model, decides which tool runs next.</span></div>
         <div><b>3 rounds, then stop</b><span>Every correction loop has a limit and an exit.</span></div>
@@ -993,12 +1048,16 @@ function timelineVisual(next) {
   const t0 = Date.parse('2026-10-01'), t1 = Date.parse('2026-12-14'), W = 900;
   const X = d => 30 + (Date.parse(d) - t0) / (t1 - t0) * (W - 60);
   const today = new Date().toISOString().slice(0, 10);
-  let s = `<svg viewBox="0 0 ${W} 190" role="img" aria-label="Timeline from 6 October to 10 December 2026">`;
+  let s = `<svg viewBox="0 -34 ${W} 258" role="img" aria-label="Timeline from 6 October to 10 December 2026">`;
   s += `<line class="tl-axis" x1="30" x2="${W - 30}" y1="95" y2="95"/>`;
+  const lastX = { up: -999, down: -999 }, tier = { up: 0, down: 0 };
   MILESTONES.forEach((m, i) => {
-    const x = X(m[0]), up = i % 2 === 0, big = /review|Final/i.test(m[2]);
-    s += `<line class="tl-stem" x1="${x}" x2="${x}" y1="95" y2="${up ? 62 : 128}"/><circle class="${m === next ? 'tl-next' : big ? 'tl-big' : 'tl-dot'}" cx="${x}" cy="95" r="${big ? 7 : 5}"/>`;
-    s += `<text class="tl-d" x="${x}" y="${up ? 40 : 150}" text-anchor="middle">${m[1]}</text><text class="tl-l" x="${x}" y="${up ? 55 : 165}" text-anchor="middle">${m[2].split(':')[0].replace(/\(.*\)/, '').trim()}</text>`;
+    const x = X(m[0]), big = /review|Final/i.test(m[2]);
+    let up = i % 2 === 0; const side = up ? 'up' : 'down';
+    tier[side] = x - lastX[side] < 150 ? (tier[side] + 1) % 2 : 0; lastX[side] = x;
+    const off = tier[side] * 34;
+    s += `<line class="tl-stem" x1="${x}" x2="${x}" y1="95" y2="${up ? 62 - off : 128 + off}"/><circle class="${m === next ? 'tl-next' : big ? 'tl-big' : 'tl-dot'}" cx="${x}" cy="95" r="${big ? 7 : 5}"/>`;
+    s += `<text class="tl-d" x="${x}" y="${up ? 40 - off : 150 + off}" text-anchor="middle">${m[1]}</text><text class="tl-l" x="${x}" y="${up ? 55 - off : 165 + off}" text-anchor="middle">${m[2].split(':')[0].replace(/\(.*\)/, '').trim()}</text>`;
   });
   if (today >= '2026-10-01' && today <= '2026-12-14') { const x = X(today); s += `<line class="tl-today" x1="${x}" x2="${x}" y1="70" y2="120"/><text class="tl-tt" x="${x + 4}" y="118">today</text>`; }
   return s + '</svg>';
@@ -1123,6 +1182,264 @@ const CASES = [
   }
 })();
 
+/*V2DIAGRAMS*/
+/* Interactive research diagrams (v2): pictogram-led, after the studio's reference boards.
+   A: workflow strip with pain-point lanes. B: tool lines across the steps. C: workbench cycle.
+   Uses STEPS_T, PAINS and EXT from the page; pictograms live in images/picto/. */
+(function () {
+  const P = n => `images/picto/${n}.png`;
+  const NS = 'http://www.w3.org/2000/svg';
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+  /* ---------- shared step model (order of the as-is workflow) ---------- */
+  const STEPS = [
+    { k: '1', name: 'Brief', icon: 'step-brief', who: 'person' },
+    { k: '2', name: 'Site truth', icon: 'step-site', who: 'person' },
+    { k: '3a', name: 'Views', icon: 'step-views', who: 'tool' },
+    { k: '3b', name: 'Solar', icon: 'step-solar', who: 'tool' },
+    { k: '3c', name: 'Floor plate', icon: 'step-floorplate', who: 'tool' },
+    { k: '3d', name: 'Separation', icon: 'step-separation', who: 'tool' },
+    { k: '3e', name: 'FSR', icon: 'step-fsr', who: 'tool' },
+    { k: '4', name: 'Options', icon: 'step-options', who: 'person' },
+    { k: '5', name: 'Studies', icon: 'step-studies', who: 'person' },
+    { k: '6', name: 'Compare', icon: 'step-compare', who: 'person' },
+    { k: '7', name: 'City enquiry', icon: 'step-cityhall', who: 'person' },
+    { k: '8', name: 'Freeze', icon: 'step-freeze', who: 'person' },
+    { k: '9', name: 'Submit', icon: 'step-submit', who: 'tool' },
+    { k: '10', name: 'City decides', icon: 'step-decision', who: 'person' },
+  ];
+  // which steps each pain point touches (from the research, section 3.3)
+  const PAIN_STEPS = {
+    a: ['2', '3a', '3b', '3c', '3d', '3e', '7', '9', '10'], b: ['1', '4', '5', '6', '7', '8', '10'], c: ['4', '5', '6'],
+    d: ['2', '3a', '3b', '3c', '3d', '3e', '4', '5', '9'], e: ['4', '5', '8', '9'], f: ['3a', '3b', '3c', '3d', '3e', '5', '6', '7', '10'], g: ['6', '7', '8', '9'],
+  };
+  const stepRow = k => STEPS_T.find(r => r[0].split(' ')[0] === k);
+
+  function panel(el, title, rows, note) {
+    el.replaceChildren();
+    const h = document.createElement('b'); h.textContent = title; el.append(h);
+    if (rows.length) {
+      const dl = document.createElement('dl'); dl.className = 'v2dl';
+      for (const [k, v] of rows) { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); }
+      el.append(dl);
+    }
+    if (note) { const p = document.createElement('div'); p.className = 'small muted'; p.textContent = note; el.append(p); }
+  }
+
+  /* ---------- A: how a tower is designed today ---------- */
+  function buildA(host, info) {
+    const W = 2040, top = 170, icon = 104, gap = 124, x0 = 300;
+    const X = i => x0 + i * gap + icon / 2;
+    const groundY = top + icon + 34, laneY0 = groundY + 110, laneGap = 42;
+    const H = laneY0 + laneGap * 7 + 30;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="How a Vancouver tower is designed today: fourteen steps with seven pain-point lanes below">`;
+    s += `<defs><marker id="v2arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-ink-f"/></marker>
+      <marker id="v2arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-acc-f"/></marker></defs>`;
+    // rework loops (dashed arcs above, like the weather cycle)
+    const loops = [['6', '1', 'reframe the brief', 132], ['6', '4', 'try other options', 44], ['7', '4', 'revise after City advice', 88], ['10', '8', 'revise and resubmit', 52]];
+    loops.forEach(([a, b, t, hgt], j) => {
+      const ia = STEPS.findIndex(x => x.k === a), ib = STEPS.findIndex(x => x.k === b);
+      const xa = X(ia), xb = X(ib), lift = 26 + j * 0; const y = top - 8;
+      const mid = (xa + xb) / 2;
+      s += `<path class="v2-loop" d="M${xa} ${y} C ${xa} ${y - hgt}, ${xb} ${y - hgt}, ${xb} ${y}" marker-end="url(#v2arrA)"/>`;
+      s += `<text class="v2-cap acc" x="${mid}" y="${y - hgt * 0.75 - 8}" text-anchor="middle">${esc(t)}</text>`;
+    });
+    // ground line + main flow
+    s += `<path class="v2-ground" d="M20 ${groundY} H ${W - 20}"/>`;
+    s += `<path class="v2-main" d="M${X(0)} ${groundY - 12} H ${X(STEPS.length - 1) + 30}" marker-end="url(#v2arr)"/>`;
+    // the five rule checks share one bracket
+    const r0 = X(2) - icon / 2 - 6, r1 = X(6) + icon / 2 + 6;
+    s += `<path class="v2-bracket" d="M${r0} ${top - 4} V ${top - 14} H ${r1} V ${top - 4}"/><text class="v2-cap" x="${(r0 + r1) / 2}" y="${top - 22}" text-anchor="middle">5 Vancouver rule checks</text>`;
+    // steps
+    STEPS.forEach((st, i) => {
+      const x = X(i);
+      s += `<g class="v2-step" data-k="${st.k}" tabindex="0" role="button" aria-label="Step ${st.k}: ${esc(st.name)}">`;
+      s += `<rect class="v2-hit" x="${x - icon / 2 - 8}" y="${top - 6}" width="${icon + 16}" height="${icon + 70}" rx="10"/>`;
+      s += `<image href="${P(st.icon)}" x="${x - icon / 2}" y="${top}" width="${icon}" height="${icon}" class="v2-pic"/>`;
+      s += `<circle class="${st.who === 'person' ? 'v2-who-p' : 'v2-who-t'}" cx="${x}" cy="${groundY - 12}" r="6"/>`;
+      s += `<text class="v2-num" x="${x}" y="${groundY + 28}" text-anchor="middle">${st.k}</text>`;
+      s += `<text class="v2-lab" x="${x}" y="${groundY + 52}" text-anchor="middle">${esc(st.name)}</text></g>`;
+    });
+    // pain lanes (metro style)
+    PAINS.forEach(([p, t], li) => {
+      const y = laneY0 + li * laneGap, idx = PAIN_STEPS[p].map(k => STEPS.findIndex(x => x.k === k)).sort((a, b) => a - b);
+      s += `<g class="v2-lane" data-p="${p}" tabindex="0" role="button" aria-label="Pain point ${p}: ${esc(t)}">`;
+      s += `<rect class="v2-hit" x="0" y="${y - 15}" width="${W}" height="30"/>`;
+      s += `<text class="v2-lanek" x="24" y="${y + 7}">${p}</text><text class="v2-lanet" x="50" y="${y + 7}">${esc(t)}</text>`;
+      s += `<path class="v2-laneline" d="M${X(idx[0])} ${y} H ${X(idx[idx.length - 1])}"/>`;
+      for (const i of idx) s += `<line class="v2-drop" data-k="${STEPS[i].k}" x1="${X(i)}" x2="${X(i)}" y1="${groundY + 62}" y2="${y}"/><circle class="v2-node" cx="${X(i)}" cy="${y}" r="5.5"/>`;
+      s += '</g>';
+    });
+    s += `<g class="v2-legend" transform="translate(${W - 640} ${H - 12})"><circle class="v2-who-p" cx="0" cy="-6" r="8"/><text class="v2-cap" x="16" y="0">a person decides</text><circle class="v2-who-t" cx="220" cy="-6" r="8"/><text class="v2-cap" x="236" y="0">a tool or file does it</text><path class="v2-loop" d="M450 -6 h40"/><text class="v2-cap" x="500" y="0">rework loop</text></g>`;
+    s += '</svg>';
+    host.innerHTML = s;
+    const svg = host.querySelector('svg');
+    const clear = () => { svg.classList.remove('v2-focus'); svg.querySelectorAll('.on').forEach(n => n.classList.remove('on')); };
+    const showStep = k => {
+      clear(); svg.classList.add('v2-focus');
+      svg.querySelector(`.v2-step[data-k="${k}"]`).classList.add('on');
+      const pains = Object.keys(PAIN_STEPS).filter(p => PAIN_STEPS[p].includes(k));
+      pains.forEach(p => svg.querySelector(`.v2-lane[data-p="${p}"]`).classList.add('on'));
+      svg.querySelectorAll(`.v2-drop[data-k="${k}"]`).forEach(n => n.classList.add('on'));
+      const r = stepRow(k) || [];
+      panel(info, `Step ${k} · ${STEPS.find(x => x.k === k).name}`, [['Who', r[1] || ''], ['What happens', r[2] || ''], ['Code or judgment', r[3] || ''], ['Where it breaks', pains.map(p => p + ' ' + PAINS.find(x => x[0] === p)[1]).join(' · ') || 'none recorded']]);
+    };
+    const showPain = p => {
+      clear(); svg.classList.add('v2-focus');
+      svg.querySelector(`.v2-lane[data-p="${p}"]`).classList.add('on');
+      PAIN_STEPS[p].forEach(k => { svg.querySelector(`.v2-step[data-k="${k}"]`).classList.add('on'); svg.querySelectorAll(`.v2-lane[data-p="${p}"] .v2-drop[data-k="${k}"]`).forEach(n => n.classList.add('on')); });
+      const row = PAINS.find(x => x[0] === p);
+      panel(info, `${p} · ${row[1]}`, [['What goes wrong', row[2]], ['Steps affected', row[3]]]);
+    };
+    bindClicks(svg, '.v2-step', el => showStep(el.dataset.k), clear, info);
+    bindClicks(svg, '.v2-lane', el => showPain(el.dataset.p), clear, info);
+  }
+
+  /* ---------- B: where today's tools stop ---------- */
+  const TOOL_LINES = [
+    ['Autodesk Forma', 'ext', { '2': 1, '3b': 1, '4': 1, '5': 1, '6': 1, '9': 1 }, 'No Vancouver permit logic'],
+    ['Rhino + Grasshopper', 'ext', { '2': .5, '3a': .5, '3b': .5, '3c': .5, '3d': .5, '3e': .5, '4': 1, '5': 1, '6': .5, '9': 1 }, 'Needs scripting skill; no judgment'],
+    ['TestFit', 'ext', { '2': 1, '3e': .5, '4': 1, '5': .5, '6': 1, '9': 1 }, 'Vancouver zoning data unverified'],
+    ['Vista', 'team', { '3a': 1, '5': .5, '6': .5 }, 'Approximate, study-only views'],
+    ['Downtown Massing Tool', 'team', { '2': .5, '3e': .5, '4': .5, '6': .5 }, 'Hub link not built yet'],
+    ['Program Value Visualizer', 'team', { '4': .5, '5': .5, '6': .5 }, 'Value is not feasibility'],
+    ['Solar Shading Explorer', 'mate', { '3b': .5, '5': .5, '6': .5 }, 'Facade only; no City shadow test'],
+    ['Workbench hub v0.5', 'hub', { '2': 1, '3a': 1, '4': 1, '5': 1, '6': 1, '8': 1 }, 'No AI, compliance or submission yet'],
+  ];
+  const TEAM_NOTES = {
+    'Vista': ['Places a proposed tower in a 3D Vancouver and checks the City\'s protected view corridors.', 'Geometry is approximate, so it is a view study, not a compliance test.'],
+    'Downtown Massing Tool': ['Loads City data for a real downtown lot and checks blocks against FSR, height and a floor-area target.', 'Its export does not feed the hub yet.'],
+    'Program Value Visualizer': ['Sets the programme floor by floor and shows value minus cost, City charges and land value.', 'Early-design estimates only; not a feasibility study.'],
+    'Solar Shading Explorer': ['Willem Girard\'s tool for sun angles, solar heat gain and code-compliant shading on a facade.', 'Works on one facade, not on the City\'s park-shadow test.'],
+    'Workbench hub v0.5': ['Our first attempt: reads the tools\' exports into one project file and compares three options.', 'No AI model is connected, and it never claims compliance or submits anything.'],
+  };
+  function buildB(host, info) {
+    const W = 2010, x0 = 330, col = 104, top = 150, rowH = 60;
+    const X = i => x0 + i * col + col / 2;
+    const H = top + TOOL_LINES.length * rowH + 70;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Eight tools drawn as lines across the workflow steps they cover, each ending where it stops">`;
+    STEPS.forEach((st, i) => {
+      s += `<g class="v2-col" data-k="${st.k}"><image href="${P(st.icon)}" x="${X(i) - 36}" y="14" width="72" height="72" class="v2-pic"/>`;
+      s += `<text class="v2-num" x="${X(i)}" y="110" text-anchor="middle">${st.k}</text><text class="v2-cap" x="${X(i)}" y="132" text-anchor="middle">${esc(st.name)}</text>`;
+      s += `<line class="v2-colline" x1="${X(i)}" x2="${X(i)}" y1="${top - 6}" y2="${H - 50}"/></g>`;
+    });
+    // City steps nobody reaches
+    const i7 = STEPS.findIndex(x => x.k === '7'), i10 = STEPS.findIndex(x => x.k === '10');
+    [i7, i10].forEach(i => { s += `<rect class="v2-cityband" x="${X(i) - col / 2 + 6}" y="${top - 6}" width="${col - 12}" height="${H - top - 44}" rx="6"/>`; });
+    s += `<text class="v2-cap acc" x="${X(i7)}" y="${H - 28}" text-anchor="middle">no tool reaches here</text><text class="v2-cap acc" x="${X(i10)}" y="${H - 28}" text-anchor="middle">no tool reaches here</text>`;
+    let lastGroup = '';
+    TOOL_LINES.forEach(([name, grp, cov, stop], r) => {
+      const y = top + 20 + r * rowH;
+      if (grp !== lastGroup && (grp === 'team' || grp === 'hub')) s += `<line class="v2-sep" x1="20" x2="${W - 20}" y1="${y - rowH / 2}" y2="${y - rowH / 2}"/>`;
+      lastGroup = grp === 'mate' ? 'team' : grp;
+      const idx = Object.keys(cov).map(k => STEPS.findIndex(x => x.k === k)).sort((a, b) => a - b);
+      s += `<g class="v2-tool ${grp}" data-t="${esc(name)}" tabindex="0" role="button" aria-label="${esc(name)}: stops at ${esc(stop)}">`;
+      s += `<rect class="v2-hit" x="0" y="${y - rowH / 2}" width="${W}" height="${rowH}"/>`;
+      s += `<text class="v2-toolname" x="24" y="${y + 5}">${esc(name)}</text>`;
+      for (let j = 0; j < idx.length; j++) {
+        const i = idx[j], v = cov[STEPS[i].k];
+        s += `<circle class="${v === 1 ? 'v2-stop-full' : 'v2-stop-part'}" cx="${X(i)}" cy="${y}" r="${v === 1 ? 8 : 6}"/>`;
+        if (j > 0) { const a = idx[j - 1]; const full = v === 1 && cov[STEPS[a].k] === 1; s += `<path class="${full ? 'v2-track' : 'v2-track part'}" d="M${X(a) + 9} ${y} H ${X(i) - 9}"/>`; }
+      }
+      const last = X(idx[idx.length - 1]);
+      s += `<path class="v2-end" d="M${last + 26} ${y - 12} V ${y + 12}"/><text class="v2-stoptx" x="${last + 36}" y="${y + 5}">${esc(stop)}</text></g>`;
+    });
+    s += `<g transform="translate(24 ${H - 22})"><circle class="v2-stop-full" cx="8" cy="-6" r="8"/><text class="v2-cap" x="24" y="0">covers the step</text><circle class="v2-stop-part" cx="200" cy="-6" r="6.5"/><text class="v2-cap" x="216" y="0">partly, only if scripted, or planned</text><path class="v2-end" d="M540 -18 v22"/><text class="v2-cap" x="552" y="0">where it stops</text></g>`;
+    s += '</svg>';
+    host.innerHTML = s;
+    const svg = host.querySelector('svg');
+    const clear = () => { svg.classList.remove('v2-focus'); svg.querySelectorAll('.on').forEach(n => n.classList.remove('on')); };
+    bindClicks(svg, '.v2-tool', el => {
+      clear(); svg.classList.add('v2-focus'); el.classList.add('on');
+      const t = el.dataset.t, row = TOOL_LINES.find(x => x[0] === t);
+      Object.keys(row[2]).forEach(k => svg.querySelector(`.v2-col[data-k="${k}"]`).classList.add('on'));
+      const ext = EXT.find(e => e[0].startsWith(t.split(' ')[0]));
+      if (ext) panel(info, t, [['Does', ext[1]], ['How it is used', ext[2]], ['Does well', ext[3]], ['Where it stops', ext[4]]], 'Functions are vendor claims, checked against vendor documentation.');
+      else { const n = TEAM_NOTES[t] || ['', '']; panel(info, t, [['Does', n[0]], ['Where it stops', n[1]]]); }
+    }, clear, info);
+  }
+
+  /* ---------- C: how the workbench runs (cycle) ---------- */
+  const CYCLE = [
+    ['You state what to test', 'you', 'icon-intent', 'Plain words, for example "check option B against the views and the 9.0 FSR rule". You own the brief and every decision gate.'],
+    ['AI turns it into a request', 'ai', 'icon-ai', 'The model fills a fixed form: which option, which checks, which basis. It never touches geometry.'],
+    ['Input check', 'code', 'icon-check', 'Code checks units, coordinate frame, source dates and the form. If anything is missing it stops and says CANNOT DETERMINE.'],
+    ['Router picks the tools', 'code', 'icon-router', 'A script, not the model, decides which tool runs next.'],
+    ['Tools run', 'tool', 'icon-tools', 'Vista, the Downtown Massing Tool, the Program Value Visualizer and others run on the same project file.'],
+    ['Engine recomputes', 'tool', 'icon-engine', 'Areas, heights and FSR are recomputed from the geometry with one written area rule.'],
+    ['Result check', 'code', 'icon-check', 'Code compares results with the inputs. A failed result goes back to the AI for a permitted revision, at most three times.'],
+    ['AI drafts the explanation', 'ai', 'icon-ai', 'The model explains the comparison in plain words, citing every number.'],
+    ['Citation check', 'code', 'icon-check', 'Every number must point to its source and basis, and there is no compliance verdict. Otherwise the draft goes back, at most three times.'],
+    ['You compare and decide', 'you', 'step-compare', 'You pick an option, freeze it or reframe the brief, and the reason is written into the project file.'],
+  ];
+  function buildC(host, info) {
+    const W = 1240, H = 820, cx = 620, cy = 400, R = 300, ic = 92;
+    const pos = i => { const a = -Math.PI / 2 + i * 2 * Math.PI / CYCLE.length; return [cx + Math.cos(a) * R, cy + Math.sin(a) * R * 0.86, a]; };
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="The workbench as a cycle of ten steps around one project file, with limited reject loops and a stop">`;
+    s += `<defs><marker id="v2arrC" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-ink-f"/></marker><marker id="v2arrCA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-acc-f"/></marker></defs>`;
+    // ring arrows
+    for (let i = 0; i < CYCLE.length; i++) {
+      const [x1, y1] = pos(i), [x2, y2] = pos((i + 1) % CYCLE.length);
+      const mx = (x1 + x2) / 2, my = (y1 + y2) / 2, ox = (mx - cx) * 0.16, oy = (my - cy) * 0.16;
+      const sx = x1 + (x2 - x1) * 0.24, sy = y1 + (y2 - y1) * 0.24, ex = x1 + (x2 - x1) * 0.76, ey = y1 + (y2 - y1) * 0.76;
+      s += `<path class="${i === CYCLE.length - 1 ? 'v2-loop' : 'v2-ring'}" d="M${sx} ${sy} Q ${mx + ox} ${my + oy} ${ex} ${ey}" marker-end="url(#${i === CYCLE.length - 1 ? 'v2arrCA' : 'v2arrC'})"/>`;
+    }
+    // reject loops inside the ring
+    const chord = (a, b, label) => { const [x1, y1] = pos(a), [x2, y2] = pos(b); const qx = cx + (x1 + x2 - 2 * cx) * 0.18, qy = cy + (y1 + y2 - 2 * cy) * 0.18; s += `<path class="v2-loop" d="M${x1 + (cx - x1) * 0.22} ${y1 + (cy - y1) * 0.22} Q ${qx} ${qy} ${x2 + (cx - x2) * 0.22} ${y2 + (cy - y2) * 0.22}" marker-end="url(#v2arrCA)"/><text class="v2-cap acc" x="${qx}" y="${qy - 6}" text-anchor="middle">${esc(label)}</text>`; };
+    // loop-back badges on the two checks (inside the ring, toward the centre)
+    const badge = (i, line1, line2) => {
+      const [x, y] = pos(i), dx = cx - x, dy = cy - y, L = Math.hypot(dx, dy), ux = dx / L, uy = dy / L;
+      const bx = x + ux * (ic / 2 + 40), by = y + uy * (ic / 2 + 40), r = 16;
+      s += `<path class="v2-loop" d="M${bx + r} ${by} A ${r} ${r} 0 1 1 ${bx} ${by - r}" marker-end="url(#v2arrCA)"/>`;
+      const anchor = ux > 0.3 ? 'start' : ux < -0.3 ? 'end' : 'middle', tx = bx + ux * 28, ty = by + uy * 20;
+      s += `<text class="v2-cap acc" x="${tx}" y="${ty}" text-anchor="${anchor}">${esc(line1)}</text><text class="v2-cap" x="${tx}" y="${ty + 17}" text-anchor="${anchor}">${esc(line2)}</text>`;
+    };
+    badge(6, 'fails: back to the AI', 'max 3 rounds');
+    badge(8, 'uncited: redraft', 'max 3 rounds');
+    // centre: project file + stop
+    s += `<circle class="v2-hub" cx="${cx}" cy="${cy - 34}" r="76"/><image href="${P('icon-file')}" x="${cx - 36}" y="${cy - 96}" width="72" height="72" class="v2-pic"/><text class="v2-hubt" x="${cx}" y="${cy - 2}" text-anchor="middle">One project file</text><text class="v2-cap" x="${cx}" y="${cy + 15}" text-anchor="middle">units, sources, decisions</text>`;
+    const sx = cx + 92, sy = cy + 30;
+    s += `<g class="v2-stopg"><image href="${P('icon-stop')}" x="${sx - 26}" y="${sy}" width="52" height="52" class="v2-pic"/><text class="v2-cap acc" x="${sx}" y="${sy + 70}" text-anchor="middle">input missing or</text><text class="v2-cap acc" x="${sx}" y="${sy + 86}" text-anchor="middle">3 rounds fail: stop</text><text class="v2-num" x="${sx}" y="${sy + 106}" text-anchor="middle">CANNOT DETERMINE</text></g>`;
+    CYCLE.forEach(([t, who], i) => {
+      const [x, y] = pos(i);
+      s += `<g class="v2-cnode ${who}" data-i="${i}" tabindex="0" role="button" aria-label="${i + 1}. ${esc(t)}">`;
+      s += `<circle class="v2-cbg" cx="${x}" cy="${y}" r="${ic / 2 + 8}"/><image href="${P(CYCLE[i][2])}" x="${x - ic / 2}" y="${y - ic / 2}" width="${ic}" height="${ic}" class="v2-pic"/>`;
+      const [, , a] = pos(i), ux = Math.cos(a), uy = Math.sin(a), d = ic / 2 + 18;
+      const lx = x + ux * d, ly = y + uy * d * 0.9 + (uy > 0.3 ? 18 : uy < -0.3 ? -18 : -6);
+      const anchor = ux > 0.35 ? 'start' : ux < -0.35 ? 'end' : 'middle';
+      s += `<text class="v2-num" x="${lx}" y="${ly}" text-anchor="${anchor}">${String(i + 1).padStart(2, '0')}</text><text class="v2-lab ${who}" x="${lx}" y="${ly + 18}" text-anchor="${anchor}">${esc(t)}</text></g>`;
+    });
+    s += `<g transform="translate(24 ${H - 20})"><circle class="v2-cbg you" cx="6" cy="-5" r="7"/><text class="v2-cap" x="18" y="0">you decide</text><circle class="v2-cbg ai" cx="110" cy="-5" r="7"/><text class="v2-cap" x="122" y="0">AI writes words</text><circle class="v2-cbg code" cx="236" cy="-5" r="7"/><text class="v2-cap" x="248" y="0">code checks</text><circle class="v2-cbg tool" cx="350" cy="-5" r="7"/><text class="v2-cap" x="362" y="0">tools compute</text></g>`;
+    s += '</svg>';
+    host.innerHTML = s;
+    const svg = host.querySelector('svg');
+    const clear = () => { svg.classList.remove('v2-focus'); svg.querySelectorAll('.on').forEach(n => n.classList.remove('on')); };
+    const role = { you: 'You (a person)', ai: 'The AI', code: 'Code (a hook in the harness)', tool: 'Tools and engine' };
+    bindClicks(svg, '.v2-cnode', el => {
+      clear(); svg.classList.add('v2-focus'); el.classList.add('on');
+      const c = CYCLE[+el.dataset.i]; panel(info, `${+el.dataset.i + 1}. ${c[0]}`, [['Who does it', role[c[1]]], ['What happens', c[3]]]);
+    }, clear, info);
+  }
+
+  function bindClicks(svg, sel, fn, clear, info) {
+    svg.querySelectorAll(sel).forEach(el => {
+      const go = e => { if (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ') return; e.preventDefault(); if (el.classList.contains('on') && svg.classList.contains('v2-focus') && e.type !== 'mouseenter') { clear(); info.dataset.empty = '1'; info.replaceChildren(info._hint.cloneNode(true)); return; } fn(el); };
+      el.addEventListener('click', go); el.addEventListener('keydown', go);
+    });
+  }
+
+  window.buildResearchDiagrams = function () {
+    for (const [id, fn] of [['v2A', buildA], ['v2B', buildB], ['v2C', buildC]]) {
+      const host = document.getElementById(id), info = document.getElementById(id + 'info');
+      if (!host || !info) continue;
+      info._hint = info.firstElementChild ? info.firstElementChild.cloneNode(true) : document.createElement('span');
+      try { fn(host, info); } catch (e) { host.textContent = 'Diagram could not be drawn.'; }
+    }
+  };
+})();
+
+/*/V2DIAGRAMS*/
+buildResearchDiagrams();
 renderProject();
 render();
 
