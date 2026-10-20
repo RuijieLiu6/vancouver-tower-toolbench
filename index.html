@@ -728,12 +728,12 @@ const el = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag)
 const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
 /* ---------- opening, join panel ---------- */
-/* IS_PUBLIC is set to true only in the public copy (built by make_public.py). */
+/* IS_PUBLIC is set to true only in the public copy (built by make_public.py). This claude.ai copy saves feedback to the shared database. */
 const IS_PUBLIC = true;
 const TEAM_URL = 'https://claude.ai/artifact/EamwZUs743tVwVofJhnE2d';
 const PUBLIC_URL = 'https://ruijieliu6.github.io/vancouver-tower-toolbench/'; // the public website on GitHub Pages; every QR code points here
 /* Google Form pre-filled link: one Paragraph question whose pre-filled value is the word ANSWERS. */
-const FORM_PREFILL = null;
+const FORM_PREFILL = 'https://docs.google.com/forms/d/e/1FAIpQLSe6XIiuEHDK0cMbosUxRfU56CVTjPoR2fDf3eAaCJjPUbAjaQ/viewform?usp=pp_url&entry.146231342=ANSWERS';
 const SITE_URL = PUBLIC_URL || TEAM_URL;
 if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('animate.smil').forEach(a => { const r = a.parentNode; a.remove(); r.setAttribute('width', '960'); });
 $('#siteUrl').textContent = SITE_URL.replace('https://', '');
@@ -943,7 +943,7 @@ async function loadResponses() {
   try {
     const people = await db.collection('responses').get();
     const all = [];
-    for (const p of (people.docs || [])) { const ans = await db.collection(`responses/${p.id}/answers`).get(); for (const d of (ans.docs || [])) all.push(d.data()); }
+    for (const p of (people.docs || [])) { const ans = await db.collection(`responses/${p.id}/answers`).get(); for (const d of (ans.docs || [])) all.push({ ...d.data(), _path: `responses/${p.id}/answers/${d.id}` }); }
     all.sort((x, y) => String(y.at).localeCompare(String(x.at)));
     lastAll = all;
     if (!all.length) { body.textContent = 'No responses yet. When someone sends the form, it appears here.'; return; }
@@ -956,7 +956,13 @@ async function loadResponses() {
     const dist = el('div', { class: 'bars' }, el('div', { class: 'hint', text: 'Trust in AI' }));
     const max = Math.max(1, ...TRUST.map(([v]) => trustVals.filter(x => x === v).length));
     for (const [v, l] of TRUST) { const n = trustVals.filter(x => x === v).length; dist.append(el('div', { class: 'bar' }, el('span', { text: `${v} · ${l}` }), el('i', { style: `width:${(n / max) * 100}%` }), el('em', { text: String(n) }))); }
-    const list = el('div', { style: 'display:flex;flex-direction:column;gap:8px' }, ...all.map(a => el('dl', { class: 'entry' }, el('div', { class: 'eyebrow', text: (a.at || '').replace('T', ' ').slice(0, 16) }), ...asLines(a).flatMap(([k, v]) => [el('dt', { text: k }), el('dd', { text: v })]))));
+    const delBtn = a => { let armed = false; const b = el('button', { type: 'button', class: 'edit', text: 'Delete', 'aria-label': 'Delete this response' });
+      b.addEventListener('click', async () => {
+        if (!armed) { armed = true; b.textContent = 'Confirm delete'; b.style.color = 'var(--signal)'; b.style.borderColor = 'var(--signal)'; setTimeout(() => { if (armed && b.isConnected) { armed = false; b.textContent = 'Delete'; b.style.color = ''; b.style.borderColor = ''; } }, 4000); return; }
+        b.disabled = true; b.textContent = 'Deleting…';
+        try { await db.doc(a._path).delete(); loadResponses(); } catch (e) { b.disabled = false; armed = false; b.textContent = 'Could not delete'; }
+      }); return b; };
+    const list = el('div', { style: 'display:flex;flex-direction:column;gap:8px' }, ...all.map(a => el('dl', { class: 'entry' }, el('div', { class: 'nav' }, el('div', { class: 'eyebrow grow', text: (a.at || '').replace('T', ' ').slice(0, 16) }), editable && a._path ? delBtn(a) : null), ...asLines(a).flatMap(([k, v]) => [el('dt', { text: k }), el('dd', { text: v })]))));
     body.replaceChildren(kp, dist, list);
   } catch (e) { body.textContent = 'Could not load responses. Try Refresh.'; }
 }
