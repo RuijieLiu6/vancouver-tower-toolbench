@@ -317,6 +317,14 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 @media (prefers-reduced-motion: no-preference) { .v2host .v2-main { stroke-dasharray: 1600; animation: v2draw 1.6s ease-out both; } }
 @keyframes v2draw { from { stroke-dashoffset: 1600; } to { stroke-dashoffset: 0; } }
 
+/* linked pictures */
+a.img-link { display: block; position: relative; color: inherit; border-radius: inherit; }
+a.img-link::after { content: "\2197"; position: absolute; top: 8px; right: 8px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 999px; background: rgba(23,36,44,.78); color: #fbfcfb; font: 600 14px var(--body); opacity: 0; transition: opacity .15s; }
+a.img-link:hover::after, a.img-link:focus-visible::after { opacity: 1; }
+@media (hover: none) { a.img-link::after { opacity: .9; } }
+a.img-link:hover img { filter: brightness(.96); }
+.gallery a.img-link { height: 100%; } .tool .shot a.img-link { height: 100%; }
+
 /* image bands */
 .gallery { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
 .gallery figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; background: var(--sheet); border: 1px solid var(--line); min-width: 0; }
@@ -605,12 +613,21 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
     <form id="fb" novalidate></form>
     <div id="status" role="status"></div>
     <div id="copyWrap" hidden class="q">
+      <div id="mailSend" style="display:flex;flex-direction:column;gap:10px">
+        <p><b>Last step: send your answers to Ruijie and Sinnie.</b> Your answers are already written into an email. Pick how you send email, then press Send.</p>
+        <div class="nav">
+          <a class="btn primary" id="gmailLink" target="_blank" rel="noopener">Send with Gmail ↗</a>
+          <a class="btn" id="mailtoLink">Open my email app</a>
+          <button type="button" id="copyMail">Copy addresses</button>
+        </div>
+        <p class="small muted">To: <span id="mailTo" style="user-select:all">liuruij6@gmail.com, sinniechoi18@gmail.com</span>. If nothing opens, copy the addresses and the text below into any email.</p>
+      </div>
       <div id="formSend" hidden style="display:flex;flex-direction:column;gap:8px">
-        <p><b>Last step:</b> your answers are filled in on our Google Form. Press Submit there to send them.</p>
-        <a class="btn primary" id="formLink" target="_blank" rel="noopener" style="align-self:flex-start">Open the form and submit ↗</a>
+        <p class="small">No email? Use our Google Form instead: your answers are filled in, so just press Submit there.</p>
+        <a class="btn" id="formLink" target="_blank" rel="noopener" style="align-self:flex-start">Open the form ↗</a>
         <p class="small muted">If the form opens empty, paste the text below into it.</p>
       </div>
-      <p class="small" id="copyNote">This view cannot save answers. Copy the text below and send it to Ruijie or Sinnie by message or email.</p>
+      <p class="small" id="copyNote" hidden>Copy the text below if you want to keep your answers.</p>
       <textarea id="copyBox" readonly aria-label="Your answers as text" style="min-height:200px"></textarea>
     </div>
     <section id="resp" hidden aria-label="Responses received">
@@ -926,13 +943,13 @@ $('#fb').addEventListener('submit', async e => {
   if (btn) btn.disabled = false;
   const box = $('#copyBox'); box.value = 'Vancouver Tower Toolbench feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
   $('#copyWrap').hidden = false;
-  if (FORM_PREFILL) {
-    $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000)));
-    $('#formSend').hidden = false; $('#copyNote').hidden = true;
-    st.className = 'ok'; st.textContent = 'Almost done. Open the form below and press Submit.';
-    $('#formLink').focus();
-    return;
-  }
+  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Vancouver Tower Toolbench feedback';
+  $('#gmailLink').href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(MAIL_TO) + '&su=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 6000));
+  $('#mailtoLink').href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 1800));
+  if (FORM_PREFILL) { $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000))); $('#formSend').hidden = false; }
+  st.className = 'ok'; st.textContent = 'Almost done. Send the email below.';
+  $('#gmailLink').focus();
+  return;
   st.className = 'warn'; st.textContent = 'This view cannot save feedback. Your answers are below as text.';
   try { await navigator.clipboard.writeText(box.value); st.textContent += ' They are also on your clipboard.'; } catch (err) { box.focus(); box.select(); }
 });
@@ -967,6 +984,12 @@ async function loadResponses() {
   } catch (e) { body.textContent = 'Could not load responses. Try Refresh.'; }
 }
 $('#refreshResp').addEventListener('click', loadResponses);
+$('#copyMail').addEventListener('click', async () => {
+  const b = $('#copyMail');
+  try { await navigator.clipboard.writeText('liuruij6@gmail.com, sinniechoi18@gmail.com'); b.textContent = 'Copied'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($('#mailTo')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected: copy it'; }
+  setTimeout(() => { b.textContent = 'Copy addresses'; }, 2200);
+});
 $('#copyCsv').addEventListener('click', async () => {
   const keys = []; const rows = lastAll.map(a => { const m = Object.fromEntries([['Sent', a.at || ''], ...asLines(a)]); for (const k of Object.keys(m)) if (!keys.includes(k)) keys.push(k); return m; });
   const q = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
@@ -1098,6 +1121,7 @@ function renderProject() {
     el('details', { class: 'more' }, el('summary', { text: 'All dates as a table' }), el('div', { class: 'timeline' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', { text: 'Date' }), el('th', { text: 'Milestone' }))),
       el('tbody', {}, ...MILESTONES.map(m => el('tr', { class: m === next ? 'now' : '' }, el('td', { text: m[1] }), el('td', { text: m[2] + (m === next ? '  · next' : '') }))))))),
     el('p', { class: 'small muted', text: 'From the ARCH 540 Assignment 2 brief. Peer reviews and the final review are in LRS 211; the mid review is in LRS 309.' })));
+  if (typeof linkImages === 'function') linkImages(body);
 }
 /* ---------- research tab ---------- */
 const PAINS = [
@@ -1187,6 +1211,28 @@ const CASES = [
   }
 })();
 
+/* clickable pictures: tools open the tool, documents open their source or PDF */
+const IMG_LINKS = {
+  'images/about-vista-intro.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  'images/about-rooftop-view.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  'images/tool-vista.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  'images/tool-dtmass.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+  'images/tool-pvv.jpg': 'https://ruijieliu6.github.io/program-value-visualizer/',
+  'images/tool-solar.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#solar-shading-explorer',
+  'images/doc-public-views.jpg': 'https://guidelines.vancouver.ca/guidelines-public-views.pdf',
+  'images/doc-evolution-paper.jpg': 'https://doi.org/10.2749/101686617X14676303588670',
+  'images/doc-mcp-paper.jpg': 'https://papers.neurips.cc/paper_files/paper/2025/file/245a7772c1c6725c1e439d7f789b48c2-Paper-Creative_AI_Track.pdf',
+  'images/doc-vtc-brief.jpg': 'https://shapeyourcity.ca/higher-buildings/news_feed/launch-of-vancouver-tall-ideas-competition',
+};
+function linkImages(root = document) {
+  root.querySelectorAll('img').forEach(img => {
+    const href = IMG_LINKS[img.getAttribute('src')];
+    if (!href || img.closest('a')) return;
+    const a = document.createElement('a'); a.href = href; a.target = '_blank'; a.rel = 'noopener'; a.className = 'img-link';
+    a.setAttribute('aria-label', 'Open ' + (img.getAttribute('alt') || 'link') + ' in a new tab');
+    img.replaceWith(a); a.append(img);
+  });
+}
 /*V2DIAGRAMS*/
 /* Interactive research diagrams (v2): pictogram-led, after the studio's reference boards.
    A: workflow strip with pain-point lanes. B: tool lines across the steps. C: workbench cycle.
@@ -1447,6 +1493,7 @@ const CASES = [
 buildResearchDiagrams();
 renderProject();
 render();
+linkImages();
 
 (async () => {
   if (!window.claude?.use || IS_PUBLIC) return;
