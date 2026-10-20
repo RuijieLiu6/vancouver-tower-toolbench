@@ -1,0 +1,1145 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA)."><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Vancouver Tower Toolbench</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: a survey-sheet for towers. A section-strip header (heights in metres), three tabs, one reading column; tool cards in a two-up grid. */
+:root {
+  --ground: #eef1f0;   /* seawall concrete */
+  --sheet: #fbfcfb;
+  --ink: #17242c;      /* False Creek at dusk */
+  --muted: #56656d;
+  --line: #cfd7d6;
+  --harbour: #1d5a6e;  /* primary */
+  --harbour-soft: #dcebef;
+  --signal: #a8480c;   /* survey-marker orange, used sparingly; 4.8:1+ on all light surfaces */
+  --signal-soft: #f7e6d9;
+  --good: #2c7a4b;
+  --display: "Familjen Grotesk", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --ground: #0f171b; --sheet: #162228; --ink: #e3eaec; --muted: #9aabb2; --line: #2a3a42;
+  --harbour: #7fbdd1; --harbour-soft: #1b3540; --signal: #f0975a; --signal-soft: #3a261a; --good: #6cc492; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --ground: #0f171b; --sheet: #162228; --ink: #e3eaec; --muted: #9aabb2; --line: #2a3a42;
+  --harbour: #7fbdd1; --harbour-soft: #1b3540; --signal: #f0975a; --signal-soft: #3a261a; --good: #6cc492; color-scheme: dark }
+
+[hidden] { display: none !important; }
+body { background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); }
+.wrap { max-width: 980px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(30px, 5vw, 46px); line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
+h2 { font-size: 26px; line-height: 1.15; font-weight: 600; }
+h3 { font-size: 19px; line-height: 1.25; font-weight: 600; }
+p { margin: 0; max-width: 66ch; }
+a { color: var(--harbour); }
+.eyebrow { font: 500 13px/1.4 var(--mono); color: var(--muted); }
+.muted { color: var(--muted); }
+.small { font-size: 14px; }
+
+/* header */
+header.top { padding-block: 28px 0; display: flex; flex-direction: column; gap: 14px; }
+.lede { font-size: 18px; color: var(--muted); max-width: 60ch; }
+.credit { font-size: 14.5px; }
+.credit b { font-weight: 600; color: var(--ink); }
+.strip { width: 100%; height: auto; display: block; margin-top: 6px; }
+.strip .t { fill: var(--harbour); opacity: .9; }
+.strip .t2 { fill: var(--harbour); opacity: .45; }
+.strip .g { stroke: var(--line); }
+.strip .cone { stroke: var(--signal); stroke-dasharray: 5 5; fill: none; stroke-width: 1.5; }
+.strip text { fill: var(--muted); font: 10px var(--mono); }
+
+/* tabs */
+nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line); }
+nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
+nav.tabs button { font: 600 15px var(--display); background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); padding: 14px 12px 11px; cursor: pointer; white-space: nowrap; }
+nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--signal); }
+main { padding-block: 28px 64px; }
+section.panel { display: flex; flex-direction: column; gap: 22px; }
+
+/* tool cards */
+.tools { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.tool { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.tool .meta { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.tag { font: 600 12.5px/1 var(--body); padding: 6px 8px; border-radius: 4px; background: var(--harbour-soft); color: var(--harbour); }
+.tag.ours { background: var(--signal-soft); color: var(--signal); }
+.tool .by { font-size: 14px; color: var(--muted); }
+.tool .by b { color: var(--ink); font-weight: 600; }
+.tool ul { margin: 0; padding-left: 18px; font-size: 14.5px; color: var(--muted); }
+.tool .row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 4px; }
+.note { font-size: 14px; color: var(--muted); }
+
+/* buttons */
+button, .btn { font: 500 15px var(--body); cursor: pointer; border-radius: 7px; padding: 9px 14px; border: 1px solid var(--line); background: var(--sheet); color: var(--ink); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+.btn.primary, button.primary { background: var(--harbour); border-color: var(--harbour); color: var(--sheet); font-weight: 600; }
+button:disabled { opacity: .5; cursor: default; }
+:focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; }
+
+/* questionnaire */
+.steps { display: flex; gap: 6px; flex-wrap: wrap; }
+.steps span { font: 500 13.5px var(--body); padding: 6px 10px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); }
+.steps span.on { border-color: var(--harbour); color: var(--harbour); background: var(--harbour-soft); }
+.steps span.done { color: var(--good); }
+.q { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.q.follow { border-color: var(--signal); background: color-mix(in srgb, var(--signal-soft) 45%, var(--sheet)); }
+.q .ql { font-weight: 600; }
+.q .hint { font-size: 13.5px; color: var(--muted); font-weight: 400; }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip { font: 400 14.5px var(--body); padding: 7px 12px; border-radius: 999px; border: 1px solid var(--line); background: var(--ground); color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--harbour); border-color: var(--harbour); color: var(--sheet); }
+.scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; }
+.scale .chip { border-radius: 8px; text-align: center; padding: 10px 4px; display: flex; flex-direction: column; gap: 2px; align-items: center; }
+.scale .chip b { font: 600 18px var(--mono); }
+.scale .chip small { font-size: 11.5px; line-height: 1.2; }
+textarea, input[type=text] { font: inherit; color: inherit; background: var(--ground); border: 1px solid var(--line); border-radius: 7px; padding: 8px 10px; width: 100%; box-sizing: border-box; min-width: 0; }
+textarea { min-height: 70px; resize: vertical; }
+.toolfb { display: flex; flex-direction: column; gap: 12px; }
+.toolfb h3 { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.nav { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.nav .grow { flex: 1; }
+#status { min-height: 1.4em; font-size: 14.5px; }
+#status.ok { color: var(--good); }
+#status.warn { color: var(--signal); }
+.thanks { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 22px; display: flex; flex-direction: column; gap: 12px; }
+
+/* responses */
+#resp { background: var(--harbour-soft); border-radius: 10px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+.kpis { display: flex; flex-wrap: wrap; gap: 18px; }
+.kpi b { display: block; font: 600 26px var(--mono); font-variant-numeric: tabular-nums; }
+.kpi span { font-size: 13px; color: var(--muted); }
+.bars { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; }
+.bar { display: grid; grid-template-columns: 150px 1fr 34px; gap: 8px; align-items: center; }
+.bar i { display: block; height: 10px; border-radius: 3px; background: var(--harbour); }
+.bar em { font-style: normal; font-family: var(--mono); text-align: right; font-variant-numeric: tabular-nums; }
+.entry { background: var(--sheet); border-radius: 8px; padding: 12px; font-size: 14px; display: flex; flex-direction: column; gap: 4px; min-width: 0; overflow-wrap: anywhere; }
+.entry dt { font-weight: 600; }
+.entry dd { margin: 0 0 4px; color: var(--muted); }
+
+/* project */
+.proj { display: grid; grid-template-columns: 220px 1fr; gap: 28px; align-items: start; }
+.proj aside { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 64px); display: flex; flex-direction: column; gap: 6px; font-size: 14.5px; }
+.proj aside a { text-decoration: none; color: var(--muted); }
+.proj aside a:hover { color: var(--ink); }
+.proj .body { display: flex; flex-direction: column; gap: 30px; min-width: 0; }
+.psec { display: flex; flex-direction: column; gap: 10px; }
+.psec .head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.psec .text { display: flex; flex-direction: column; gap: 10px; }
+.psec textarea { min-height: 160px; }
+.edit { font-size: 13px; padding: 4px 9px; }
+.timeline { overflow-x: auto; }
+.timeline table { border-collapse: collapse; width: 100%; font-size: 14.5px; min-width: 520px; }
+.timeline td, .timeline th { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.timeline th { font: 500 12px var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.timeline td:first-child { font-family: var(--mono); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.timeline tr.now td { background: var(--signal-soft); }
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)); gap: 12px; }
+.person { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px; display: flex; flex-direction: column; gap: 4px; }
+footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size: 13.5px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
+
+/* research tab: graphics first, detail on demand */
+:root { --violet: #6a46a8; --violet-soft: #ebe4f6; --stop: #7a1f1f; --onstop: #fbfcfb; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #e0736b; --onstop: #0f171b; } }
+:root[data-theme="dark"] { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #e0736b; --onstop: #0f171b; }
+.rs { gap: 40px; }
+.rs-hero { display: flex; flex-direction: column; gap: 14px; }
+.rs-big { font-size: clamp(26px, 4.2vw, 40px); line-height: 1.1; font-weight: 700; max-width: 22ch; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 0; margin-top: 10px; border-block: 1px solid var(--line); }
+.stat { padding: 16px 18px 16px 0; display: flex; flex-direction: column; gap: 4px; } .stat + .stat { padding-left: 18px; border-left: 1px solid var(--line); }
+.stat b { font: 600 clamp(32px, 5vw, 46px)/1 var(--display); color: var(--harbour); font-variant-numeric: tabular-nums; }
+.stat span { font-size: 14px; color: var(--muted); }
+.photos { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 30%); gap: 10px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x mandatory; }
+.photos figure { margin: 0; scroll-snap-align: start; display: flex; flex-direction: column; gap: 4px; }
+.photos img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border-radius: 8px; display: block; max-width: 100%; }
+.photos figcaption { font-size: 13px; display: flex; flex-direction: column; }
+.photos figcaption span { font-size: 11.5px; color: var(--muted); }
+.chapter { display: flex; flex-direction: column; gap: 16px; padding-top: 22px; border-top: 1px solid var(--line); }
+.ch-head { display: flex; gap: 14px; align-items: flex-start; }
+.ch-head h2 { font-size: clamp(24px, 3.4vw, 32px); }
+.ch-n { font: 700 15px/1 var(--mono); color: var(--sheet); background: var(--signal); border-radius: 999px; min-width: 30px; height: 30px; display: grid; place-items: center; margin-top: 3px; }
+.dg { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.dg .scroll { overflow-x: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 8px; }
+.dg svg { display: block; width: 100%; min-width: 880px; height: auto; }
+.dg figcaption { font-size: 13.5px; color: var(--muted); }
+.dg .bg { fill: var(--sheet) } .dg .lane { fill: var(--ground) } .dg .lanelab { fill: var(--muted); font: 600 12px var(--body); letter-spacing: .04em }
+.dg .you { fill: var(--signal-soft); stroke: var(--signal) } .dg .ai { fill: var(--violet-soft); stroke: var(--violet) } .dg .tool { fill: var(--harbour-soft); stroke: var(--harbour) }
+.dg .hook { fill: var(--sheet); stroke: var(--ink) } .dg .stop { fill: var(--stop); stroke: var(--stop) } .dg .tx { fill: var(--ink); font: 500 11.5px var(--body) } .dg .tx.stoptx { fill: var(--onstop) }
+.dg .sub { fill: var(--muted); font: 400 10px var(--body) } .dg .edge { stroke: var(--muted); fill: none; stroke-width: 1.3 } .dg .loop { stroke: var(--signal); fill: none; stroke-width: 1.3; stroke-dasharray: 5 4 }
+.dg .ah { fill: var(--muted) } .dg .ahl { fill: var(--signal) } .dg .pain { fill: var(--signal) } .dg .paintx { fill: var(--sheet); font: 700 9px var(--mono) }
+.dg .cell { fill: var(--harbour) } .dg .cellp { fill: var(--harbour); opacity: .35 } .dg .grid { stroke: var(--line) } .dg .stopmk { fill: var(--stop) }
+.dg .node { transition: opacity .15s; } .dg.filter .node { opacity: .18; } .dg.filter .node.on { opacity: 1; }
+.dg.filter .node.on rect, .dg.filter .node.on polygon { stroke-width: 3; }
+.pains, .gates { display: flex; flex-direction: column; gap: 10px; }
+.ql .hint { font-weight: 400; }
+.chip.pain-c { font-family: var(--mono); font-weight: 600; min-width: 40px; }
+.chip.pain-c small { font-family: var(--body); font-weight: 400; margin-left: 6px; }
+.paininfo { background: var(--signal-soft); border: 1px solid var(--signal); border-radius: 8px; padding: 12px 14px; font-size: 15px; min-height: 48px; }
+.paininfo b { font-family: var(--display); font-size: 18px; }
+.more { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; }
+.more summary { cursor: pointer; font-weight: 600; font-size: 15px; }
+.more[open] summary { margin-bottom: 10px; }
+.tablewrap { overflow-x: auto; }
+.steps-t { border-collapse: collapse; font-size: 13.5px; width: 100%; min-width: 640px; }
+.steps-t th, .steps-t td { text-align: left; padding: 7px 9px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.steps-t th { font: 500 11.5px var(--mono); text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.cards3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; }
+.cards3 details { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+.cards3 summary { cursor: pointer; display: flex; flex-direction: column; gap: 4px; list-style: none; }
+.cards3 summary::-webkit-details-marker { display: none; }
+.cards3 summary b { font: 600 19px var(--display); }
+.cards3 summary .stopline { font-size: 14px; color: var(--stop); }
+.cards3 summary .more-l { font-size: 13px; color: var(--harbour); }
+.cards3 dl { margin: 10px 0 0; font-size: 14px; display: flex; flex-direction: column; gap: 4px; }
+.cards3 dt { font-weight: 600; } .cards3 dd { margin: 0 0 6px; color: var(--muted); }
+.roles { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.role { border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 8px; border: 2px solid; }
+.role h3 { font-size: 24px; }
+.role ul { margin: 0; padding-left: 18px; font-size: 15px; display: flex; flex-direction: column; gap: 4px; }
+.r-ai { background: var(--violet-soft); border-color: var(--violet); border-style: dashed; }
+.r-code { background: var(--sheet); border-color: var(--ink); }
+.r-you { background: var(--signal-soft); border-color: var(--signal); }
+.nogo { font-size: 15px; padding: 12px 14px; border-radius: 8px; background: var(--sheet); border: 1px solid var(--line); }
+.nogo b { color: var(--stop); margin-right: 4px; }
+.gate-track { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.gate-track button { border-radius: 6px; padding: 10px 4px; display: flex; flex-direction: column; align-items: center; gap: 2px; background: var(--signal-soft); border: 1px solid var(--signal); color: var(--ink); }
+.gate-track button b { font: 700 18px var(--mono); color: var(--signal); }
+.gate-track button span { font-size: 12px; line-height: 1.2; text-align: center; }
+.gate-track button[aria-pressed="true"] { background: var(--signal); } .gate-track button[aria-pressed="true"] b, .gate-track button[aria-pressed="true"] span { color: var(--sheet); }
+.rules3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 12px; }
+.rules3 div { background: var(--sheet); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; display: flex; flex-direction: column; gap: 4px; }
+.rules3 b { font: 600 20px var(--display); } .rules3 span { font-size: 14px; color: var(--muted); }
+.attempt { display: grid; grid-template-columns: 220px 1fr; gap: 20px; align-items: start; }
+.ring { aspect-ratio: 1; border-radius: 50%; border: 12px solid var(--good); display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; background: var(--sheet); max-width: 220px; }
+.ring b { font: 700 40px/1 var(--display); color: var(--good); }
+.ring span { font-size: 12.5px; color: var(--muted); margin-top: 6px; }
+.attempt-r { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.cbar { display: flex; height: 54px; border-radius: 8px; overflow: hidden; gap: 2px; }
+.cbar button { border: 0; border-radius: 0; padding: 0; background: var(--harbour); color: var(--sheet); font: 600 13px var(--mono); justify-content: center; min-width: 22px; opacity: .55; }
+.cbar button:nth-child(odd) { background: var(--good); }
+.cbar button[aria-pressed="true"], .cbar button:hover { opacity: 1; }
+.notyet { font-size: 14px; color: var(--muted); }
+.notyet b { color: var(--ink); }
+.pipe { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr)); gap: 6px; counter-reset: p; }
+.pipe li { background: var(--sheet); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: var(--muted); }
+.pipe li b { font: 600 15px var(--display); color: var(--ink); }
+.pipe li b::before { counter-increment: p; content: counter(p) " · "; color: var(--signal); font-family: var(--mono); font-size: 13px; }
+
+/* About us visuals */
+.psec.has-vis { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 28px; align-items: center; }
+.psec.has-vis:nth-of-type(even) .pvis { order: -1; }
+.psec.has-vis:nth-of-type(even) { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); }
+.ptext { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.pvis { min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+.pvis > svg { width: 100%; height: auto; display: block; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; }
+.pcap { font-size: 13px; color: var(--muted); }
+.pv-link { stroke: var(--signal); stroke-dasharray: 4 4; fill: none; stroke-width: 1.3; }
+.pv-tower { fill: var(--harbour); } .pv-floor { stroke: var(--sheet); stroke-width: 1; opacity: .5; } .pv-ground { stroke: var(--ink); stroke-width: 2; }
+.pv-doc { fill: var(--sheet); stroke: var(--line); stroke-width: 1.5; } .pv-fold { fill: var(--line); }
+.pv-t { fill: var(--ink); font: 600 14px var(--display); } .pv-s { fill: var(--muted); font: 400 11px var(--body); }
+.pshots { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.pshots.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.pshots figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
+.pshots img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line); display: block; max-width: 100%; }
+.pshots.two img { aspect-ratio: 4/3; object-position: center; }
+.pshots figcaption { font-size: 12.5px; color: var(--muted); } .pshots figcaption b { display: block; color: var(--ink); font-size: 14px; }
+.lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.lessons > div { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+.lessons svg { width: 100%; height: auto; }
+.lessons b { font: 600 16px/1.25 var(--display); }
+.ls-num { fill: var(--harbour); font: 700 24px var(--display); } .ls-tag { fill: var(--signal-soft); stroke: var(--signal); } .ls-tagt { fill: var(--signal); font: 500 8px var(--mono); }
+.ls-doc, .ls-box { fill: var(--harbour-soft); stroke: var(--harbour); stroke-width: 1.5; } .ls-line { stroke: var(--harbour); stroke-width: 2; }
+.ls-arrow { stroke: var(--signal); stroke-width: 2; fill: none; } .ls-code { fill: var(--ink); font: 700 22px var(--mono); }
+.pl-on { stroke: var(--harbour); stroke-width: 2; } .pl-off { stroke: var(--signal); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.pn-on { fill: var(--harbour-soft); stroke: var(--harbour); stroke-width: 1.5; } .pn-off { fill: var(--sheet); stroke: var(--signal); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.pn-t { fill: var(--ink); font: 600 12.5px var(--display); } .pn-s { fill: var(--muted); font: 400 10px var(--body); }
+.pc { fill: var(--signal); } .pc-t { fill: var(--sheet); font: 700 15px var(--display); } .pc-s { fill: var(--sheet); font: 500 10px var(--mono); opacity: .9; }
+.key { display: inline-block; width: 22px; height: 0; border-top: 2px solid var(--harbour); vertical-align: middle; margin-right: 4px; } .key.off { border-top: 2px dashed var(--signal); }
+#p-timeline .pvis, #p-timeline > .pvis { overflow-x: auto; }
+#p-timeline svg { min-width: 680px; }
+.tl-axis { stroke: var(--line); stroke-width: 3; } .tl-stem { stroke: var(--line); } .tl-dot { fill: var(--harbour); } .tl-big { fill: var(--ink); } .tl-next { fill: var(--signal); }
+.tl-d { fill: var(--ink); font: 600 12px var(--mono); } .tl-l { fill: var(--muted); font: 400 11px var(--body); }
+.tl-today { stroke: var(--signal); stroke-width: 2; stroke-dasharray: 3 3; } .tl-tt { fill: var(--signal); font: 600 10px var(--mono); }
+@media (max-width: 720px) { .psec.has-vis, .psec.has-vis:nth-of-type(even) { grid-template-columns: 1fr; } .pvis { order: -1; } .lessons { grid-template-columns: 1fr; } .lessons svg { max-width: 160px; } }
+
+/* image bands */
+.gallery { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
+.gallery figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; background: var(--sheet); border: 1px solid var(--line); min-width: 0; }
+.gallery figure:first-child { grid-row: span 2; }
+.gallery img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: 100%; aspect-ratio: 4/3; }
+.gallery figure:first-child img { aspect-ratio: auto; min-height: 100%; }
+.gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 12px 10px; color: #fbfcfb; font-size: 13.5px; background: linear-gradient(transparent, rgba(10,18,22,.82)); }
+.gallery figcaption b { display: block; font: 600 16px var(--display); }
+.shelf { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: 14px; overflow-x: auto; padding: 6px 2px 10px; }
+.shelf figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.shelf img { width: 100%; aspect-ratio: 3/4; object-fit: cover; object-position: top; border-radius: 4px; border: 1px solid var(--line); background: #fff; box-shadow: 0 8px 18px -12px var(--ink); transition: transform .18s; max-width: 100%; }
+.shelf figure:hover img { transform: translateY(-4px) rotate(-1deg); }
+.shelf figcaption { font-size: 12.5px; line-height: 1.35; }
+.shelf figcaption b { display: block; font-size: 13.5px; }
+.shelf figcaption span { color: var(--muted); }
+.band-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.band-h h3 { font-size: 20px; }
+.tool .shot { margin: -18px -18px 4px; height: 170px; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--ground); }
+.tool .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .4s; max-width: 100%; }
+.tool:hover .shot img { transform: scale(1.04); }
+.fb-banner { position: relative; border-radius: 14px; overflow: hidden; min-height: 180px; display: flex; align-items: flex-end; }
+.fb-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.fb-banner div { position: relative; padding: 20px 22px; color: #fbfcfb; background: linear-gradient(transparent, rgba(10,18,22,.85)); width: 100%; display: flex; flex-direction: column; gap: 4px; }
+.fb-banner h2 { color: #fbfcfb; font-size: clamp(26px, 4vw, 36px); }
+.fb-banner p { color: #fbfcfb; opacity: .9; }
+.fb-banner small { font-size: 11px; opacity: .75; }
+.attempt-shot { margin: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
+.attempt-shot img { width: 100%; display: block; max-width: 100%; }
+.attempt-shot figcaption { font-size: 12.5px; color: var(--muted); padding: 6px 10px; background: var(--sheet); }
+@media (max-width: 720px) { .gallery { grid-template-columns: 1fr 1fr; } .gallery figure:first-child { grid-column: span 2; grid-row: auto; } }
+
+/* opening sequence, presentation path, join panel */
+.hero-row { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.hero-text { display: flex; flex-direction: column; gap: 12px; min-width: 0; flex: 1 1 520px; }
+header.top h1 { font-size: clamp(34px, 6vw, 58px); }
+.join-btn { display: inline-flex; gap: 10px; align-items: center; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--harbour); background: var(--sheet); color: var(--harbour); text-align: left; }
+.join-btn span { display: flex; flex-direction: column; } .join-btn b { font-weight: 600; } .join-btn small { font-size: 12px; color: var(--muted); }
+.strip { margin-top: 14px; }
+@media (prefers-reduced-motion: no-preference) {
+  .in { animation: fadeUp .7s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--d) * 120ms + 150ms); }
+  .strip .t, .strip .t2 { transform-box: fill-box; transform-origin: 50% 100%; animation: rise .9s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i) * 55ms + 250ms); }
+  nav.tabs button.hot .pulse { animation: pulse 1.8s ease-out infinite; }
+  .tools.show .tool { animation: fadeUp .5s cubic-bezier(.2,.7,.2,1) both; }
+  .tools.show .tool:nth-child(2) { animation-delay: .08s } .tools.show .tool:nth-child(3) { animation-delay: .16s } .tools.show .tool:nth-child(4) { animation-delay: .24s }
+  .tool { transition: transform .18s, box-shadow .18s, border-color .18s; }
+  .tool:hover { transform: translateY(-3px); box-shadow: 0 10px 24px -14px var(--ink); border-color: var(--signal); }
+  .tool .btn.primary:hover .arr { transform: translate(2px, -2px); }
+  .tool .arr { display: inline-block; transition: transform .15s; }
+}
+@keyframes fadeUp { from { opacity: .4; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@keyframes rise { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--signal); } 80%, 100% { box-shadow: 0 0 0 9px transparent; } }
+nav.tabs button i { font: 600 11px var(--mono); font-style: normal; display: inline-grid; place-items: center; width: 20px; height: 20px; border-radius: 999px; border: 1px solid currentColor; margin-right: 7px; vertical-align: 1px; }
+nav.tabs button.hot { color: var(--signal); position: relative; }
+nav.tabs button.hot[aria-selected="true"] { color: var(--signal); background: var(--signal-soft); border-radius: 8px 8px 0 0; }
+nav.tabs button .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 999px; background: var(--signal); margin-left: 8px; vertical-align: 2px; }
+.try-banner { background: var(--signal); color: var(--sheet); border-radius: 14px; padding: 22px 24px; display: flex; flex-direction: column; gap: 6px; }
+.try-banner h2 { font-size: clamp(26px, 4vw, 38px); color: var(--sheet); }
+.try-banner p { color: var(--sheet); opacity: .92; }
+.try-k { font: 600 12px var(--mono); letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.tool .btn.primary { background: var(--signal); border-color: var(--signal); }
+.nav.next { justify-content: flex-end; padding-top: 8px; border-top: 1px solid var(--line); }
+.nav.next .primary { font-size: 16px; padding: 12px 18px; }
+.join { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, var(--ink) 55%, transparent); display: grid; place-items: center; padding: max(16px, env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) max(16px, env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+.join-card { background: var(--sheet); border-radius: 16px; padding: 24px; width: min(100%, 460px); max-height: 100%; overflow: auto; display: flex; flex-direction: column; gap: 14px; align-items: center; text-align: center; position: relative; }
+.join-card h2 { font-size: 26px; }
+.qr { background: #ffffff; padding: 14px; border-radius: 10px; line-height: 0; }
+.qr img, .qr canvas { width: min(62vw, 280px); height: auto; image-rendering: pixelated; }
+.url { font: 500 15px var(--mono); background: var(--ground); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; width: 100%; box-sizing: border-box; overflow-wrap: anywhere; user-select: all; }
+.join-steps { text-align: left; font-size: 14px; color: var(--muted); margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.join-x { position: absolute; top: 10px; right: 10px; padding: 6px 10px; }
+.join.present .join-card { width: min(100%, 760px); }
+.join.present .qr img, .join.present .qr canvas { width: min(70vh, 460px); }
+.join.present h2 { font-size: 40px; }
+
+
+/* phones: all four tabs fit on screen, labels wrap to two lines */
+@media (max-width: 560px) {
+  nav.tabs .wrap { gap: 0; overflow-x: visible; }
+  nav.tabs button { flex: 1 1 0; white-space: normal; padding: 10px 4px 8px; font-size: 13.5px; line-height: 1.2; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  nav.tabs button i { margin-right: 0; }
+  nav.tabs button .pulse { position: absolute; top: 8px; right: 10px; margin: 0; }
+}
+/* polish: browser surfaces, touch targets, small-type floor */
+::selection { background: var(--signal-soft); color: var(--ink); }
+:root { caret-color: var(--signal); accent-color: var(--harbour); scrollbar-color: var(--line) transparent; }
+a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.chip, button, .btn { min-height: 44px; }
+.edit { min-height: 36px; }
+.join-x { min-width: 44px; display: inline-grid; place-items: center; }
+.cbar button { min-height: 0; }
+.photos figcaption { font-size: 14px; } .photos figcaption span { font-size: 12.5px; }
+.shelf figcaption { font-size: 13.5px; } .shelf figcaption b { font-size: 14.5px; }
+.pshots figcaption { font-size: 13.5px; } .pcap { font-size: 14px; }
+.dg .sub { font-size: 11px; } .dg .tx { font-size: 12.5px; }
+.tl-l { font-size: 12px; } .tl-d { font-size: 13px; }
+.tool .by, .tool ul { font-size: 15px; }
+@media (max-width: 720px) { .stat + .stat { border-left: 0; padding-left: 0; } .stat { border-bottom: 1px solid var(--line); } }
+@media (max-width: 720px) {
+  .attempt { grid-template-columns: 1fr; }
+  .ring { max-width: 170px; }
+  .gate-track { grid-template-columns: repeat(4, 1fr); }
+  .photos { grid-auto-columns: 75%; }
+  .proj { grid-template-columns: 1fr; }
+  .proj aside { position: static; flex-direction: row; flex-wrap: wrap; gap: 6px 14px; }
+  .scale .chip small { display: none; }
+  .bar { grid-template-columns: 100px 1fr 30px; }
+}
+@media (prefers-reduced-motion: no-preference) { .chip, nav.tabs button { transition: background .12s, color .12s, border-color .12s; } }
+</style>
+
+<header class="top wrap">
+  <div class="hero-row">
+    <div class="hero-text">
+      <h1 class="in" style="--d:1">Vancouver Tower Toolbench</h1>
+      <p class="lede in" style="--d:2">Small tools for designing a high-rise in Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
+      <p class="credit in" style="--d:3">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
+    </div>
+    <button type="button" class="join-btn in" style="--d:4" id="joinBtn" aria-haspopup="dialog">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M3 3h8v8H3V3zm2 2v4h4V5H5zm8-2h8v8h-8V3zm2 2v4h4V5h-4zM3 13h8v8H3v-8zm2 2v4h4v-4H5zm8-2h2v2h-2v-2zm4 0h4v2h-2v2h-2v-4zm-4 4h2v4h-2v-4zm4 2h2v2h2v2h-4v-4zm2-2h2v2h-2v-2z"/></svg>
+      <span><b>Open on your device</b><small>QR code and link</small></span>
+    </button>
+  </div>
+  <svg class="strip" viewBox="0 0 960 120" role="img" aria-label="A row of tower silhouettes measured against a 0 to 300 metre height scale, with a dashed view-cone line crossing them">
+    <line class="g" x1="0" y1="110" x2="960" y2="110"/>
+    <line class="g" x1="0" y1="73" x2="960" y2="73" stroke-dasharray="2 6"/>
+    <line class="g" x1="0" y1="36" x2="960" y2="36" stroke-dasharray="2 6"/>
+    <text x="0" y="106">0 m</text><text x="0" y="69">150 m</text><text x="0" y="32">300 m</text>
+    <rect class="t2" style="--i:1" x="70" y="88" width="34" height="22"/><rect class="t2" style="--i:2" x="112" y="80" width="26" height="30"/>
+    <rect class="t" style="--i:3" x="150" y="58" width="30" height="52"/><rect class="t2" style="--i:4" x="190" y="74" width="40" height="36"/>
+    <rect class="t2" style="--i:5" x="244" y="66" width="24" height="44"/><rect class="t" style="--i:6" x="282" y="48" width="28" height="62"/>
+    <rect class="t2" style="--i:7" x="322" y="84" width="46" height="26"/><rect class="t" style="--i:8" x="380" y="62" width="30" height="48"/>
+    <rect class="t2" style="--i:9" x="424" y="78" width="30" height="32"/><rect class="t" style="--i:10" x="468" y="40" width="26" height="70"/>
+    <rect class="t2" style="--i:11" x="506" y="70" width="36" height="40"/><rect class="t" style="--i:12" x="556" y="54" width="30" height="56"/>
+    <polygon class="t" style="--i:13" points="604,110 604,30 616,22 628,30 628,110"/>
+    <rect class="t2" style="--i:14" x="642" y="76" width="40" height="34"/><rect class="t" style="--i:15" x="694" y="60" width="26" height="50"/>
+    <rect class="t2" style="--i:16" x="734" y="86" width="44" height="24"/><rect class="t" style="--i:17" x="790" y="66" width="30" height="44"/>
+    <rect class="t2" style="--i:18" x="832" y="82" width="34" height="28"/><rect class="t2" style="--i:19" x="878" y="92" width="50" height="18"/>
+    <defs><clipPath id="sweep"><rect x="0" y="0" width="960" height="120"><animate class="smil" attributeName="width" values="0;0;960" keyTimes="0;0.45;1" dur="2.4s" fill="freeze"/></rect></clipPath></defs><g clip-path="url(#sweep)"><path class="cone" d="M40 104 L960 52"/><text x="842" y="48" style="fill:var(--signal)">view cone</text></g>
+    </svg>
+</header>
+
+<nav class="tabs" aria-label="Sections">
+  <div class="wrap" role="tablist">
+    <button role="tab" id="tab-project" aria-controls="project" aria-selected="true"><i>1</i>About us</button>
+    <button role="tab" id="tab-research" aria-controls="research" aria-selected="false"><i>2</i>How it works</button>
+    <button role="tab" id="tab-tools" aria-controls="tools" aria-selected="false" class="hot"><i>3</i>Try the tools<span class="pulse" aria-hidden="true"></span></button>
+    <button role="tab" id="tab-feedback" aria-controls="feedback" aria-selected="false"><i>4</i>Give feedback</button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <!-- TOOLS -->
+  <section class="panel" id="tools" role="tabpanel" aria-labelledby="tab-tools">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="try-banner"><h2>Try a tool on your own scheme</h2><p>Pick one and try it on your own tower for five minutes, then tell us what helped.</p></div>
+      <p class="small muted">These are study tools for early design. They won't tell you if a tower complies, size its structure or prove it's feasible, and each one shows where its numbers come from.</p>
+    </div>
+    <div class="tools" id="toolGrid"></div>
+    <div class="nav next"><button class="primary" type="button" data-go="feedback">Next: give feedback →</button></div>
+  </section>
+
+  <!-- RESEARCH -->
+  <section class="panel rs" id="research" role="tabpanel" aria-labelledby="tab-research" hidden>
+    <div class="rs-hero">
+      <h2 class="rs-big">We link the tools you already use and leave the decisions to you.</h2>
+      <p class="lede">We mapped how a Vancouver high-rise gets designed today and where that process tends to break. The workbench is built around those spots.</p>
+      <div class="stats">
+        <div class="stat"><b>10</b><span>steps from brief to City decision</span></div>
+        <div class="stat"><b>7</b><span>places where the process breaks</span></div>
+        <div class="stat"><b>11</b><span>tools mapped against the steps</span></div>
+        <div class="stat"><b>89/89</b><span>checks passed by our first prototype</span></div>
+      </div>
+    </div>
+
+    <div class="photos" aria-label="Photographs of Vancouver towers and protected views">
+      <figure><img src="images/01-qe-park-panorama.jpg" alt="Downtown Vancouver seen from Queen Elizabeth Park" loading="lazy"><figcaption>Protected view from Queen Elizabeth Park <span>Jonathanfv · CC BY 3.0</span></figcaption></figure>
+      <figure><img src="images/02-cambie-view-cone.jpg" alt="The Cambie Street view cone toward the North Shore mountains" loading="lazy"><figcaption>Cambie Street view cone <span>Ian Spence · CC BY 3.0</span></figcaption></figure>
+      <figure><img src="images/04-vancouver-house-rises.jpg" alt="Vancouver House tower under construction" loading="lazy"><figcaption>Vancouver House rising <span>W &amp; J · CC BY-SA 2.0</span></figcaption></figure>
+      <figure><img src="images/05-living-shangri-la.jpg" alt="Living Shangri-La tower" loading="lazy"><figcaption>Living Shangri-La <span>Klazu · CC BY-SA 4.0</span></figcaption></figure>
+      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers in 2025" loading="lazy"><figcaption>False Creek, 2025 <span>Northwest · CC BY 4.0</span></figcaption></figure>
+      <figure><img src="images/06-skyline-mountains.jpg" alt="Vancouver skyline with the North Shore mountains" loading="lazy"><figcaption>Skyline and mountains <span>Kyle Pearce · CC BY-SA 2.0</span></figcaption></figure>
+    </div>
+
+    <!-- 1 -->
+    <div class="chapter">
+      <div class="ch-head"><span class="ch-n">1</span><div><h2>How a tower is designed today</h2><p class="muted">Ten steps from brief to City decision, with a lot of going back and forth between people and tools.</p></div></div>
+      <figure class="dg big" id="dgA"><div class="scroll"><!--DIAGRAM:01-as-is-workflow--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 560" role="img" aria-label="As-is workflow of early-stage high-rise design in Vancouver, steps 1 to 10, with pain points a to g"><rect class="lane" x="0" y="30" width="1240" height="130" rx="6"/><text class="lanelab" x="10" y="46">PEOPLE (YOU)</text><rect class="lane" x="0" y="170" width="1240" height="290" rx="6"/><text class="lanelab" x="10" y="186">TOOLS, FILES, ENGINES</text><rect class="lane" x="0" y="470" width="1240" height="80" rx="6"/><text class="lanelab" x="10" y="486">CHECKS AND STOPS</text><g class="node" data-p="b,c"><rect class="you" x="20" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="80.0" y="91.0" text-anchor="middle">1 Team frames the</text><text class="tx" x="80.0" y="104.0" text-anchor="middle">brief</text><text class="sub" x="80.0" y="117.0" text-anchor="middle">owner + architect</text><circle class="pain" cx="138" cy="70" r="6"/><text class="paintx" x="138" y="73" text-anchor="middle">c</text><circle class="pain" cx="125" cy="70" r="6"/><text class="paintx" x="125" y="73" text-anchor="middle">b</text></g><g class="node" data-p="b"><rect class="tool" x="20" y="200" width="120" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="80.0" y="219.0" text-anchor="middle">Brief, criteria,</text><text class="tx" x="80.0" y="232.0" text-anchor="middle">unknowns</text><circle class="pain" cx="138" cy="200" r="6"/><text class="paintx" x="138" y="203" text-anchor="middle">b</text></g><g class="node" data-p="a,d"><rect class="you" x="160" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="220.0" y="91.0" text-anchor="middle">2 Establish site</text><text class="tx" x="220.0" y="104.0" text-anchor="middle">truth</text><text class="sub" x="220.0" y="117.0" text-anchor="middle">architect, surveyor</text><circle class="pain" cx="278" cy="70" r="6"/><text class="paintx" x="278" y="73" text-anchor="middle">d</text><circle class="pain" cx="265" cy="70" r="6"/><text class="paintx" x="265" y="73" text-anchor="middle">a</text></g><g class="node" data-p="a,d"><rect class="tool" x="160" y="200" width="120" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="220.0" y="219.0" text-anchor="middle">Survey, parcel,</text><text class="tx" x="220.0" y="232.0" text-anchor="middle">dated sources</text><circle class="pain" cx="278" cy="200" r="6"/><text class="paintx" x="278" y="203" text-anchor="middle">d</text><circle class="pain" cx="265" cy="200" r="6"/><text class="paintx" x="265" y="203" text-anchor="middle">a</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="220.0,476 265,510.0 220.0,544 175,510.0"/><text class="tx" x="220.0" y="507.0" text-anchor="middle">Units, CRS,</text><text class="tx" x="220.0" y="520.0" text-anchor="middle">datum, date?</text></g><g class="node" data-p="a,d,f"><rect class="stop" x="20" y="500" width="130" height="36" rx="3" stroke-width="1.4"/><text class="tx stoptx" x="85.0" y="521.5" text-anchor="middle">CANNOT DETERMINE</text><circle class="pain" cx="148" cy="500" r="6"/><text class="paintx" x="148" y="503" text-anchor="middle">f</text><circle class="pain" cx="135" cy="500" r="6"/><text class="paintx" x="135" y="503" text-anchor="middle">d</text><circle class="pain" cx="122" cy="500" r="6"/><text class="paintx" x="122" y="503" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="196" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="219.5" text-anchor="middle">3a View-cone screen</text><circle class="pain" cx="458" cy="196" r="6"/><text class="paintx" x="458" y="199" text-anchor="middle">f</text><circle class="pain" cx="445" cy="196" r="6"/><text class="paintx" x="445" y="199" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="248" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="271.5" text-anchor="middle">3b Solar access test</text><circle class="pain" cx="458" cy="248" r="6"/><text class="paintx" x="458" y="251" text-anchor="middle">f</text><circle class="pain" cx="445" cy="248" r="6"/><text class="paintx" x="445" y="251" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="300" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="323.5" text-anchor="middle">3c Floorplate test</text><circle class="pain" cx="458" cy="300" r="6"/><text class="paintx" x="458" y="303" text-anchor="middle">f</text><circle class="pain" cx="445" cy="300" r="6"/><text class="paintx" x="445" y="303" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="352" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="375.5" text-anchor="middle">3d Tower separation</text><circle class="pain" cx="458" cy="352" r="6"/><text class="paintx" x="458" y="355" text-anchor="middle">f</text><circle class="pain" cx="445" cy="352" r="6"/><text class="paintx" x="445" y="355" text-anchor="middle">a</text></g><g class="node" data-p="a,f"><rect class="tool" x="310" y="404" width="150" height="40" rx="3" stroke-width="1.4"/><text class="tx" x="385.0" y="427.5" text-anchor="middle">3e FSR on stated bases</text><circle class="pain" cx="458" cy="404" r="6"/><text class="paintx" x="458" y="407" text-anchor="middle">f</text><circle class="pain" cx="445" cy="404" r="6"/><text class="paintx" x="445" y="407" text-anchor="middle">a</text></g><g class="node" data-p="b,c,e"><rect class="you" x="490" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="550.0" y="97.0" text-anchor="middle">4 Architect</text><text class="tx" x="550.0" y="110.0" text-anchor="middle">authors options</text><circle class="pain" cx="608" cy="70" r="6"/><text class="paintx" x="608" y="73" text-anchor="middle">e</text><circle class="pain" cx="595" cy="70" r="6"/><text class="paintx" x="595" y="73" text-anchor="middle">c</text><circle class="pain" cx="582" cy="70" r="6"/><text class="paintx" x="582" y="73" text-anchor="middle">b</text></g><g class="node" data-p="d,e"><rect class="tool" x="560" y="290" width="140" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="630.0" y="307.0" text-anchor="middle">Options, results,</text><text class="tx" x="630.0" y="320.0" text-anchor="middle">assumptions</text><text class="sub" x="630.0" y="333.0" text-anchor="middle">Rhino / GH / sheets</text><circle class="pain" cx="698" cy="290" r="6"/><text class="paintx" x="698" y="293" text-anchor="middle">e</text><circle class="pain" cx="685" cy="290" r="6"/><text class="paintx" x="685" y="293" text-anchor="middle">d</text></g><g class="node" data-p="d,e,f"><rect class="you" x="630" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="690.0" y="91.5" text-anchor="middle">5 Consultants test</text><text class="sub" x="690.0" y="104.5" text-anchor="middle">structure, energy,</text><text class="sub" x="690.0" y="116.5" text-anchor="middle">cost</text><circle class="pain" cx="748" cy="70" r="6"/><text class="paintx" x="748" y="73" text-anchor="middle">f</text><circle class="pain" cx="735" cy="70" r="6"/><text class="paintx" x="735" y="73" text-anchor="middle">e</text><circle class="pain" cx="722" cy="70" r="6"/><text class="paintx" x="722" y="73" text-anchor="middle">d</text></g><g class="node" data-p="b,c,g"><rect class="you" x="770" y="70" width="120" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="830.0" y="91.0" text-anchor="middle">6 Compare and</text><text class="tx" x="830.0" y="104.0" text-anchor="middle">reframe</text><text class="sub" x="830.0" y="117.0" text-anchor="middle">team</text><circle class="pain" cx="888" cy="70" r="6"/><text class="paintx" x="888" y="73" text-anchor="middle">g</text><circle class="pain" cx="875" cy="70" r="6"/><text class="paintx" x="875" y="73" text-anchor="middle">c</text><circle class="pain" cx="862" cy="70" r="6"/><text class="paintx" x="862" y="73" text-anchor="middle">b</text></g><g class="node" data-p="a,b,f,g"><rect class="you" x="910" y="70" width="110" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="965.0" y="97.5" text-anchor="middle">7 City enquiry</text><text class="sub" x="965.0" y="110.5" text-anchor="middle">applicant + City</text><circle class="pain" cx="1018" cy="70" r="6"/><text class="paintx" x="1018" y="73" text-anchor="middle">g</text><circle class="pain" cx="1005" cy="70" r="6"/><text class="paintx" x="1005" y="73" text-anchor="middle">f</text><circle class="pain" cx="992" cy="70" r="6"/><text class="paintx" x="992" y="73" text-anchor="middle">b</text><circle class="pain" cx="979" cy="70" r="6"/><text class="paintx" x="979" y="73" text-anchor="middle">a</text></g><g class="node" data-p="b,e"><rect class="tool" x="905" y="290" width="120" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="965.0" y="313.0" text-anchor="middle">Advice, studies,</text><text class="tx" x="965.0" y="326.0" text-anchor="middle">version</text><circle class="pain" cx="1023" cy="290" r="6"/><text class="paintx" x="1023" y="293" text-anchor="middle">e</text><circle class="pain" cx="1010" cy="290" r="6"/><text class="paintx" x="1010" y="293" text-anchor="middle">b</text></g><g class="node" data-p="b,e,g"><rect class="you" x="1040" y="70" width="90" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1085.0" y="97.5" text-anchor="middle">8 Freeze</text><text class="sub" x="1085.0" y="110.5" text-anchor="middle">team (G6)</text><circle class="pain" cx="1128" cy="70" r="6"/><text class="paintx" x="1128" y="73" text-anchor="middle">g</text><circle class="pain" cx="1115" cy="70" r="6"/><text class="paintx" x="1115" y="73" text-anchor="middle">e</text><circle class="pain" cx="1102" cy="70" r="6"/><text class="paintx" x="1102" y="73" text-anchor="middle">b</text></g><g class="node" data-p="d,e"><rect class="tool" x="1040" y="380" width="180" height="52" rx="3" stroke-width="1.4"/><text class="tx" x="1130.0" y="403.5" text-anchor="middle">9 Frozen submission package</text><text class="sub" x="1130.0" y="416.5" text-anchor="middle">consultants</text><circle class="pain" cx="1218" cy="380" r="6"/><text class="paintx" x="1218" y="383" text-anchor="middle">e</text><circle class="pain" cx="1205" cy="380" r="6"/><text class="paintx" x="1205" y="383" text-anchor="middle">d</text></g><g class="node" data-p="a,b,f,g"><rect class="you" x="1145" y="70" width="85" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1187.5" y="97.0" text-anchor="middle">10 City</text><text class="tx" x="1187.5" y="110.0" text-anchor="middle">decides</text><circle class="pain" cx="1228" cy="70" r="6"/><text class="paintx" x="1228" y="73" text-anchor="middle">g</text><circle class="pain" cx="1215" cy="70" r="6"/><text class="paintx" x="1215" y="73" text-anchor="middle">f</text><circle class="pain" cx="1202" cy="70" r="6"/><text class="paintx" x="1202" y="73" text-anchor="middle">b</text><circle class="pain" cx="1189" cy="70" r="6"/><text class="paintx" x="1189" y="73" text-anchor="middle">a</text></g><path class="edge" d="M80.0,130 L80.0,200"/><polygon class="ah" points="80.0,200 76.9,192.6 83.1,192.6"/><path class="edge" d="M140,222.0 L150,222 L150,100 L160,100.0"/><polygon class="ah" points="160,100.0 152.6,103.1 152.6,96.9"/><path class="edge" d="M220.0,130 L220.0,200"/><polygon class="ah" points="220.0,200 216.9,192.6 223.1,192.6"/><path class="edge" d="M220.0,244 L220.0,476"/><polygon class="ah" points="220.0,476 216.9,468.6 223.1,468.6"/><path class="edge" d="M175,510.0 L150,518.0"/><polygon class="ah" points="150,518.0 156.1,512.8 158.0,518.7"/><text class="sub" x="166.5" y="510.0">fail</text><path class="edge" d="M265,510 L290,510 L290,216.0 L310,216.0"/><polygon class="ah" points="310,216.0 302.6,219.1 302.6,212.9"/><path class="edge" d="M460,216.0 L520,216.0"/><polygon class="ah" points="520,216.0 512.6,219.1 512.6,212.9"/><path class="edge" d="M265,510 L290,510 L290,268.0 L310,268.0"/><polygon class="ah" points="310,268.0 302.6,271.1 302.6,264.9"/><path class="edge" d="M460,268.0 L520,268.0"/><polygon class="ah" points="520,268.0 512.6,271.1 512.6,264.9"/><path class="edge" d="M265,510 L290,510 L290,320.0 L310,320.0"/><polygon class="ah" points="310,320.0 302.6,323.1 302.6,316.9"/><path class="edge" d="M460,320.0 L520,320.0"/><polygon class="ah" points="520,320.0 512.6,323.1 512.6,316.9"/><path class="edge" d="M265,510 L290,510 L290,372.0 L310,372.0"/><polygon class="ah" points="310,372.0 302.6,375.1 302.6,368.9"/><path class="edge" d="M460,372.0 L520,372.0"/><polygon class="ah" points="520,372.0 512.6,375.1 512.6,368.9"/><path class="edge" d="M265,510 L290,510 L290,424.0 L310,424.0"/><polygon class="ah" points="310,424.0 302.6,427.1 302.6,420.9"/><path class="edge" d="M460,424.0 L520,424.0"/><polygon class="ah" points="520,424.0 512.6,427.1 512.6,420.9"/><path class="edge" d="M520,216 L520,424"/><path class="edge" d="M520,216 L550.0,130"/><polygon class="ah" points="550.0,130 550.5,138.0 544.6,135.9"/><path class="edge" d="M560,130 L560,200 L630,200 L630.0,290"/><polygon class="ah" points="630.0,290 626.9,282.6 633.1,282.6"/><path class="edge" d="M700,316.0 L720,316 L720,160 L690,160 L690.0,130"/><polygon class="ah" points="690.0,130 693.1,137.4 686.9,137.4"/><path class="loop" d="M660,130 L660,290"/><polygon class="ahl" points="660,290 656.9,282.6 663.1,282.6"/><text class="sub" x="664.0" y="206.0">results</text><path class="edge" d="M750,100.0 L770,100.0"/><polygon class="ah" points="770,100.0 762.6,103.1 762.6,96.9"/><path class="edge" d="M890,100.0 L910,100.0"/><polygon class="ah" points="910,100.0 902.6,103.1 902.6,96.9"/><path class="edge" d="M965.0,130 L965.0,290"/><polygon class="ah" points="965.0,290 961.9,282.6 968.1,282.6"/><path class="loop" d="M905,316.0 L860,316 L860,360 L600,360 L600,342"/><polygon class="ahl" points="600,342 603.1,349.4 596.9,349.4"/><text class="sub" x="864" y="356">revise option / study</text><path class="edge" d="M1020,100.0 L1040,100.0"/><polygon class="ah" points="1040,100.0 1032.6,103.1 1032.6,96.9"/><path class="edge" d="M1085.0,130 L1130.0,380"/><polygon class="ah" points="1130.0,380 1125.6,373.3 1131.8,372.2"/><path class="edge" d="M1220,406.0 L1228,406 L1228,150 L1187,150 L1187.5,130"/><polygon class="ah" points="1187.5,130 1190.4,137.4 1184.2,137.3"/><path class="loop" d="M830,70 L830,46 L80,46 L80,70"/><polygon class="ahl" points="80,70 76.9,62.6 83.1,62.6"/><text class="sub" x="420" y="42">reframe brief or option (G4)</text><path class="loop" d="M1187,70 L1187,52 L1085,52 L1085,70"/><polygon class="ahl" points="1085,70 1081.9,62.6 1088.1,62.6"/><text class="sub" x="1089" y="48">revise</text><rect class="you" x="330" y="488" width="22" height="14" rx="7"/><text class="sub" x="358" y="499">person decides</text><rect class="tool" x="460" y="488" width="22" height="14"/><text class="sub" x="488" y="499">tool, file or engine</text><path class="loop" d="M610,495 h26"/><text class="sub" x="642" y="499">loop back (rework)</text><circle class="pain" cx="768" cy="495" r="6"/><text class="paintx" x="768" y="498" text-anchor="middle">a</text><text class="sub" x="780" y="499">pain point (see table)</text><text class="sub" x="330" y="524">a authority and dates · b iteration lost · c option narrowing · d semantic transfer · e divergent versions · f false certainty · g responsibility</text></svg><!--/DIAGRAM--></div>
+        <figcaption>Orange = a person decides · blue = a tool, file or engine · diamond = a check · dashed = rework. <a href="diagrams/01-as-is-workflow.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
+      <div class="pains">
+        <p class="ql">Where it breaks <span class="hint">Tap a letter to light up the steps it affects.</span></p>
+        <div class="chips" id="painChips" role="group" aria-label="Pain points"></div>
+        <div class="paininfo" id="painInfo" aria-live="polite"><span class="muted">Seven pain points, a to g. Each one marks steps in the diagram above.</span></div>
+      </div>
+      <div class="shelf" aria-label="Documents the rules come from" style="grid-auto-columns:minmax(130px, 170px)">
+        <figure><img src="images/doc-public-views.jpg" alt="Public Views Guidelines cover" loading="lazy"><figcaption><b>Step 3a</b><span>Public Views Guidelines</span></figcaption></figure>
+        <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy" style="object-position:center"><figcaption><b>Step 1</b><span>Competition brief</span></figcaption></figure>
+        <figure><img src="images/doc-evolution-paper.jpg" alt="Evolution of High-rise Buildings in Vancouver first page" loading="lazy"><figcaption><b>Step 5</b><span>Structure research</span></figcaption></figure>
+      </div>
+      <details class="more"><summary>The ten steps in detail</summary><div class="tablewrap"><table class="steps-t" id="stepTable"></table></div></details>
+    </div>
+
+    <!-- 2 -->
+    <div class="chapter">
+      <div class="ch-head"><span class="ch-n">2</span><div><h2>Where today's tools stop</h2><p class="muted">Each tool covers part of the process, and none of them gets as far as the City enquiry or decision.</p></div></div>
+      <figure class="dg big"><div class="scroll"><!--DIAGRAM:02-case-study--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1114 470" role="img" aria-label="Case study: where each existing tool sits on the workflow steps and where it stops"><text class="sub" transform="translate(253.0,62) rotate(-40)">1 Brief</text><text class="sub" transform="translate(299.0,62) rotate(-40)">2 Site</text><text class="sub" transform="translate(345.0,62) rotate(-40)">3a Views</text><text class="sub" transform="translate(391.0,62) rotate(-40)">3b Solar</text><text class="sub" transform="translate(437.0,62) rotate(-40)">3c Plate</text><text class="sub" transform="translate(483.0,62) rotate(-40)">3d Sep.</text><text class="sub" transform="translate(529.0,62) rotate(-40)">3e FSR</text><text class="sub" transform="translate(575.0,62) rotate(-40)">4 Options</text><text class="sub" transform="translate(621.0,62) rotate(-40)">5 Studies</text><text class="sub" transform="translate(667.0,62) rotate(-40)">6 Compare</text><text class="sub" transform="translate(713.0,62) rotate(-40)">7 Enquiry</text><text class="sub" transform="translate(759.0,62) rotate(-40)">8 Freeze</text><text class="sub" transform="translate(805.0,62) rotate(-40)">9 Submit</text><text class="sub" transform="translate(851.0,62) rotate(-40)">10 Decide</text><text class="lanelab" x="886" y="60">STOPS HERE</text><g class="trow" data-tool="0"><rect class="lane" x="0" y="70" width="1114" height="30"/><text class="tx" x="8" y="89">Autodesk Forma</text><rect class="cell" x="279" y="77" width="40" height="16" rx="2"/><rect class="cell" x="371" y="77" width="40" height="16" rx="2"/><rect class="cell" x="555" y="77" width="40" height="16" rx="2"/><rect class="cell" x="601" y="77" width="40" height="16" rx="2"/><rect class="cell" x="647" y="77" width="40" height="16" rx="2"/><rect class="cell" x="785" y="77" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="75" width="4" height="20"/><text class="sub" x="886" y="89">No Vancouver permit logic [UNVERIFIED]</text></g><g class="trow" data-tool="1"><text class="tx" x="8" y="119">Rhino + Grasshopper + Ladybug + Speckle</text><rect class="cellp" x="279" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="325" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="371" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="417" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="463" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="107" width="40" height="16" rx="2"/><rect class="cell" x="555" y="107" width="40" height="16" rx="2"/><rect class="cell" x="601" y="107" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="107" width="40" height="16" rx="2"/><rect class="cell" x="785" y="107" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="105" width="4" height="20"/><text class="sub" x="886" y="119">Needs scripting expertise; no judgment</text></g><g class="trow" data-tool="2"><rect class="lane" x="0" y="130" width="1114" height="30"/><text class="tx" x="8" y="149">TestFit</text><rect class="cell" x="279" y="137" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="137" width="40" height="16" rx="2"/><rect class="cell" x="555" y="137" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="137" width="40" height="16" rx="2"/><rect class="cell" x="647" y="137" width="40" height="16" rx="2"/><rect class="cell" x="785" y="137" width="40" height="16" rx="2"/><rect class="stopmk" x="830" y="135" width="4" height="20"/><text class="sub" x="886" y="149">Vancouver zoning data [UNVERIFIED]</text></g><g class="trow" data-tool="3"><text class="tx" x="8" y="179">Vista (Ruijie)</text><rect class="cell" x="325" y="167" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="167" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="167" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="165" width="4" height="20"/><text class="sub" x="886" y="179">Approximate, study-only views</text></g><g class="trow" data-tool="4"><rect class="lane" x="0" y="190" width="1114" height="30"/><text class="tx" x="8" y="209">Downtown Massing Tool (Sinnie)</text><rect class="cellp" x="279" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="509" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="555" y="197" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="197" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="195" width="4" height="20"/><text class="sub" x="886" y="209">Hub adapter schema pending</text></g><g class="trow" data-tool="5"><text class="tx" x="8" y="239">Program Value Visualizer</text><rect class="cellp" x="555" y="227" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="227" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="227" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="225" width="4" height="20"/><text class="sub" x="886" y="239">Value is not feasibility</text></g><g class="trow" data-tool="6"><rect class="lane" x="0" y="250" width="1114" height="30"/><text class="tx" x="8" y="269">Solar Shading Explorer (W. Girard)</text><rect class="cellp" x="371" y="257" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="257" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="257" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="255" width="4" height="20"/><text class="sub" x="886" y="269">Facade only; no City shadow test</text></g><g class="trow" data-tool="7"><text class="tx" x="8" y="299">Form Studio export</text><rect class="cellp" x="555" y="287" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="287" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="285" width="4" height="20"/><text class="sub" x="886" y="299">Reference design, not policy</text></g><g class="trow" data-tool="8"><rect class="lane" x="0" y="310" width="1114" height="30"/><text class="tx" x="8" y="329">Structure Lab export</text><rect class="cellp" x="601" y="317" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="317" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="315" width="4" height="20"/><text class="sub" x="886" y="329">No structural adequacy</text></g><g class="trow" data-tool="9"><text class="tx" x="8" y="359">Concept Lab export</text><rect class="cellp" x="555" y="347" width="40" height="16" rx="2"/><rect class="cellp" x="601" y="347" width="40" height="16" rx="2"/><rect class="cellp" x="647" y="347" width="40" height="16" rx="2"/><rect class="stopmk" x="692" y="345" width="4" height="20"/><text class="sub" x="886" y="359">Units / frame undeclared</text></g><g class="trow" data-tool="10"><rect class="lane" x="0" y="370" width="1114" height="30"/><text class="tx" x="8" y="389">Tower Studio hub v0.5</text><rect class="cell" x="279" y="377" width="40" height="16" rx="2"/><rect class="cell" x="325" y="377" width="40" height="16" rx="2"/><rect class="cell" x="555" y="377" width="40" height="16" rx="2"/><rect class="cell" x="601" y="377" width="40" height="16" rx="2"/><rect class="cell" x="647" y="377" width="40" height="16" rx="2"/><rect class="cell" x="739" y="377" width="40" height="16" rx="2"/><rect class="stopmk" x="784" y="375" width="4" height="20"/><text class="sub" x="886" y="389">No AI, compliance or submission</text></g><line class="grid" x1="230" y1="70" x2="230" y2="400"/><line class="grid" x1="276" y1="70" x2="276" y2="400"/><line class="grid" x1="322" y1="70" x2="322" y2="400"/><line class="grid" x1="368" y1="70" x2="368" y2="400"/><line class="grid" x1="414" y1="70" x2="414" y2="400"/><line class="grid" x1="460" y1="70" x2="460" y2="400"/><line class="grid" x1="506" y1="70" x2="506" y2="400"/><line class="grid" x1="552" y1="70" x2="552" y2="400"/><line class="grid" x1="598" y1="70" x2="598" y2="400"/><line class="grid" x1="644" y1="70" x2="644" y2="400"/><line class="grid" x1="690" y1="70" x2="690" y2="400"/><line class="grid" x1="736" y1="70" x2="736" y2="400"/><line class="grid" x1="782" y1="70" x2="782" y2="400"/><line class="grid" x1="828" y1="70" x2="828" y2="400"/><line class="grid" x1="874" y1="70" x2="874" y2="400"/><rect class="cell" x="8" y="414" width="24" height="12"/><text class="sub" x="38" y="424">covers the step</text><rect class="cellp" x="140" y="414" width="24" height="12"/><text class="sub" x="170" y="424">partial, only if scripted, or planned</text><rect class="stopmk" x="380" y="413" width="4" height="14"/><text class="sub" x="392" y="424">last step reached; the reason it stops is on the right</text><text class="sub" x="8" y="446">From draft_r2 §4 and §7.2 (vendor docs graded B; team tools graded T). No tool covers steps 7 and 10: City enquiry and decision stay with people.</text></svg><!--/DIAGRAM--></div>
+        <figcaption>Dark = covers the step · light = partly, only if scripted, or planned · red bar = where it stops. <a href="diagrams/02-case-study.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
+      <div class="cards3" id="extTools"></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="chapter">
+      <div class="ch-head"><span class="ch-n">3</span><div><h2>Who does what</h2><p class="muted">AI helps with the wording, code does the checking, and people make the calls.</p></div></div>
+      <div class="roles">
+        <div class="role r-ai"><h3>AI can</h3><ul><li>Turn what you ask into a structured request</li><li>Propose a revision within allowed limits</li><li>Draft an explanation with its sources</li></ul></div>
+        <div class="role r-code"><h3>Code checks</h3><ul><li>Units, coordinate frame, source date</li><li>Geometry and arithmetic, recomputed</li><li>Every number has a citation, or it stops</li></ul></div>
+        <div class="role r-you"><h3>People decide</h3><ul><li>What the brief is and what matters</li><li>Which option goes forward</li><li>What is frozen and submitted</li></ul></div>
+      </div>
+      <div class="nogo"><b>AI cannot</b> confer compliance · refresh City policy · supply a survey · repair a file that lost its meaning · settle values · replace City discretion</div>
+      <div class="gates">
+        <p class="ql">Seven decisions that stay with people <span class="hint">Tap one to read it.</span></p>
+        <div class="gate-track" id="gateTrack" role="group" aria-label="Human decision gates"></div>
+        <div class="paininfo" id="gateInfo" aria-live="polite"><span class="muted">G1 to G7 run from the brief to the City's decision.</span></div>
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="chapter">
+      <div class="ch-head"><span class="ch-n">4</span><div><h2>How our workbench runs</h2><p class="muted">The steps run in a fixed order, and code picks what runs next.</p></div></div>
+      <figure class="dg big"><div class="scroll"><!--DIAGRAM:03-tool-logic--><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 600" role="img" aria-label="Tool logic of the proposed workbench in the Session 4 notation: people, the AI, harness hooks, tools and files, loops with limits, and stops"><rect class="lane" x="0" y="30" width="1240" height="110" rx="6"/><text class="lanelab" x="10" y="46">YOU</text><rect class="lane" x="0" y="150" width="1240" height="100" rx="6"/><text class="lanelab" x="10" y="166">THE AI</text><rect class="lane" x="0" y="260" width="1240" height="120" rx="6"/><text class="lanelab" x="10" y="276">HARNESS: HOOKS AND LIMITS (CODE)</text><rect class="lane" x="0" y="390" width="1240" height="190" rx="6"/><text class="lanelab" x="10" y="406">TOOLS, FILES, ENGINE</text><g class="node" data-p="a,b,f,g"><rect class="you" x="30" y="62" width="170" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="115.0" y="89.5" text-anchor="middle">Architect states intent</text><text class="sub" x="115.0" y="102.5" text-anchor="middle">owns gates G1–G7</text><circle class="pain" cx="198" cy="62" r="6"/><text class="paintx" x="198" y="65" text-anchor="middle">g</text><circle class="pain" cx="185" cy="62" r="6"/><text class="paintx" x="185" y="65" text-anchor="middle">f</text><circle class="pain" cx="172" cy="62" r="6"/><text class="paintx" x="172" y="65" text-anchor="middle">b</text><circle class="pain" cx="159" cy="62" r="6"/><text class="paintx" x="159" y="65" text-anchor="middle">a</text></g><g class="node" data-p="f"><rect class="ai" x="30" y="180" width="170" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="115.0" y="202.0" text-anchor="middle">Parse text to a</text><text class="tx" x="115.0" y="215.0" text-anchor="middle">structured request</text><circle class="pain" cx="198" cy="180" r="6"/><text class="paintx" x="198" y="183" text-anchor="middle">f</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="300.0,278 360,320.0 300.0,362 240,320.0"/><text class="tx" x="300.0" y="317.0" text-anchor="middle">PreToolUse: input</text><text class="tx" x="300.0" y="330.0" text-anchor="middle">guard</text></g><g class="node" data-p="d,g"><rect class="tool" x="390" y="296" width="130" height="48" rx="3" stroke-width="1.4"/><text class="tx" x="455.0" y="311.0" text-anchor="middle">Fixed chain +</text><text class="tx" x="455.0" y="324.0" text-anchor="middle">router</text><text class="sub" x="455.0" y="337.0" text-anchor="middle">code decides route</text><circle class="pain" cx="518" cy="296" r="6"/><text class="paintx" x="518" y="299" text-anchor="middle">g</text><circle class="pain" cx="505" cy="296" r="6"/><text class="paintx" x="505" y="299" text-anchor="middle">d</text></g><g class="node" data-p="a,b,d,e"><rect class="tool" x="30" y="420" width="190" height="56" rx="3" stroke-width="1.4"/><text class="tx" x="125.0" y="445.5" text-anchor="middle">Project file</text><text class="sub" x="125.0" y="458.5" text-anchor="middle">sources, versions, frames</text><circle class="pain" cx="218" cy="420" r="6"/><text class="paintx" x="218" y="423" text-anchor="middle">e</text><circle class="pain" cx="205" cy="420" r="6"/><text class="paintx" x="205" y="423" text-anchor="middle">d</text><circle class="pain" cx="192" cy="420" r="6"/><text class="paintx" x="192" y="423" text-anchor="middle">b</text><circle class="pain" cx="179" cy="420" r="6"/><text class="paintx" x="179" y="423" text-anchor="middle">a</text></g><g class="node" data-p="a"><rect class="tool" x="400" y="420" width="150" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="475.0" y="439.0" text-anchor="middle">Approved-source</text><text class="tx" x="475.0" y="452.0" text-anchor="middle">retrieval</text><circle class="pain" cx="548" cy="420" r="6"/><text class="paintx" x="548" y="423" text-anchor="middle">a</text></g><g class="node" data-p="d,e"><rect class="tool" x="400" y="500" width="150" height="44" rx="3" stroke-width="1.4"/><text class="tx" x="475.0" y="519.5" text-anchor="middle">Tool adapters</text><text class="sub" x="475.0" y="532.5" text-anchor="middle">Vista, DMT, PVV…</text><circle class="pain" cx="548" cy="500" r="6"/><text class="paintx" x="548" y="503" text-anchor="middle">e</text><circle class="pain" cx="535" cy="500" r="6"/><text class="paintx" x="535" y="503" text-anchor="middle">d</text></g><g class="node" data-p="d,f"><rect class="tool" x="590" y="460" width="150" height="48" rx="3" stroke-width="1.4"/><text class="tx" x="665.0" y="481.0" text-anchor="middle">Deterministic metric</text><text class="tx" x="665.0" y="494.0" text-anchor="middle">engine</text><circle class="pain" cx="738" cy="460" r="6"/><text class="paintx" x="738" y="463" text-anchor="middle">f</text><circle class="pain" cx="725" cy="460" r="6"/><text class="paintx" x="725" y="463" text-anchor="middle">d</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="830.0,278 890,320.0 830.0,362 770,320.0"/><text class="tx" x="830.0" y="317.0" text-anchor="middle">PostToolUse:</text><text class="tx" x="830.0" y="330.0" text-anchor="middle">result guard</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="980.0,278 1050,320.0 980.0,362 910,320.0"/><text class="tx" x="980.0" y="323.5" text-anchor="middle">Round limit: max 3</text></g><g class="node" data-p="c,f"><rect class="ai" x="640" y="180" width="190" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="735.0" y="202.5" text-anchor="middle">Propose a permitted revision</text><text class="sub" x="735.0" y="215.5" text-anchor="middle">evaluator-optimiser</text><circle class="pain" cx="828" cy="180" r="6"/><text class="paintx" x="828" y="183" text-anchor="middle">f</text><circle class="pain" cx="815" cy="180" r="6"/><text class="paintx" x="815" y="183" text-anchor="middle">c</text></g><g class="node" data-p="f"><rect class="ai" x="880" y="180" width="170" height="50" rx="10" stroke-width="1.4" stroke-dasharray="4 3"/><text class="tx" x="965.0" y="202.5" text-anchor="middle">Draft the explanation</text><text class="sub" x="965.0" y="215.5" text-anchor="middle">evaluator-optimiser</text><circle class="pain" cx="1048" cy="180" r="6"/><text class="paintx" x="1048" y="183" text-anchor="middle">f</text></g><g class="node" data-p=""><polygon class="hook" stroke-width="1.4" points="1140.0,278 1200,320.0 1140.0,362 1080,320.0"/><text class="tx" x="1140.0" y="317.0" text-anchor="middle">Stop hook:</text><text class="tx" x="1140.0" y="330.0" text-anchor="middle">citation + basis</text></g><g class="node" data-p="b,e"><rect class="tool" x="1050" y="470" width="150" height="56" rx="3" stroke-width="1.4"/><text class="tx" x="1125.0" y="488.5" text-anchor="middle">Comparison,</text><text class="tx" x="1125.0" y="501.5" text-anchor="middle">uncertainty,</text><text class="tx" x="1125.0" y="514.5" text-anchor="middle">transcript</text><circle class="pain" cx="1198" cy="470" r="6"/><text class="paintx" x="1198" y="473" text-anchor="middle">e</text><circle class="pain" cx="1185" cy="470" r="6"/><text class="paintx" x="1185" y="473" text-anchor="middle">b</text></g><g class="node" data-p="b,f,g"><rect class="you" x="1000" y="62" width="220" height="60" rx="14" stroke-width="1.4"/><text class="tx" x="1110.0" y="89.5" text-anchor="middle">Review, select, freeze, submit</text><text class="sub" x="1110.0" y="102.5" text-anchor="middle">G3–G7 stay with people</text><circle class="pain" cx="1218" cy="62" r="6"/><text class="paintx" x="1218" y="65" text-anchor="middle">g</text><circle class="pain" cx="1205" cy="62" r="6"/><text class="paintx" x="1205" y="65" text-anchor="middle">f</text><circle class="pain" cx="1192" cy="62" r="6"/><text class="paintx" x="1192" y="65" text-anchor="middle">b</text></g><g class="node" data-p=""><rect class="stop" x="600" y="540" width="150" height="34" rx="3" stroke-width="1.4"/><text class="tx stoptx" x="675.0" y="554.0" text-anchor="middle">CANNOT DETERMINE /</text><text class="tx stoptx" x="675.0" y="567.0" text-anchor="middle">limit</text></g><path class="edge" d="M115.0,122 L115.0,180"/><polygon class="ah" points="115.0,180 111.9,172.6 118.1,172.6"/><path class="edge" d="M200,205.0 L300,205 L300.0,278"/><polygon class="ah" points="300.0,278 296.9,270.6 303.1,270.6"/><path class="edge" d="M125.0,420 L125,400 L240,400 L240,340 L260,340"/><polygon class="ah" points="260,340 252.6,343.1 252.6,336.9"/><text class="sub" x="244" y="396">state</text><path class="edge" d="M360,320.0 L390,320.0"/><polygon class="ah" points="390,320.0 382.6,323.1 382.6,316.9"/><path class="edge" d="M300.0,362 L300,557 L600,557.0"/><polygon class="ah" points="600,557.0 592.6,560.1 592.6,553.9"/><text class="sub" x="304" y="553">invalid input</text><path class="edge" d="M455.0,344 L455,400 L475,400 L475.0,420"/><polygon class="ah" points="475.0,420 471.9,412.6 478.1,412.6"/><path class="edge" d="M500,344 L500,380 L580,380 L580,490 L475,490 L475.0,500"/><polygon class="ah" points="475.0,500 471.9,492.6 478.1,492.6"/><path class="edge" d="M550,442.0 L570,442 L570,484 L590,484.0"/><polygon class="ah" points="590,484.0 582.6,487.1 582.6,480.9"/><path class="edge" d="M550,522.0 L570,522 L570,500 L590,500"/><polygon class="ah" points="590,500 582.6,503.1 582.6,496.9"/><path class="edge" d="M740,484.0 L830,484 L830.0,362"/><polygon class="ah" points="830.0,362 833.1,369.4 826.9,369.4"/><path class="loop" d="M890,320.0 L910,320.0"/><polygon class="ahl" points="910,320.0 902.6,323.1 902.6,316.9"/><text class="sub" x="912" y="378">rejects from both guards count here</text><path class="loop" d="M980.0,278 L980,250 L850,250 L850,205 L830,205.0"/><polygon class="ahl" points="830,205.0 837.4,201.9 837.4,208.1"/><text class="sub" x="854" y="246">round &lt; 3</text><path class="loop" d="M640,205.0 L320,205 L320,290"/><polygon class="ahl" points="320,290 316.9,282.6 323.1,282.6"/><text class="sub" x="324" y="201">revised request</text><path class="edge" d="M980.0,362 L980,557 L750,557.0"/><polygon class="ah" points="750,557.0 757.4,553.9 757.4,560.1"/><text class="sub" x="984" y="553">max 3 or budget → stop</text><path class="edge" d="M830.0,278 L830,205 L880,205.0"/><polygon class="ah" points="880,205.0 872.6,208.1 872.6,201.9"/><text class="sub" x="834" y="201">pass</text><path class="edge" d="M965.0,230 L965,260 L1140,260 L1140.0,278"/><polygon class="ah" points="1140.0,278 1136.9,270.6 1143.1,270.6"/><path class="loop" d="M1080,320 L1050,320"/><polygon class="ahl" points="1050,320 1057.4,316.9 1057.4,323.1"/><path class="edge" d="M220,448.0 L250,448 L250,590 L1030,590 L1030,420 L1110,420 L1110,341"/><polygon class="ah" points="1110,341 1113.1,348.4 1106.9,348.4"/><text class="sub" x="1034" y="586">citation oracle</text><path class="edge" d="M1140,362 L1140,470"/><polygon class="ah" points="1140,470 1136.9,462.6 1143.1,462.6"/><text class="sub" x="1144.0" y="412.0">pass</text><path class="edge" d="M1200,498.0 L1225,498 L1225,135 L1210,135 L1210,122"/><polygon class="ah" points="1210,122 1213.1,129.4 1206.9,129.4"/><path class="loop" d="M1000,92.0 L200,92.0"/><polygon class="ahl" points="200,92.0 207.4,88.9 207.4,95.1"/><text class="sub" x="604.0" y="88.0">new run / reframe (G4)</text><text class="sub" x="380" y="135">Who decides the next step: code (router, hooks, counter) chooses computation; people reframe, select, freeze and submit. The AI is not an open agent.</text></svg><!--/DIAGRAM--></div>
+        <figcaption>Drawn in the Session 4 notation: You · The AI · harness hooks · tools and files. <a href="diagrams/03-tool-logic.svg" target="_blank" rel="noopener">Open full size</a></figcaption></figure>
+      <div class="rules3">
+        <div><b>Code chooses</b><span>A router, not the model, decides which tool runs next.</span></div>
+        <div><b>3 rounds, then stop</b><span>Every correction loop has a limit and an exit.</span></div>
+        <div><b>CANNOT DETERMINE</b><span>When an input is missing or unclear, it says so instead of guessing.</span></div>
+      </div>
+      <details class="more"><summary>Each AI step, its check, and who closes the loop</summary><div class="tablewrap"><table class="steps-t">
+        <thead><tr><th>AI step</th><th>Pattern</th><th>Check that cannot be skipped</th><th>Who closes the loop</th></tr></thead>
+        <tbody>
+          <tr><td>Parse intent into fields</td><td>Chain + router</td><td>PreToolUse: schema, range, units, frame, date</td><td>Harness blocks; a person resolves ambiguity</td></tr>
+          <tr><td>Retrieve source passages</td><td>Fixed approved route</td><td>Identity, version, locator, authority</td><td>Planner confirms it applies</td></tr>
+          <tr><td>Call and normalise tools</td><td>Fixed router</td><td>PostToolUse: schema, IDs, units, hash, recompute</td><td>Harness retries up to 3, then stops</td></tr>
+          <tr><td>Propose alternatives</td><td>Evaluator–optimiser</td><td>Geometry and arithmetic rejection</td><td>Harness retries; architect changes the rules</td></tr>
+          <tr><td>Explain the comparison</td><td>Evaluator–optimiser</td><td>Stop hook: numbers, citations, basis, no verdict</td><td>AI revises up to 3; a person approves</td></tr>
+          <tr><td>Reframe or select</td><td>None (person only)</td><td>Person, basis, evidence and version logged</td><td>The project team</td></tr>
+        </tbody></table></div></details>
+    </div>
+
+    <!-- 5 -->
+    <div class="chapter">
+      <div class="ch-head"><span class="ch-n">5</span><div><h2>First attempt: hub v0.5</h2><p class="muted">It reads real exports from our tools, measures three options with the same area rule, and logs every decision.</p></div></div>
+      <div class="attempt">
+        <div class="ring"><b>89/89</b><span>hand-written checks passed<br>run on 16 Oct 2026</span></div>
+        <div class="attempt-r">
+          <div class="cbar" id="caseBar" role="group" aria-label="Checks by case type"></div>
+          <div class="paininfo" id="caseInfo" aria-live="polite"><span class="muted">Tap a block to see what that set of checks tests.</span></div>
+          <figure class="attempt-shot"><img src="images/about-hub-v05.jpg" alt="Hub v0.5 Compare and decide screen: tool stations across the top, and a table checking three tower options against the brief and City rules" loading="lazy"><figcaption>Hub v0.5, the Compare and decide screen. Across the top are the stations, one per tool (Vista, Form Studio, Structure Lab and others). The table checks options A, B and C against the competition brief and City rules: height, non-residential floor area, housing plate size and tower separation.</figcaption></figure>
+          <div class="notyet"><b>Not shown yet:</b> no AI model is connected · a sample block, not a legal parcel · City area definitions not applied · not yet tried by users</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="chapter method">
+      <div class="ch-head"><span class="ch-n">6</span><div><h2>How this research was made</h2><p class="muted">A GPT model wrote the drafts, and Claude Opus 5.5 reviewed them in two rounds before we published.</p></div></div>
+      <ol class="pipe">
+        <li><b>Plan</b><span>Questions from the Assignment 2 brief</span></li>
+        <li><b>Draft</b><span>GPT (gpt-5.6-sol) · 53 sources</span></li>
+        <li><b>Peer review</b><span>Claude Opus 5.5 · method and sources</span></li>
+        <li><b>Revise</b><span>26 findings applied</span></li>
+        <li><b>Gate</b><span>Conditional pass · final fixes</span></li>
+      </ol>
+      <p class="small muted">60 sources: City of Vancouver documents, 14 peer-reviewed papers, vendor documentation and our own files. 59 opened and checked. The City's new design guidelines take effect 27 October 2026; the floorplate figures will be rechecked then.</p>
+      <div class="nav"><a class="btn" href="https://claude.ai/artifact/QEtyQMnBYyD1siiWLt7y2G" target="_blank" rel="noopener">Read the full report ↗</a></div>
+    </div>
+    <div class="nav next"><button class="primary" type="button" data-go="tools">Next: try the tools →</button>
+    </div>
+  </section>
+
+  <!-- FEEDBACK -->
+  <section class="panel" id="feedback" role="tabpanel" aria-labelledby="tab-feedback" hidden>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div class="fb-banner"><img src="images/06-skyline-mountains.jpg" alt="" loading="lazy"><div><h2>Tell us what you think</h2><p>We'll use what you tell us to decide what to fix next.</p><small>Photo: Kyle Pearce / DIY Genius, CC BY-SA 2.0</small></div></div>
+      <p class="muted">It takes about five minutes, and most questions are just taps. You stay anonymous unless you leave your name. We read every response and keep a log of what we change because of it.<span id="formHint" hidden> At the end, your answers open in our Google Form to submit.</span></p>
+    </div>
+    <div class="steps" id="steps" aria-hidden="true"></div>
+    <form id="fb" novalidate></form>
+    <div id="status" role="status"></div>
+    <div id="copyWrap" hidden class="q">
+      <div id="formSend" hidden style="display:flex;flex-direction:column;gap:8px">
+        <p><b>Last step:</b> your answers are filled in on our Google Form. Press Submit there to send them.</p>
+        <a class="btn primary" id="formLink" target="_blank" rel="noopener" style="align-self:flex-start">Open the form and submit ↗</a>
+        <p class="small muted">If the form opens empty, paste the text below into it.</p>
+      </div>
+      <p class="small" id="copyNote">This view cannot save answers. Copy the text below and send it to Ruijie or Sinnie by message or email.</p>
+      <textarea id="copyBox" readonly aria-label="Your answers as text" style="min-height:200px"></textarea>
+    </div>
+    <section id="resp" hidden aria-label="Responses received">
+      <div class="nav"><h2 class="grow">Responses received</h2><button type="button" id="refreshResp">Refresh</button><button type="button" id="copyCsv">Copy as CSV</button></div>
+      <p class="small muted">Visible only to Ruijie, Sinnie and anyone given Editor access.</p>
+      <div id="respBody" class="small">Loading…</div>
+    </section>
+  </section>
+
+  <!-- PROJECT -->
+  <section class="panel" id="project" role="tabpanel" aria-labelledby="tab-project" hidden>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <h2 class="rs-big">What would help you design a tower in Vancouver?</h2>
+      <p class="muted" id="editHint" hidden>You can edit this page. Use Edit beside a heading; your text is saved for everyone who opens it.</p>
+    </div>
+    <div class="gallery" aria-label="What we have built so far">
+      <figure><img src="images/about-vista-intro.jpg" alt="Vista opening screen: explore a building in Vancouver's protected views" loading="lazy"><figcaption><b>Vista</b>Ruijie's view-protection tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool showing a tower on 1189 Howe Street with FSR over the limit" loading="lazy"><figcaption><b>Downtown Massing Tool</b>Sinnie's massing tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/about-form-studio.jpg" alt="Form Studio: a tower with mega floors and outriggers" loading="lazy"><figcaption><b>Form Studio</b>Shaping tower forms</figcaption></figure>
+      <figure><img src="images/about-rooftop-view.jpg" alt="Vista checking a proposed tower from a rooftop viewpoint" loading="lazy"><figcaption><b>Standing at a viewpoint</b>Vista's rooftop view check</figcaption></figure>
+      <figure><img src="images/about-hub-v05.jpg" alt="Hub v0.5 Compare and decide screen: three tower options checked against the brief and City rules" loading="lazy" style="object-position:left top"><figcaption><b>Workbench hub v0.5</b>Compare screen: three options against the brief and City rules</figcaption></figure>
+    </div>
+    <div class="band-h"><h3>What we read</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
+    <div class="shelf" aria-label="Documents and readings">
+      <figure><img src="images/doc-vtc-brief.jpg" alt="Cover of the Vancouver Tall Challenge competition conditions" loading="lazy" style="object-fit:cover;object-position:center"><figcaption><b>Vancouver Tall Challenge</b><span>Competition conditions, 2026</span></figcaption></figure>
+      <figure><img src="images/doc-a2-brief.jpg" alt="First page of the ARCH 540 Assignment 2 brief" loading="lazy"><figcaption><b>From a Real Workflow to a Working Tool</b><span>ARCH 540 Assignment 2 brief, UBC SALA</span></figcaption></figure>
+      <figure><img src="images/doc-public-views.jpg" alt="Cover of the City of Vancouver Public Views Guidelines" loading="lazy"><figcaption><b>Public Views Guidelines</b><span>City of Vancouver, amended 4 Feb 2026</span></figcaption></figure>
+      <figure><img src="images/doc-evolution-paper.jpg" alt="First page of Evolution of High-rise Buildings in Vancouver, Canada" loading="lazy"><figcaption><b>Evolution of High-rise Buildings in Vancouver</b><span>Adebar, DeVall &amp; Mutrie, Structural Engineering International, 2017</span></figcaption></figure>
+      <figure><img src="images/doc-mcp-paper.jpg" alt="First page of MCP-Driven Parametric Modeling" loading="lazy"><figcaption><b>MCP-Driven Parametric Modeling</b><span>Liu &amp; Tian, 2025</span></figcaption></figure>
+    </div>
+    <div class="proj">
+      <aside id="projNav" aria-label="On this page"></aside>
+      <div class="body" id="projBody"></div>
+    </div>
+    <div class="nav next"><button class="primary" type="button" data-go="research">Next: how it works →</button></div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div>Vancouver Tower Toolbench · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
+  <div>Solar Shading Explorer by Willem Girard, linked with credit from the ARCH 540 Assignment 1 toolkit.</div>
+</footer>
+
+<div class="join" id="join" hidden role="dialog" aria-modal="true" aria-labelledby="joinTitle">
+  <div class="join-card">
+    <button type="button" class="join-x" id="joinClose" aria-label="Close"><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <h2 id="joinTitle">Scan to open on your phone</h2>
+    <div class="qr" id="qr" role="img" aria-label="QR code linking to this website"></div>
+    <div class="url" id="siteUrl"></div>
+    <div class="nav" style="justify-content:center"><button type="button" class="primary" id="copyLink">Copy link</button><button type="button" id="presentBtn">Present full screen</button></div>
+    <ol class="join-steps">
+      <li>Point your phone camera at the code.</li>
+      <li>On a laptop, type the link above, or open it on your phone and use Copy link to message it to yourself.</li>
+    </ol>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+/* ---------- data ---------- */
+const TOOLS = [
+  { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'Vancouver view protection', by: 'Ruijie Liu', ours: true,
+    url: 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+    does: ['Places a proposed tower in a 3D Vancouver built from OpenStreetMap, terrain and shoreline', "Checks it against the City's mapped public view corridors", 'Lets you stand at a viewpoint and look, then export a study report'],
+    limit: 'The geometry is approximate, so use it to study views. It can\'t tell you whether a tower complies.',
+    worked: ['View cones were clear', '3D city context', 'Standing at a viewpoint', 'The exported report', 'Fast to place a tower'],
+    blocked: ['Geometry too approximate', 'Hard to place my tower', 'Unclear what passes or fails', 'Slow to load', 'Missing a viewpoint I need'] },
+  { id: 'dtmass', img: 'images/tool-dtmass.jpg', name: 'Downtown Massing Tool', sub: 'Tower massing against downtown documents', by: 'Sinnie Choi', ours: true,
+    url: 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+    does: ['Loads what City data says about a real downtown parcel', 'Push and pull blocks by use: residential, office, retail, parking', 'Checks live against FSR, height and your floor-area target; compare options and export'],
+    limit: 'Planning limits come from City documents. Check the current by-law before you rely on a number.',
+    worked: ['Real parcel data', 'Live FSR and height check', 'Blocks by use', 'Comparing options', 'The report'],
+    blocked: ['Blocks hard to edit', 'My parcel or rule was missing', 'Numbers I could not trace', 'Too simple for a supertall', 'Unclear interface'] },
+  { id: 'pvv', img: 'images/tool-pvv.jpg', name: 'Program Value Visualizer', sub: 'Which floors pay for which', by: 'Ruijie Liu', ours: true,
+    url: 'https://claude.ai/artifact/Ahksj9w9qL43e7UgtJ1RRE',
+    does: ['Set the programme floor by floor from 112 activity-based programmes', 'See value minus cost and profit on every floor, beside the section', "Verdict on land value, City charges, and the competition's 9.0 FSR non-residential rule"],
+    limit: 'It gives early-design estimates, and every default shows its source, date and grade. It is no substitute for a feasibility study.',
+    worked: ['Floor-by-floor value', 'Sources on every number', 'The verdict', 'The 9.0 FSR check', 'Asking the AI in plain words'],
+    blocked: ['Too many inputs', 'A number I did not trust', 'Finance jargon', 'Missing a programme I need', 'Unclear how to start'],
+    access: 'Opens on claude.ai. Ask Ruijie for access if it does not open.' },
+  { id: 'solar', img: 'images/tool-solar.jpg', name: 'Solar Shading Explorer', sub: 'Solar geometry, heat gain and shading', by: 'Willem Girard', ours: false,
+    url: 'https://genenv.github.io/arch540-a1-toolkit/#solar-shading-explorer',
+    does: ['Shows the sun angles and solar heat gain on a facade', 'Lets you shape exterior shading devices and see the effect right away', 'Checks the shading against code requirements'],
+    limit: "A classmate's Assignment 1 tool, shared here with credit.",
+    worked: ['Sun path was clear', 'Heat gain numbers', 'Shading design loop', 'Code check on shading'],
+    blocked: ['Not tied to my tower form', 'Hard to read the results', 'Missing a facade type', 'Unclear interface'] },
+];
+
+const ROLES = ['Vancouver Tall Challenge entrant', 'Architecture student, not entering', 'Practitioner at a Vancouver firm', 'Instructor or reviewer', 'Other'];
+const EXPERIENCE = ['None yet', 'One studio project', 'Worked on a built or proposed tower', '5+ years in high-rise practice'];
+const STAGE_STUDENT = ['Still reading the brief', 'Choosing a concept', 'Massing options', 'Developing one scheme', 'Boards and presentation'];
+const FIRM_CHECK = ['Spreadsheets', 'Grasshopper scripts', 'Forma or a similar product', 'Planner and consultant meetings', 'Experience and rules of thumb'];
+const AI_NOW = ["I don't use it", 'Writing code or scripts', 'Reading codes and by-laws', 'Images and renderings', 'Massing or form', 'Writing and research'];
+const TRUST = [ [1, 'Not at all'], [2, 'A little'], [3, 'Depends'], [4, 'Mostly'], [5, 'Fully'] ];
+/* follow-ups depend on the trust answer */
+const FOLLOW = {
+  low: [
+    { key: 'why', q: 'What makes you sceptical?', opts: ['Makes up numbers or sources', "Can't see where a result comes from", 'Takes judgment away from the designer', 'Liability: who signs off?', 'Makes every tower look the same', 'Privacy of drawings and client data'] },
+    { key: 'earn', q: 'What would earn some trust?', opts: ['A source and date on every number', 'Tested against towers that exist', 'Says plainly what it cannot do', 'A person reviews before anything counts', 'Open code I can check', 'Same answer every run'] },
+  ],
+  mid: [
+    { key: 'help', q: 'Where would you let AI help?', opts: ['Finding the rule that applies', 'Checking areas and FSR', 'Generating massing options', 'Explaining a failed check', 'Drafting text and reports', 'Writing scripts for me'] },
+    { key: 'out', q: 'Where should it stay out?', opts: ['Choosing the final form', 'Compliance sign-off', 'Cost and value numbers', 'Talking to the client or City', 'Aesthetic judgment', 'Structural decisions'] },
+  ],
+  high: [
+    { key: 'first', q: 'What would you hand to AI first?', opts: ['Code and by-law checks', 'Area and FSR take-offs', 'Option generation', 'Sun, wind and view studies', 'Cost estimates', 'Board diagrams'] },
+    { key: 'risk', q: 'Even so, what still worries you?', opts: ['Confident but wrong answers', 'Out-of-date rules', 'Losing design skill', 'Who is responsible', 'Every tower looking the same', 'Nothing much'] },
+  ],
+};
+const AI_NEVER = ['The final form', 'Compliance sign-off', 'Structural sizing', 'Public benefit trade-offs', 'Which views matter', 'Nothing: it can help everywhere'];
+const WISHLIST = ['Wind and comfort', 'Structure and core sizing', 'Building code and egress', 'Precedent towers to compare', 'Shadow on parks', 'Embodied carbon', 'Board-ready diagrams', 'One file shared by all tools'];
+
+/* ---------- small helpers ---------- */
+const $ = s => document.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag); for (const [k, v] of Object.entries(attrs)) { if (k === 'class') n.className = v; else if (k === 'text') n.textContent = v; else if (k.startsWith('on')) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v); } for (const k of kids) if (k != null) n.append(k); return n; };
+const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
+
+/* ---------- opening, join panel ---------- */
+/* IS_PUBLIC is set to true only in the public copy (built by make_public.py). */
+const IS_PUBLIC = true;
+const TEAM_URL = 'https://claude.ai/artifact/EamwZUs743tVwVofJhnE2d';
+const PUBLIC_URL = 'https://ruijieliu6.github.io/vancouver-tower-toolbench/'; // the public copy; both QR codes point here
+/* Google Form pre-filled link: one Paragraph question whose pre-filled value is the word ANSWERS. */
+const FORM_PREFILL = null;
+const SITE_URL = PUBLIC_URL || TEAM_URL;
+if (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches) document.querySelectorAll('animate.smil').forEach(a => { const r = a.parentNode; a.remove(); r.setAttribute('width', '960'); });
+$('#siteUrl').textContent = SITE_URL.replace('https://', '');
+let qrDone = false;
+function openJoin(present) {
+  const j = $('#join'); j.hidden = false; j.classList.toggle('present', !!present);
+  $('#presentBtn').hidden = !!present;
+  if (!qrDone && window.QRCode) { try { new QRCode($('#qr'), { text: SITE_URL, width: 512, height: 512, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M }); qrDone = true; } catch (e) {} }
+  if (!qrDone) $('#qr').replaceChildren(el('p', { style: 'line-height:1.4;color:#17242c;padding:20px', text: 'QR code could not load here. Use the link below.' }));
+  $('#joinClose').focus();
+}
+function closeJoin() { $('#join').hidden = true; $('#joinBtn').focus(); }
+$('#joinBtn').addEventListener('click', () => openJoin(false));
+$('#joinClose').addEventListener('click', closeJoin);
+$('#presentBtn').addEventListener('click', () => openJoin(true));
+$('#join').addEventListener('click', e => { if (e.target.id === 'join') closeJoin(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#join').hidden) closeJoin(); });
+$('#copyLink').addEventListener('click', async () => {
+  const b = $('#copyLink');
+  try { await navigator.clipboard.writeText(SITE_URL); b.textContent = 'Copied'; }
+  catch (e) { const r = document.createRange(); r.selectNodeContents($('#siteUrl')); const s = getSelection(); s.removeAllRanges(); s.addRange(r); b.textContent = 'Selected: copy it'; }
+  setTimeout(() => { b.textContent = 'Copy link'; }, 2200);
+});
+if ((location.hash || '') === '#join') openJoin(true);
+if (IS_PUBLIC && FORM_PREFILL) $('#formHint').hidden = false;
+
+/* ---------- tabs ---------- */
+const TABS = ['project', 'research', 'tools', 'feedback'];
+function showTab(id) {
+  if (!TABS.includes(id)) id = 'project';
+  for (const t of TABS) { $('#' + t).hidden = t !== id; const b = $('#tab-' + t); b.setAttribute('aria-selected', String(t === id)); b.tabIndex = t === id ? 0 : -1; }
+  const g = $('#toolGrid'); if (g) { g.classList.remove('show'); if (id === 'tools') { void g.offsetWidth; g.classList.add('show'); } }
+  try { history.replaceState(null, '', '#' + id); } catch (e) {}
+}
+for (const t of TABS) $('#tab-' + t).addEventListener('click', () => { showTab(t); window.scrollTo({ top: 0 }); });
+document.addEventListener('click', e => { const go = e.target.closest('[data-go]'); if (go) { showTab(go.dataset.go); window.scrollTo({ top: 0 }); } });
+showTab((location.hash || '').slice(1));
+document.documentElement.lang = 'en';
+/* tabs: arrow keys move between tabs (WAI-ARIA tabs pattern) */
+document.querySelector('[role=tablist]').addEventListener('keydown', e => {
+  const i = TABS.findIndex(t => $('#tab-' + t).getAttribute('aria-selected') === 'true');
+  const k = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: TABS.length - 1 }[e.key];
+  if (k === undefined) return;
+  e.preventDefault(); const t = TABS[(k + TABS.length) % TABS.length]; showTab(t); $('#tab-' + t).focus();
+});
+/* keep keyboard focus inside the QR dialog while it is open */
+$('#join').addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return;
+  const f = [...$('#join').querySelectorAll('button:not([hidden]), a[href]')].filter(x => x.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+/* ---------- tools tab ---------- */
+for (const t of TOOLS) {
+  $('#toolGrid').append(el('article', { class: 'tool' },
+    el('div', { class: 'shot' }, el('img', { src: t.img, alt: 'Screenshot of ' + t.name, loading: 'lazy' })),
+    el('div', { class: 'meta' }, el('span', { class: 'tag' + (t.ours ? ' ours' : ''), text: t.ours ? 'Ours' : 'Classmate' }), el('span', { class: 'tag', text: t.sub })),
+    el('h3', { text: t.name }),
+    el('div', { class: 'by' }, 'by ', el('b', { text: t.by })),
+    el('ul', {}, ...t.does.map(d => el('li', { text: d }))),
+    el('p', { class: 'note', text: t.limit + (t.access ? ' ' + t.access : '') }),
+    el('div', { class: 'row' },
+      el('a', { class: 'btn primary', href: t.url, target: '_blank', rel: 'noopener', }, 'Open ' + t.name + ' ', el('span', { class: 'arr', text: '↗' })),
+      el('button', { type: 'button', text: 'Feedback', onclick: () => { if (!A.tools.includes(t.id)) A.tools.push(t.id); step = 0; render(); showTab('feedback'); window.scrollTo({ top: 0 }); } }))));
+}
+
+/* ---------- questionnaire ---------- */
+const blank = () => ({ role: [], roleOther: '', exp: [], stage: [], firm: [], tools: [], trust: 0, f: {}, fOther: '', aiNow: [], tf: {}, never: [], wish: [], wishOther: '', reflect: '', contact: '', quote: [] });
+let A = Object.assign(blank(), store.get('vtt-draft') || {});
+let step = 0;
+const STEP_NAMES = ['You', 'AI and you', 'The tools', 'Reflect and send'];
+const trustBand = () => A.trust <= 0 ? null : A.trust <= 2 ? 'low' : A.trust === 3 ? 'mid' : 'high';
+const isStudent = () => A.role.some(r => /student|entrant/i.test(r));
+const isPro = () => A.role.some(r => /Practitioner|Instructor/i.test(r));
+
+function chips(list, arr, { single = false, onchange } = {}) {
+  const g = el('div', { class: 'chips', role: 'group' });
+  for (const o of list) {
+    const b = el('button', { type: 'button', class: 'chip', 'aria-pressed': String(arr.includes(o)), text: o });
+    b.addEventListener('click', () => {
+      const i = arr.indexOf(o);
+      if (single) { arr.splice(0, arr.length); if (i < 0) arr.push(o); }
+      else if (i < 0) arr.push(o); else arr.splice(i, 1);
+      save(); onchange ? onchange() : g.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(arr.includes(c.textContent))));
+    });
+    g.append(b);
+  }
+  return g;
+}
+function text(obj, key, ph, area) {
+  const n = el(area ? 'textarea' : 'input', area ? { id: 'f-' + key, placeholder: ph || '' } : { type: 'text', id: 'f-' + key, placeholder: ph || '', autocomplete: 'off' });
+  n.value = obj[key] || ''; n.addEventListener('input', () => { obj[key] = n.value; save(); });
+  return n;
+}
+function Q(label, hint, ...body) { return el('div', { class: 'q' }, el('div', { class: 'ql' }, label, hint ? el('div', { class: 'hint', text: hint }) : null), ...body); }
+function save() { store.set('vtt-draft', A); }
+
+function render() {
+  const f = $('#fb'); f.replaceChildren();
+  $('#steps').replaceChildren(...STEP_NAMES.map((s, i) => el('span', { class: i === step ? 'on' : i < step ? 'done' : '', text: `${i + 1} · ${s}` })));
+  if (step === 0) {
+    f.append(Q('Which describes you best?', 'Pick one or more.', chips(ROLES, A.role, { onchange: render }), A.role.includes('Other') ? text(A, 'roleOther', 'Tell us your role') : null));
+    f.append(Q('How much high-rise design have you done?', null, chips(EXPERIENCE, A.exp, { single: true })));
+    if (isStudent()) { const q = Q('Where are you in your Vancouver Tall Challenge entry?', null, chips(STAGE_STUDENT, A.stage, { single: true })); q.classList.add('follow'); f.append(q); }
+    if (isPro()) { const q = Q('How does your office test early tower massing today?', 'Pick any.', chips(FIRM_CHECK, A.firm)); q.classList.add('follow'); f.append(q); }
+    f.append(Q('Which tools did you try?', 'You will rate only these. Skip if you have not tried any yet.', chips(TOOLS.map(t => t.name), A.tools.map(id => TOOLS.find(t => t.id === id)?.name).filter(Boolean), { onchange: null })));
+    // the tools chip group maps names back to ids
+    const g = f.lastChild.querySelector('.chips');
+    g.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { const id = TOOLS.find(t => t.name === c.textContent).id; const i = A.tools.indexOf(id); if (i < 0) A.tools.push(id); else A.tools.splice(i, 1); save(); }, true));
+  }
+  if (step === 1) {
+    const sc = el('div', { class: 'scale', role: 'group', 'aria-label': 'Trust in AI, 1 to 5' });
+    for (const [v, l] of TRUST) sc.append(el('button', { type: 'button', class: 'chip', 'aria-pressed': String(A.trust === v), 'aria-label': `${v}, ${l}`, onclick: () => { A.trust = v; save(); render(); } }, el('b', { text: String(v) }), el('small', { text: l })));
+    f.append(Q('How far do you trust AI with design decisions on a tower?', '1 = not at all, 5 = fully. The next questions change with your answer.', sc));
+    const band = trustBand();
+    if (band) for (const fq of FOLLOW[band]) {
+      A.f[fq.key] = A.f[fq.key] || [];
+      const q = Q(fq.q, 'Pick any.', chips(fq.opts, A.f[fq.key])); q.classList.add('follow'); f.append(q);
+    }
+    if (band) { const q = Q('Anything to add?', null, text(A, 'fOther', 'Optional', true)); q.classList.add('follow'); f.append(q); }
+    f.append(Q('How do you use AI in design work today?', 'Pick any.', chips(AI_NOW, A.aiNow)));
+  }
+  if (step === 2) {
+    if (!A.tools.length) f.append(el('div', { class: 'q' }, el('p', { text: 'You did not pick any tools in step 1. Go back to choose the ones you tried, or continue to the last step.' })));
+    for (const id of A.tools) {
+      const t = TOOLS.find(x => x.id === id); if (!t) continue;
+      const r = A.tf[id] = A.tf[id] || { rating: 0, worked: [], blocked: [], note: '' };
+      const sc = el('div', { class: 'scale', role: 'group', 'aria-label': `Usefulness of ${t.name}, 1 to 5` });
+      for (const [v, l] of [[1, 'Not useful'], [2, 'Slightly'], [3, 'Somewhat'], [4, 'Useful'], [5, 'Essential']]) sc.append(el('button', { type: 'button', class: 'chip', 'aria-pressed': String(r.rating === v), 'aria-label': `${v}, ${l}`, onclick: () => { r.rating = v; save(); render(); } }, el('b', { text: String(v) }), el('small', { text: l })));
+      f.append(el('div', { class: 'q toolfb' },
+        el('h3', {}, t.name, el('span', { class: 'hint', text: 'by ' + t.by })),
+        el('div', { class: 'hint', text: 'How useful was it for your tower?' }), sc,
+        el('div', { class: 'hint', text: 'What worked?' }), chips(t.worked, r.worked),
+        el('div', { class: 'hint', text: 'What got in the way?' }), chips(t.blocked, r.blocked),
+        text(r, 'note', 'One thing you would change (optional)')));
+    }
+  }
+  if (step === 3) {
+    f.append(Q('What should AI never decide in tower design?', 'Pick any.', chips(AI_NEVER, A.never)));
+    f.append(Q('What should this toolbench add next?', 'Pick up to three.', chips(WISHLIST, A.wish), text(A, 'wishOther', 'Something else')));
+    f.append(Q('A general reflection on AI in your design process', 'What surprised you, worried you or helped you? Optional.', text(A, 'reflect', 'Write as much or as little as you like', true)));
+    f.append(Q('May we quote you (anonymously) in our project?', null, chips(['Yes, anonymously', 'Yes, with my name', 'No'], A.quote, { single: true })));
+    f.append(Q('Want to test the next version?', 'Optional. Your name or email. Leave blank to stay anonymous.', text(A, 'contact', 'Name or email')));
+  }
+  const nav = el('div', { class: 'nav' });
+  if (step > 0) nav.append(el('button', { type: 'button', text: '← Back', onclick: () => { step--; render(); } }));
+  nav.append(el('span', { class: 'grow' }));
+  nav.append(el('button', { type: 'button', text: 'Start over', onclick: () => { A = blank(); save(); step = 0; render(); $('#status').textContent = ''; } }));
+  if (step < 3) nav.append(el('button', { type: 'button', class: 'primary', text: 'Next →', onclick: () => { step++; render(); $('#feedback').scrollIntoView({ block: 'start' }); } }));
+  else nav.append(el('button', { type: 'submit', class: 'primary', id: 'sendBtn', text: 'Send feedback' }));
+  f.append(nav);
+}
+
+/* plain-text version of one response (for copy fallback and the responses list) */
+function asLines(a) {
+  const L = [];
+  const add = (k, v) => { if (v && (!Array.isArray(v) || v.length)) L.push([k, Array.isArray(v) ? v.join('; ') : String(v)]); };
+  add('Role', [...(a.role || []), a.roleOther].filter(Boolean)); add('Experience', a.exp); add('VTC stage', a.stage); add('Office massing method', a.firm);
+  add('Trust in AI (1–5)', a.trust || '');
+  for (const band of Object.values(FOLLOW)) for (const fq of band) add(fq.q, (a.f || {})[fq.key]);
+  add('Trust note', a.fOther); add('AI use today', a.aiNow);
+  for (const [id, r] of Object.entries(a.tf || {})) { if (!(a.tools || []).includes(id)) continue; const t = TOOLS.find(x => x.id === id); add(`${t ? t.name : id}: usefulness (1–5)`, r.rating || ''); add(`${t ? t.name : id}: worked`, r.worked); add(`${t ? t.name : id}: got in the way`, r.blocked); add(`${t ? t.name : id}: change`, r.note); }
+  add('AI should never decide', a.never); add('Add next', [...(a.wish || []), a.wishOther].filter(Boolean)); add('Reflection', a.reflect); add('Quote', a.quote); add('Contact', a.contact);
+  return L;
+}
+function cleanForSave(a) { const o = JSON.parse(JSON.stringify(a)); for (const k of Object.keys(o.tf)) if (!o.tools.includes(k)) delete o.tf[k]; const band = trustBand(); const keep = band ? FOLLOW[band].map(x => x.key) : []; for (const k of Object.keys(o.f)) if (!keep.includes(k)) delete o.f[k]; return o; }
+
+/* ---------- runtime: db, user ---------- */
+let db = null, user = null, myId = null, canWrite = null;
+$('#fb').addEventListener('submit', async e => {
+  e.preventDefault();
+  const st = $('#status'); st.className = '';
+  const a = cleanForSave(A);
+  if (!a.trust && !a.tools.length && !a.reflect && !a.never.length) { st.className = 'warn'; st.textContent = 'Answer at least the trust question in step 2 before sending.'; return; }
+  const btn = $('#sendBtn'); if (btn) btn.disabled = true;
+  if (db && myId && canWrite !== false) {
+    try {
+      const at = new Date().toISOString();
+      await db.doc(`responses/${myId}`).set({ last: at });
+      await db.collection(`responses/${myId}/answers`).add({ ...a, at, v: 1 });
+      A = blank(); save(); step = 0; render();
+      st.className = 'ok'; st.textContent = 'Thank you. Your feedback was saved. You can send another response any time.';
+      if (editable) loadResponses();
+      return;
+    } catch (err) { canWrite = false; }
+  }
+  if (btn) btn.disabled = false;
+  const box = $('#copyBox'); box.value = 'Vancouver Tower Toolbench feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
+  $('#copyWrap').hidden = false;
+  if (FORM_PREFILL) {
+    $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000)));
+    $('#formSend').hidden = false; $('#copyNote').hidden = true;
+    st.className = 'ok'; st.textContent = 'Almost done. Open the form below and press Submit.';
+    $('#formLink').focus();
+    return;
+  }
+  st.className = 'warn'; st.textContent = 'This view cannot save feedback. Your answers are below as text.';
+  try { await navigator.clipboard.writeText(box.value); st.textContent += ' They are also on your clipboard.'; } catch (err) { box.focus(); box.select(); }
+});
+
+let lastAll = [];
+async function loadResponses() {
+  const body = $('#respBody');
+  try {
+    const people = await db.collection('responses').get();
+    const all = [];
+    for (const p of (people.docs || [])) { const ans = await db.collection(`responses/${p.id}/answers`).get(); for (const d of (ans.docs || [])) all.push(d.data()); }
+    all.sort((x, y) => String(y.at).localeCompare(String(x.at)));
+    lastAll = all;
+    if (!all.length) { body.textContent = 'No responses yet. When someone sends the form, it appears here.'; return; }
+    const trustVals = all.map(a => a.trust).filter(Boolean);
+    const avg = v => v.length ? (v.reduce((s, x) => s + x, 0) / v.length).toFixed(1) : '–';
+    const kp = el('div', { class: 'kpis' },
+      el('div', { class: 'kpi' }, el('b', { text: String(all.length) }), el('span', { text: 'responses' })),
+      el('div', { class: 'kpi' }, el('b', { text: avg(trustVals) }), el('span', { text: 'mean trust in AI (1–5)' })),
+      ...TOOLS.map(t => { const r = all.map(a => a.tf?.[t.id]?.rating).filter(Boolean); return el('div', { class: 'kpi' }, el('b', { text: avg(r) }), el('span', { text: `${t.name} (${r.length})` })); }));
+    const dist = el('div', { class: 'bars' }, el('div', { class: 'hint', text: 'Trust in AI' }));
+    const max = Math.max(1, ...TRUST.map(([v]) => trustVals.filter(x => x === v).length));
+    for (const [v, l] of TRUST) { const n = trustVals.filter(x => x === v).length; dist.append(el('div', { class: 'bar' }, el('span', { text: `${v} · ${l}` }), el('i', { style: `width:${(n / max) * 100}%` }), el('em', { text: String(n) }))); }
+    const list = el('div', { style: 'display:flex;flex-direction:column;gap:8px' }, ...all.map(a => el('dl', { class: 'entry' }, el('div', { class: 'eyebrow', text: (a.at || '').replace('T', ' ').slice(0, 16) }), ...asLines(a).flatMap(([k, v]) => [el('dt', { text: k }), el('dd', { text: v })]))));
+    body.replaceChildren(kp, dist, list);
+  } catch (e) { body.textContent = 'Could not load responses. Try Refresh.'; }
+}
+$('#refreshResp').addEventListener('click', loadResponses);
+$('#copyCsv').addEventListener('click', async () => {
+  const keys = []; const rows = lastAll.map(a => { const m = Object.fromEntries([['Sent', a.at || ''], ...asLines(a)]); for (const k of Object.keys(m)) if (!keys.includes(k)) keys.push(k); return m; });
+  const q = s => '"' + String(s ?? '').replace(/"/g, '""') + '"';
+  const csv = [keys.map(q).join(','), ...rows.map(r => keys.map(k => q(r[k])).join(','))].join('\n');
+  try { await navigator.clipboard.writeText(csv); $('#copyCsv').textContent = 'Copied'; } catch (e) { const t = $('#copyBox'); t.value = csv; $('#copyWrap').hidden = false; t.select(); }
+  setTimeout(() => { $('#copyCsv').textContent = 'Copy as CSV'; }, 2000);
+});
+
+/* ---------- project tab ---------- */
+const SECTIONS = [
+  { id: 'who', title: 'Who we are', text: "We're Ruijie Liu and Sinnie Choi, and we're in Xun Liu's ARCH 540 studio at UBC SALA, “Designing the Design”. In this studio we build our own design tools, with AI helping us write the code.\n\nThis term we're working on one question: what would actually help someone design a high-rise in Vancouver?" },
+  { id: 'problem', vis: 'problem', title: 'The problem: too many rule books', text: "A Vancouver tower gets checked against a lot of rules at once: density, height and protected views, floor plate size, shadows on parks, the building code and, in the end, money. Each of these lives in a different document, and most of our time went into flipping between them.\n\nThe tools don't share a file either. We kept re-entering the same tower in a view checker, a massing model and a spreadsheet, and converting coordinates by hand each time." },
+  { id: 'built', vis: 'built', title: 'What we built first', text: "In Assignment 1 we each built one tool. Sinnie's Downtown Massing Tool loads what the City's data says about a real downtown lot, and as you push and pull blocks it checks them against FSR, height and your floor-area target. Ruijie's Vista puts a proposed tower into a 3D model of Vancouver and checks it against the City's protected view corridors.\n\nThen came the Program Value Visualizer. It asks the question every tower runs into sooner or later: after construction, City charges and a normal profit, is there enough money left to pay for the land?" },
+  { id: 'learned', vis: 'learned', title: 'What building them taught us', text: "Every number needs a source. If a tool shows a height limit or a price, you should be able to see where it came from and how old it is.\n\nAI is great at writing code fast, but the rules and numbers have to come from real documents, reports and existing towers.\n\nAnd one tool per rule isn't enough. A tower is one design, so the checks need to talk to each other." },
+  { id: 'plan', vis: 'plan', title: 'Assignment 2: one workbench', text: "So now we're building a workbench that links the tools a designer already uses through one project file. That file keeps the units, coordinates, sources and decisions together, so nothing gets re-typed.\n\nThree pieces exist already: Vista's city model, the massing and planning limits from the Downtown Massing Tool, and the protected views. Next we want sun, wind and rain, code and brief checks, precedent towers to compare against, and diagrams you can pin on a board.\n\nThe workbench won't make the call for you. Every result says which rule it comes from and how sure it is, and when it can't know, it says so. You compare the options, pick one and write down why." },
+  { id: 'users', vis: 'users', title: "Who it's for, and how you can help", text: "We're building it first for people entering the Vancouver Tall Challenge, which mostly means our classmates. We'd also love to hear from anyone at a Vancouver firm who designs high-rises, since you know where the process really gets stuck.\n\nTry the tools on your own scheme, then fill in the feedback form. We log every response along with what we changed because of it." },
+];
+const MILESTONES = [
+  ['2026-10-06', 'Tue Oct 6', 'Phase 2 launch: workflow and case-study methods'],
+  ['2026-10-20', 'Tue Oct 20', 'SuperTall Studio presentation: tools shown, feedback opened'],
+  ['2026-10-23', 'Fri Oct 23', 'Mid review: diagrams, pitch, 150-word proposal, first attempt'],
+  ['2026-11-06', 'Fri Nov 6', 'User matched: at least one confirmed user'],
+  ['2026-11-12', 'by Nov 12–16', 'User session 1: the user tries the working core'],
+  ['2026-11-13', 'Nov 13 / 17', 'Peer review 1: working core, end to end on a real input'],
+  ['2026-11-27', 'Fri Nov 27', 'Peer review 2 (handover) and user session 2 with tool v1'],
+  ['2026-12-03', 'by Thu Dec 3', 'User session 3: the near-final tool'],
+  ['2026-12-10', 'Thu Dec 10', 'Final review: every tool runs live'],
+];
+let projText = {}; let editable = false;
+/* About us visuals: static markup written for this page */
+function frag(html) { const d = document.createElement('div'); d.className = 'pvis'; d.innerHTML = html; return d; }
+const VISUALS = {
+  problem() {
+    const docs = [
+      [20, 26, 'Density (FSR)', 'Zoning By-law, Downtown ODP'], [20, 138, 'Height and views', 'Public Views Guidelines'], [20, 250, 'Floor plate size', 'Floor plate bulletin'],
+      [430, 26, 'Shadows on parks', 'City shadow-study rules'], [430, 138, 'Building code', 'Vancouver Building By-law'], [430, 250, 'Money', 'Cost guides, City charges'],
+    ];
+    let s = '<svg viewBox="0 0 640 340" role="img" aria-label="One tower in the middle, linked by dashed lines to six separate rule documents">';
+    for (const [x, y] of docs) s += `<path class="pv-link" d="M${x < 300 ? x + 190 : x} ${y + 30} L${x < 300 ? 296 : 344} ${y < 100 ? 110 : y < 200 ? 175 : 245}"/>`;
+    s += '<rect class="pv-tower" x="296" y="62" width="48" height="246" rx="2"/>';
+    for (let y = 74; y < 304; y += 12) s += `<line class="pv-floor" x1="296" x2="344" y1="${y}" y2="${y}"/>`;
+    s += '<line class="pv-ground" x1="250" x2="390" y1="308" y2="308"/>';
+    for (const [x, y, a, b] of docs) s += `<g><rect class="pv-doc" x="${x}" y="${y}" width="190" height="60" rx="6"/><path class="pv-fold" d="M${x + 172} ${y} l18 18 h-18 z"/><text class="pv-t" x="${x + 14}" y="${y + 26}">${a}</text><text class="pv-s" x="${x + 14}" y="${y + 45}">${b}</text></g>`;
+    s += '</svg>';
+    return frag(s + '<p class="pcap">Each rule set sits in its own document, and usually in its own tool.</p>');
+  },
+  built() {
+    return frag(`<div class="pshots">
+      <figure><img src="images/about-vista-intro.jpg" alt="Vista start screen" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
+      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool on 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · FSR and height</figcaption></figure>
+      <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer section view" loading="lazy"><figcaption><b>Program Value Visualizer</b> Ruijie · value and land</figcaption></figure></div>`);
+  },
+  learned() {
+    return frag(`<div class="lessons">
+      <div><svg viewBox="0 0 120 70" aria-hidden="true"><text class="ls-num" x="6" y="40">605 m²</text><rect class="ls-tag" x="58" y="48" width="58" height="16" rx="8"/><text class="ls-tagt" x="64" y="60">source · 2025</text></svg><b>Every number needs a source</b></div>
+      <div><svg viewBox="0 0 120 70" aria-hidden="true"><rect class="ls-doc" x="8" y="8" width="38" height="52" rx="3"/><line class="ls-line" x1="15" x2="39" y1="22" y2="22"/><line class="ls-line" x1="15" x2="39" y1="31" y2="31"/><line class="ls-line" x1="15" x2="33" y1="40" y2="40"/><path class="ls-arrow" d="M52 34 h14 m-5 -5 l5 5 l-5 5"/><text class="ls-code" x="72" y="42">{ }</text></svg><b>Rules come from documents, the code from AI</b></div>
+      <div><svg viewBox="0 0 120 70" aria-hidden="true"><rect class="ls-box" x="6" y="8" width="26" height="22" rx="3"/><rect class="ls-box" x="88" y="8" width="26" height="22" rx="3"/><rect class="ls-box" x="47" y="42" width="26" height="22" rx="3"/><path class="ls-arrow" d="M32 19 h56 M19 30 L52 42 M101 30 L68 42"/></svg><b>The checks have to talk to each other</b></div>
+    </div>`);
+  },
+  plan() {
+    const nodes = [
+      ['City model', 'Vista', 1], ['Protected views', 'Vista', 1], ['Massing + limits', 'Downtown Massing Tool', 1], ['Value + City charges', 'Program Value Visualizer', 1],
+      ['Sun, wind, rain', 'next', 0], ['Code + brief checks', 'next', 0], ['Precedent towers', 'next', 0], ['Board diagrams', 'next', 0],
+    ];
+    let s = '<svg viewBox="0 0 640 360" role="img" aria-label="Hub diagram: one project file in the middle, linked to four existing tools and four planned ones">';
+    const cx = 320, cy = 180;
+    nodes.forEach(([a, b, on], i) => {
+      const ang = -Math.PI / 2 + i * (Math.PI * 2 / nodes.length) + Math.PI / 8;
+      const x = cx + Math.cos(ang) * 235, y = cy + Math.sin(ang) * 128;
+      s += `<line class="${on ? 'pl-on' : 'pl-off'}" x1="${cx}" y1="${cy}" x2="${x.toFixed(0)}" y2="${y.toFixed(0)}"/>`;
+      s += `<g><rect class="${on ? 'pn-on' : 'pn-off'}" x="${(x - 72).toFixed(0)}" y="${(y - 22).toFixed(0)}" width="144" height="44" rx="22"/><text class="pn-t" x="${x.toFixed(0)}" y="${(y - 2).toFixed(0)}" text-anchor="middle">${a}</text><text class="pn-s" x="${x.toFixed(0)}" y="${(y + 13).toFixed(0)}" text-anchor="middle">${b}</text></g>`;
+    });
+    s += `<circle class="pc" cx="${cx}" cy="${cy}" r="66"/><text class="pc-t" x="${cx}" y="${cy - 4}" text-anchor="middle">One project file</text><text class="pc-s" x="${cx}" y="${cy + 14}" text-anchor="middle">units, frames</text><text class="pc-s" x="${cx}" y="${cy + 28}" text-anchor="middle">sources, decisions</text>`;
+    s += '</svg>';
+    return frag(s + '<p class="pcap"><span class="key on"></span>built &nbsp; <span class="key off"></span>next</p>');
+  },
+  users() {
+    return frag(`<div class="pshots two">
+      <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy"><figcaption><b>Vancouver Tall Challenge entrants</b> mostly our classmates</figcaption></figure>
+      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers" loading="lazy"><figcaption><b>Vancouver high-rise designers</b> at firms in the city · photo Northwest, CC BY 4.0</figcaption></figure></div>`);
+  },
+};
+function timelineVisual(next) {
+  const t0 = Date.parse('2026-10-01'), t1 = Date.parse('2026-12-14'), W = 900;
+  const X = d => 30 + (Date.parse(d) - t0) / (t1 - t0) * (W - 60);
+  const today = new Date().toISOString().slice(0, 10);
+  let s = `<svg viewBox="0 0 ${W} 190" role="img" aria-label="Timeline from 6 October to 10 December 2026">`;
+  s += `<line class="tl-axis" x1="30" x2="${W - 30}" y1="95" y2="95"/>`;
+  MILESTONES.forEach((m, i) => {
+    const x = X(m[0]), up = i % 2 === 0, big = /review|Final/i.test(m[2]);
+    s += `<line class="tl-stem" x1="${x}" x2="${x}" y1="95" y2="${up ? 62 : 128}"/><circle class="${m === next ? 'tl-next' : big ? 'tl-big' : 'tl-dot'}" cx="${x}" cy="95" r="${big ? 7 : 5}"/>`;
+    s += `<text class="tl-d" x="${x}" y="${up ? 40 : 150}" text-anchor="middle">${m[1]}</text><text class="tl-l" x="${x}" y="${up ? 55 : 165}" text-anchor="middle">${m[2].split(':')[0].replace(/\(.*\)/, '').trim()}</text>`;
+  });
+  if (today >= '2026-10-01' && today <= '2026-12-14') { const x = X(today); s += `<line class="tl-today" x1="${x}" x2="${x}" y1="70" y2="120"/><text class="tl-tt" x="${x + 4}" y="118">today</text>`; }
+  return s + '</svg>';
+}
+function renderProject() {
+  const nav = $('#projNav'), body = $('#projBody'); nav.replaceChildren(); body.replaceChildren();
+  body.append(el('div', { class: 'pair' },
+    el('div', { class: 'person' }, el('h3', { text: 'Ruijie Liu' }), el('span', { class: 'small muted', text: 'Vista · Program Value Visualizer · the workbench hub and its project file' })),
+    el('div', { class: 'person' }, el('h3', { text: 'Sinnie Choi' }), el('span', { class: 'small muted', text: 'Downtown Massing Tool · massing and planning limits' }))));
+  for (const s of SECTIONS) {
+    nav.append(el('a', { href: '#project', text: s.title.split(':')[0], onclick: e => { e.preventDefault(); document.getElementById('p-' + s.id).scrollIntoView({ block: 'start' }); } }));
+    const txt = projText[s.id] ?? s.text;
+    const textBox = el('div', { class: 'text' }, ...txt.split(/\n\s*\n/).map(p => el('p', { text: p.trim() })));
+    const head = el('div', { class: 'head' }, el('h3', { text: s.title }));
+    const vis = s.vis && VISUALS[s.vis] ? VISUALS[s.vis]() : null;
+    const sec = el('div', { class: 'psec' + (vis ? ' has-vis' : ''), id: 'p-' + s.id }, el('div', { class: 'ptext' }, head, textBox), vis);
+    if (editable) head.append(el('button', { type: 'button', class: 'edit', text: 'Edit', onclick: () => {
+      const ta = el('textarea', { id: 'edit-' + s.id, 'aria-label': 'Edit ' + s.title }); ta.value = txt;
+      const msg = el('span', { class: 'small muted' });
+      const bar = el('div', { class: 'nav' },
+        el('button', { type: 'button', class: 'primary', text: 'Save', onclick: async () => { try { await db.doc('project/content').set({ ...projText, [s.id]: ta.value }); projText[s.id] = ta.value; renderProject(); } catch (e) { msg.textContent = 'Could not save. Check you have Editor access.'; } } }),
+        el('button', { type: 'button', text: 'Cancel', onclick: renderProject }),
+        projText[s.id] != null ? el('button', { type: 'button', text: 'Reset to original', onclick: async () => { const n = { ...projText }; delete n[s.id]; try { await db.doc('project/content').set(n); projText = n; renderProject(); } catch (e) { msg.textContent = 'Could not save.'; } } }) : null, msg);
+      textBox.replaceWith(el('div', { class: 'text' }, ta, bar)); ta.focus();
+    } }));
+    body.append(sec);
+  }
+  nav.append(el('a', { href: '#project', text: 'Timeline', onclick: e => { e.preventDefault(); $('#p-timeline').scrollIntoView({ block: 'start' }); } }));
+  const today = new Date().toISOString().slice(0, 10);
+  const next = MILESTONES.find(m => m[0] >= today);
+  body.append(el('div', { class: 'psec', id: 'p-timeline' }, el('h3', { text: 'Timeline' }),
+    frag(timelineVisual(next)),
+    el('details', { class: 'more' }, el('summary', { text: 'All dates as a table' }), el('div', { class: 'timeline' }, el('table', {}, el('thead', {}, el('tr', {}, el('th', { text: 'Date' }), el('th', { text: 'Milestone' }))),
+      el('tbody', {}, ...MILESTONES.map(m => el('tr', { class: m === next ? 'now' : '' }, el('td', { text: m[1] }), el('td', { text: m[2] + (m === next ? '  · next' : '') }))))))),
+    el('p', { class: 'small muted', text: 'From the ARCH 540 Assignment 2 brief. Peer reviews and the final review are in LRS 211; the mid review is in LRS 309.' })));
+}
+/* ---------- research tab ---------- */
+const PAINS = [
+  ['a', 'Rules change', 'Authority and dates. City contributions changed on 30 Sep 2026 and new design guidelines start on 27 Oct 2026. A study is only as good as the date of its rules.', '2, 3a–3e, 7, 9, 10'],
+  ['b', 'Reasons get lost', 'Iteration. Options come and go across rounds, and why one was dropped is rarely written down.', '1, 4–8, 10'],
+  ['c', 'Options narrow early', 'Teams settle on a few forms before the rules are fully tested.', '4–6'],
+  ['d', 'Files lose meaning', 'Semantic transfer. Moving geometry between tools drops units, coordinate frames and IDs.', '2–5, 9'],
+  ['e', 'Versions drift', 'Each consultant may be working on a different version of the tower.', '4–5, 8–9'],
+  ['f', 'False certainty', 'Geometry can be computed; City discretion cannot. A green check is not an approval.', '3a–3e, 5–7, 10'],
+  ['g', 'Who owns it?', 'At each hand-over it is unclear who is responsible for a result. (Our inference, to test with users.)', '6–9'],
+];
+const STEPS_T = [
+  ['1 Brief', 'Owner, architect', 'Goals → criteria and open questions', 'Code structures; people set values'],
+  ['2 Site truth', 'Architect, surveyor, planner', 'Title, survey, context → one dated, located record', 'Code validates; professionals certify'],
+  ['3a Views', 'Tool', 'Tower top vs protected view planes, in one height datum', 'Code intersects; City judges'],
+  ['3b Solar', 'Tool', 'Shadow on protected parks at set dates and times', 'Code casts; people judge'],
+  ['3c Floorplate', 'Tool', 'Plate area vs City benchmarks (generally 510–700 m²)', 'Code measures; City applies'],
+  ['3d Separation', 'Tool', 'Distance between tower faces (24.4 m residential)', 'Code measures; planner applies'],
+  ['3e FSR', 'Tool', 'Floor area ÷ site area, on a stated basis', 'Code sums; City permits'],
+  ['4 Options', 'Architect', 'Massing families and versions', 'Tool varies; architect authors'],
+  ['5 Studies', 'Consultants', 'Structure, energy, cost → warnings', 'Tools calculate; specialists validate'],
+  ['6 Compare', 'Team', 'Results → shortlist or reframe', 'Code aligns; people decide'],
+  ['7 City enquiry', 'Applicant, City', 'Proposal → advice', 'City interprets'],
+  ['8 Freeze', 'Team', 'Chosen option → frozen version', 'Code detects change; people accept risk'],
+  ['9 Submit', 'Consultants', 'Frozen version → coordinated package', 'Code checks format; architect owns'],
+  ['10 Decide', 'City, public, panels', 'Package → decision or conditions', 'Institutions decide'],
+];
+const EXT = [
+  ['Autodesk Forma', 'Site context, massing, areas and quick environmental studies in one loop, with Revit exchange.', 'Set the site, draw or import massing, analyse, compare, export.', 'One clear site–massing–environment loop.', "Cannot complete an environmental impact analysis alone. Vancouver view, floorplate and permit logic not verified."],
+  ['Rhino + Grasshopper + Ladybug + Speckle', 'Geometry, scripted logic, climate studies and versioned exchange.', 'Write and debug a script graph, run analyses, publish versions.', 'Anything can be built and inspected.', 'A valid model is not a valid policy. Needs scripting skill; Speckle connector is Windows-only for Rhino 7/8.'],
+  ['TestFit', 'Fast test-fits: typology, cores, parking, yield and pro forma.', 'Define the site and goals, solve, filter, export.', 'Direct feedback from layout to yield to money.', 'Local zoning depends on a vendor data layer; Vancouver coverage not verified. Cannot replace City discretion.'],
+];
+const GATES = [
+  ['G1', 'Brief', 'The team sets purpose, success and acceptable risk.'],
+  ['G2', 'Applies?', 'An architect or planner confirms which rule and which version applies.'],
+  ['G3', 'Assumptions', 'Specialists own structure, code, environment and cost assumptions.'],
+  ['G4', 'Option space', 'The architect changes the rules, goals and weights that generate options.'],
+  ['G5', 'Selection', 'The team chooses an option and records the trade-offs.'],
+  ['G6', 'Freeze', 'The accountable team accepts a version and its risks.'],
+  ['G7', 'Submit', 'The architect submits; the City or institution decides.'],
+];
+const CASES = [
+  [47, 'Typical', 'Option A through every station, with the four real tool exports: height 282.4 m, 68 floors, plate 740 m².'],
+  [11, 'Boundary', 'Option B with 19,800 m² of light wells: net area fails, gross passes, so the tool asks a person to choose.'],
+  [7, 'Missing info', 'Files without units or frame, invalid JSON, feet, a compliance request: it stops with CANNOT DETERMINE.'],
+  [1, 'Repeat run', 'Option C computed three times gives identical numbers.'],
+  [8, 'Save & reopen', 'Export the project, reload, reopen: weights, decisions and geometry come back intact.'],
+  [2, 'Wrong tag', 'A 204 m, 50-storey file tagged as option A triggers a DIFFERENT DESIGN warning.'],
+  [3, 'New input', 'A new CSV stack model builds a project; an off-site box stops the build.'],
+  [4, 'Economics', 'Favourable ≥ central ≥ adverse scenarios hold for every option.'],
+  [6, 'Compare', 'No option is called best until a person sets a weight; no composite score.'],
+];
+(function research() {
+  const dgA = document.getElementById('dgA');
+  const info = $('#painInfo');
+  const chipsEl = $('#painChips');
+  for (const [k, t, d, steps] of PAINS) {
+    const b = el('button', { type: 'button', class: 'chip pain-c', 'aria-pressed': 'false' }, k, el('small', { text: t }));
+    b.addEventListener('click', () => {
+      const on = b.getAttribute('aria-pressed') !== 'true';
+      chipsEl.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', 'false'));
+      dgA.classList.toggle('filter', on);
+      dgA.querySelectorAll('.node').forEach(n => n.classList.toggle('on', on && (n.dataset.p || '').split(',').includes(k)));
+      if (on) { b.setAttribute('aria-pressed', 'true'); info.replaceChildren(el('b', { text: `${k} · ${t}` }), el('div', { text: d }), el('div', { class: 'small muted', text: 'Steps affected: ' + steps })); }
+      else info.replaceChildren(el('span', { class: 'muted', text: 'Seven pain points, a to g. Each one marks steps in the diagram above.' }));
+    });
+    chipsEl.append(b);
+  }
+  $('#stepTable').append(el('thead', {}, el('tr', {}, ...['Step', 'Who', 'What happens', 'Code vs judgment'].map(h => el('th', { text: h })))),
+    el('tbody', {}, ...STEPS_T.map(r => el('tr', {}, ...r.map((c, i) => el('td', i === 0 ? {} : { text: c }, i === 0 ? el('b', { text: c }) : null))))));
+  for (const [n, does, how, well, stops] of EXT) {
+    $('#extTools').append(el('details', {}, el('summary', {}, el('b', { text: n }), el('span', { class: 'stopline', text: 'Stops: ' + stops.split('.')[0] + '.' }), el('span', { class: 'more-l', text: 'More' })),
+      el('dl', {}, el('dt', { text: 'Does' }), el('dd', { text: does }), el('dt', { text: 'How it is used' }), el('dd', { text: how }), el('dt', { text: 'Does well' }), el('dd', { text: well }), el('dt', { text: 'Where it stops' }), el('dd', { text: stops }))));
+  }
+  $('#extTools').append(el('p', { class: 'small muted', style: 'grid-column:1/-1', text: 'Tool functions are vendor claims, checked against vendor documentation; none proves Vancouver compliance.' }));
+  const gi = $('#gateInfo');
+  for (const [g, t, d] of GATES) {
+    const b = el('button', { type: 'button', 'aria-pressed': 'false' }, el('b', { text: g }), el('span', { text: t }));
+    b.addEventListener('click', () => { $('#gateTrack').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); gi.replaceChildren(el('b', { text: `${g} · ${t}` }), el('div', { text: d })); });
+    $('#gateTrack').append(b);
+  }
+  const ci = $('#caseInfo');
+  for (const [n, t, d] of CASES) {
+    const b = el('button', { type: 'button', 'aria-pressed': 'false', 'aria-label': `${t}: ${n} checks`, style: `flex:${n}`, title: `${t} · ${n}` }, n >= 3 ? String(n) : '');
+    b.addEventListener('click', () => { $('#caseBar').querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); ci.replaceChildren(el('b', { text: `${t} · ${n} checks · all passed` }), el('div', { text: d })); });
+    $('#caseBar').append(b);
+  }
+})();
+
+renderProject();
+render();
+
+(async () => {
+  if (!window.claude?.use || IS_PUBLIC) return;
+  try {
+    [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+    myId = user ? await user.id().catch(() => null) : null;
+    canWrite = user?.can ? await Promise.resolve(user.can('data.write')).catch(() => null) : null;
+    if (db) {
+      try { const d = await db.doc('project/content').get(); if (d.exists) { projText = d.data() || {}; } } catch (e) {}
+      editable = !!(await user?.canEdit?.().catch(() => false));
+      $('#editHint').hidden = !editable;
+      renderProject();
+      if (editable) { $('#resp').hidden = false; loadResponses(); }
+    }
+  } catch (e) { db = null; }
+})();
+</script>
+</body></html>
