@@ -1,4 +1,6 @@
 <title>Original Website</title>
+<script>/* gate: a plain visit (or #tour, #join, #project) shows only the landing until you enter; a deep link to another tab skips it */
+if (!/^#(research|tools|feedback)$/.test(location.hash)) document.documentElement.classList.add('gated');</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2222%22%20fill%3D%22%231f5f8b%22/%3E%3Crect%20x%3D%2227%22%20y%3D%2272%22%20width%3D%2246%22%20height%3D%2210%22%20fill%3D%22%23c9d8e4%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2258%22%20fill%3D%22%23f6f5f2%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2241%22%20width%3D%2220%22%20height%3D%224%22%20fill%3D%22%23eda100%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -50,7 +52,7 @@ header.top { padding-block: 40px 26px; display: flex; flex-direction: column; ga
 .credit b { font-weight: 600; color: var(--ink); }
 
 /* tabs */
-nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line); }
+nav.tabs { position: sticky; /* also the frame for .present-btn */ top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line); }
 nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
 nav.tabs button { font: 600 15px var(--display); background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); padding: 14px 12px 11px; cursor: pointer; white-space: nowrap; }
 nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--signal); }
@@ -239,7 +241,7 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 .pshots.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .pshots figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
 .pshots img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line); display: block; max-width: 100%; }
-.pshots.two img { aspect-ratio: 4/3; object-position: center; }
+.pshots.two img, .pshots.wide img { aspect-ratio: 4/3; object-position: center; }
 .pshots figcaption { font-size: 12.5px; color: var(--muted); } .pshots figcaption b { display: block; color: var(--ink); font-size: 14px; }
 .lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .lessons > div { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -324,7 +326,7 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 #tdtC .tdt-library ~ text, #tdtC .tdt-library ~ g text { --halo: var(--ground); }
 /* D: who does what */
 #v2D svg { min-width: 980px; max-width: min(1180px, calc((100vh - 300px) * 1.65)); max-width: min(1180px, calc((100svh - 300px) * 1.65)); margin: 0 auto; }
-#v2D .v2-lab { font-size: 19px; } #v2D .v2-cap { font-size: 14px; } #v2D .v2-num { font-size: 15px; }
+#v2D .v2-lab { font-size: 15px; } #v2D .v2-cap { font-size: 14px; } #v2D .v2-num { font-size: 15px; } #v2D .v2-elab { font-size: 14px; } #v2D .v2-elab2 { font-size: 12.5px; }
 .v2-dedge { stroke: var(--ink); stroke-width: 2; fill: none; }
 .v2-hitline { stroke: transparent; stroke-width: 24; fill: none; }
 .v2-elab { fill: var(--ink); font: 600 15px var(--body); } .v2-elab2 { fill: var(--muted); font: 500 13.5px var(--body); }
@@ -352,12 +354,9 @@ a.img-link:hover img { filter: brightness(.96); }
 .gallery a.img-link { height: 100%; } .tool .shot a.img-link { height: 100%; }
 
 /* image bands */
-.gallery { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .gallery figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; background: var(--sheet); border: 1px solid var(--line); min-width: 0; }
-.gallery figure:first-child { grid-row: span 2; }
-.gallery figure:last-child { grid-column: span 2; }
 .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: 100%; aspect-ratio: 4/3; }
-.gallery figure:first-child img { aspect-ratio: auto; min-height: 100%; }
 .gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 12px 10px; color: #fbfcfb; font-size: 13.5px; background: linear-gradient(transparent, rgba(10,18,22,.82)); }
 .gallery figcaption b { display: block; font: 600 16px var(--display); }
 .shelf { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: 14px; overflow-x: auto; padding: 6px 2px 10px; }
@@ -370,7 +369,7 @@ a.img-link:hover img { filter: brightness(.96); }
 .band-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .band-h h3 { font-size: 20px; }
 .tool .shot { margin: -18px -18px 4px; height: 170px; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--ground); }
-.tool .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .4s; max-width: 100%; }
+.tool .shot img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform .4s; max-width: 100%; }
 .tool:hover .shot img { transform: scale(1.04); }
 .fb-banner { position: relative; border-radius: 14px; overflow: hidden; min-height: 180px; display: flex; align-items: flex-end; }
 .fb-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -381,7 +380,7 @@ a.img-link:hover img { filter: brightness(.96); }
 .attempt-shot { margin: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .attempt-shot img { width: 100%; display: block; max-width: 100%; }
 .attempt-shot figcaption { font-size: 12.5px; color: var(--muted); padding: 6px 10px; background: var(--sheet); }
-@media (max-width: 720px) { .gallery { grid-template-columns: 1fr 1fr; } .gallery figure:first-child { grid-column: span 2; grid-row: auto; } }
+@media (max-width: 720px) { .gallery { grid-template-columns: 1fr 1fr; } }
 
 /* opening sequence, presentation path, join panel */
 .hero-row { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
@@ -508,6 +507,8 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
 /* entering: the camera dives into our building, the page fades through to the site */
 .landing.diving .land-model { transform: scale(13); transition: transform 1.05s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
 .landing.diving .land-title, .landing.diving .land-foot, .landing.diving .land-spot, .landing.diving .land-go, .landing.diving .iso-plate-corners { opacity: 0; transition: opacity .25s; }
+/* gate: while html.gated, the header, tabs, content and footer are not on the page, so the landing is all there is to see or scroll. openGate() lifts it. */
+html.gated :is(#site, nav.tabs, main.wrap, footer.wrap) { display: none !important; }
 /* the dive ends in black, holds a beat, then the site fades up out of it */
 .enter-veil { position: fixed; inset: 0; z-index: 80; pointer-events: none; opacity: 0; background: #05080a; transition: opacity .7s cubic-bezier(.4, 0, .2, 1); }
 .enter-veil.on { opacity: 1; transition: opacity .45s cubic-bezier(.4, 0, .2, 1) .5s; }
@@ -647,14 +648,16 @@ path.tdt-canvas {
   stroke-width: 2.5;
 }
 
-/* Inline symbols use the same plain line weight as the raster pictograms. */
-.tdt-ic {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* The drawn isometric pictograms (ISO_ICONS): ink lines, white faces, like the raster pictograms. */
+/* Matched to the raster pictograms in images/picto: their ink measures #17242c and their line is about 1.8 px on a 360 px
+   drawing, so the stroke here is 0.26 units of the 48-unit symbol and scales with it: near 0.5 px in a large node, a faint
+   hairline in a small one, exactly as the pictograms beside them render. Dark mode uses the colour the pictograms invert to. */
+:root { --picto-ink: #17242c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --picto-ink: #d2dfe7; } }
+:root[data-theme="dark"] { --picto-ink: #d2dfe7; }
+.iso-f { fill: var(--sheet); stroke: var(--picto-ink); stroke-width: .26; stroke-linejoin: round; stroke-linecap: round; }
+.iso-l { fill: none; stroke: var(--picto-ink); stroke-width: .26; stroke-linejoin: round; stroke-linecap: round; }
+.iso-d { stroke-dasharray: 1.2 .9; }
 
 /* ---------- node and role treatments ---------- */
 .tdt-node,
@@ -758,8 +761,7 @@ text.tdt-card-title {
   font: 600 15px var(--display);
 }
 
-.tdt-canvas-title text,
-text.tdt-canvas-title {
+.tdt-canvas-h {
   fill: var(--ink);
   font: 700 19px var(--display);
 }
@@ -909,33 +911,21 @@ text.tdt-badge.tdt-designer-b {
   stroke-width: 1.8;
 }
 
-/* ---------- figure-specific type scale ---------- */
-#tdtLoop .v2-cap { font-size: 14px; }
-#tdtLoop .v2-num { font-size: 15px; }
-#tdtLoop .v2-lab { font-size: 16px; }
-#tdtLoop .v2-hubt { font-size: 20px; }
-
-#tdtWhy .v2-cap { font-size: 14px; }
-#tdtWhy .v2-num { font-size: 14px; }
-#tdtWhy .v2-lab { font-size: 16px; }
-#tdtWhy .v2-hubt { font-size: 19px; }
-
-#tdtOpen .v2-cap { font-size: 14px; }
-#tdtOpen .v2-num { font-size: 14px; }
-#tdtOpen .v2-lab { font-size: 16px; }
-#tdtOpen .v2-hubt { font-size: 19px; }
-
-#tdtA .v2-cap { font-size: 13px; }
-#tdtA .v2-num { font-size: 13px; }
-#tdtA .v2-lab { font-size: 14px; }
-#tdtA .v2-hubt { font-size: 19px; }
-
-#tdtC .v2-cap { font-size: 13px; }
-#tdtC .v2-num { font-size: 13px; }
-#tdtC .v2-lab { font-size: 14px; }
-#tdtC .v2-hubt { font-size: 18px; }
-#tdtC .tdt-card-title { font-size: 15px; }
-#tdtC .tdt-note { font-size: 13px; }
+/* ---------- one type scale for every chapter 4 figure ----------
+   Diagrams 1 and 2 draw on a 2040-wide canvas shown at about two thirds, so their labels land at about 13 px,
+   captions at 12 px. These figures draw on a 1240-wide canvas shown at about three quarters (the two short
+   ones are capped to the same width below), so the same rendered sizes need these canvas sizes. */
+#tdtWhy svg, #tdtOpen svg { max-width: 1000px; margin: 0 auto; }
+.v2fig.tdt .v2-cap { font-size: 15.5px; }
+.v2fig.tdt .v2-num { font-size: 16.5px; }
+.v2fig.tdt .v2-lab { font-size: 17px; }
+.v2fig.tdt .v2-hubt { font-size: 20px; }
+.v2fig.tdt .tdt-card-title { font-size: 17px; }
+.v2fig.tdt .tdt-note, .v2fig.tdt .tdt-small, .v2fig.tdt .tdt-mono,
+.v2fig.tdt .tdt-role-legend text, .v2fig.tdt .tdt-entry text, .v2fig.tdt .tdt-legend-button text { font-size: 15.5px; }
+.v2fig.tdt .tdt-stop text { font-size: 17px; }
+.v2fig.tdt .tdt-canvas-h { font-size: 20px; }
+.v2fig.tdt .tdt-switch text, .v2fig.tdt .tdt-switch-on text, .v2fig.tdt .tdt-badge text { font-size: 14.5px; }
 
 @media (hover: hover) {
   .v2host [role="button"]:hover .v2-cbg,
@@ -1876,14 +1866,19 @@ const SPRING = {"stagger":0.035,"stiffness":64,"damping":14.2};
 const SITE_PLAN = {"x":76,"y":77,"w":14,"d":14,"r":1.4}, POD_H = 6, STUB_H = 6, TOWER_H = 89, FLOOR_M = 3.2;
 const stage = document.querySelector(".iso-stage"), svg = stage.querySelector("svg");
 const propEls = {}; for (const el of svg.querySelectorAll("[data-prop-tower] [data-pp]")) propEls[el.dataset.pp] = el;
+const BLOCKS = 16, BLOCK_U = (TOWER_H - STUB_H) / BLOCKS;   // the tower stacks up in sixteen blocks of about four floors (12 m) rather than extruding
+const RISE_S = 1.7, SINK_S = 0.8;                            // seconds to stack the whole tower, and to take it down
 const grow = { x: 0, v: 0, target: 0, drawn: -1 };
+const blocksUp = () => Math.min(BLOCKS, Math.floor(grow.x * BLOCKS + 1e-6));
 function drawTower() {
-  const h = STUB_H + (TOWER_H - STUB_H) * grow.x;
-  if (Math.abs(h - grow.drawn) < 0.02) return;
+  const n = blocksUp(), h = STUB_H + n * BLOCK_U;
+  if (h === grow.drawn) return;
   grow.drawn = h;
   const q = slabOf(SITE_PLAN, POD_H, h, P, 3, 0);
   propEls.fill.setAttribute("d", q.fill); propEls.top.setAttribute("d", q.top); propEls.outline.setAttribute("d", q.outline);
-  propEls.crease.setAttribute("d", q.crease || "");
+  const lines = [];                                          // a line where each block meets the next, on the faces you can see
+  for (let k = 0; k < n; k++) lines.push(slabOf(SITE_PLAN, POD_H + STUB_H + k * BLOCK_U, 0, P, 3, 0).crease || "");
+  propEls.crease.setAttribute("d", lines.join(""));
   q.shades.forEach((d, i) => propEls["s" + i].setAttribute("d", d || ""));
 }
 const readout = document.querySelector("[data-readout]");
@@ -1898,8 +1893,8 @@ function say() {
   const t = selected ? INFO[selected] : null;
   let text = "downtown · hover a tower";
   if (t && selected === "proposal") {
-    const metres = Math.round((POD_H + STUB_H + (TOWER_H - STUB_H) * grow.x) / 0.42);
-    text = grow.x > 0.995 ? t.name + " · " + t.m + " m · topped out" : "Our building · " + metres + " m of " + t.m + " · rising";
+    const metres = Math.round((POD_H + STUB_H + blocksUp() * BLOCK_U) / 0.42);
+    text = blocksUp() >= BLOCKS ? t.name + " · " + t.m + " m · topped out" : "Our building · " + metres + " m of " + t.m + " · rising";
   } else if (t) text = t.name + " · " + t.m + " m · " + t.year;
   if (readout.textContent !== text) readout.textContent = text;
   if (selected !== lastSaid) { lastSaid = selected; stage.setAttribute("aria-valuetext", t ? t.name + ", " + t.m + " metres, " + t.year + ". " + t.note : "Nothing selected"); }
@@ -1936,10 +1931,10 @@ function tick(now) {
     if (Math.abs(p.target - p.x) < 5e-4 && Math.abs(p.v) < 5e-4 && clock >= p.at) { p.x = p.target; p.v = 0; } else moving = true;
     place(p);
   }
-  // the site's tower: a slower, critically damped rise, so it reads as an extrusion
-  if (calm) { grow.x = grow.target; grow.v = 0; }
-  else for (let s = 0; s < 4; s++) { grow.v += ((grow.target - grow.x) * 10 - grow.v * 6.4) * dt / 4; grow.x += grow.v * dt / 4; }
-  if (Math.abs(grow.target - grow.x) < 5e-4 && Math.abs(grow.v) < 5e-4) { grow.x = grow.target; grow.v = 0; } else moving = true;
+  // the site's tower stacks up block by block at a steady pace, and comes down faster; no spring, so every block lands as a step
+  if (calm) grow.x = grow.target;
+  else { const d = grow.target - grow.x, rate = d > 0 ? 1 / RISE_S : 1 / SINK_S; grow.x += Math.sign(d) * Math.min(Math.abs(d), rate * dt); }
+  if (grow.x !== grow.target) moving = true;
   drawTower();
   if (selected === "proposal") say();
   frame = visible && moving ? requestAnimationFrame(tick) : 0;
@@ -1969,7 +1964,7 @@ say();
   <button type="button" class="land-go" id="landGo" aria-label="Our building. Hold it until it reaches the top, then press Enter to go in."><span class="go-t">Hold</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   <div class="land-title">
     <svg class="land-mark in" style="--d:0" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1f5f8b"/><rect x="27" y="72" width="46" height="10" fill="#c9d8e4"/><rect x="40" y="14" width="20" height="58" fill="#f6f5f2"/><rect x="40" y="41" width="20" height="4" fill="#eda100"/></svg>
-    <h1 class="in" style="--d:1">Tower Design Toolkits</h1>
+    <h1 class="in" style="--d:1">Tower Design Toolkit</h1>
     <p class="in" style="--d:2">Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, fall 2026</p>
   </div>
   <div class="land-foot">
@@ -1985,8 +1980,8 @@ say();
 <header class="top wrap" id="site">
   <div class="hero-row">
     <div class="hero-text">
-      <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkits</p>
-      <p class="lede">Small tools for designing a high-rise in Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
+      <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkit</p>
+      <p class="lede">Toolkit for designing a high-rise in Downtown Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
       <p class="credit">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
     </div>
     <div class="hero-actions">
@@ -2009,6 +2004,7 @@ say();
     <button role="tab" id="tab-tools" aria-controls="tools" aria-selected="false" class="hot"><i>3</i>Try the tools<span class="pulse" aria-hidden="true"></span></button>
     <button role="tab" id="tab-feedback" aria-controls="feedback" aria-selected="false"><i>4</i>Give feedback</button>
   </div>
+  <button type="button" class="present-btn" id="talkBtn" aria-haspopup="dialog" title="The talk as slides: the sections and figures of this site, in the order of the script"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>Present</button>
 </nav>
 
 <main class="wrap">
@@ -2094,21 +2090,21 @@ say();
       <div class="ch-head"><span class="ch-n">4</span><div><h2>How the toolkit runs</h2><p class="muted">Mass it, test it, learn from it: five stages around one shared model, with analysis nodes that every stage can call.</p></div></div>
       <figure class="v2fig tdt" id="rs-next-loop"><div class="v2scroll"><div id="tdtLoop" class="v2host"></div></div>
         <div class="v2info" id="tdtLoopinfo" aria-live="polite"><span class="muted">Tap a stage or an analysis node to see what it does.</span></div>
-        <figcaption><b>Fig 1 · Design loop.</b> Five stages around one shared model. Enter at any stage, move in either direction or jump across, and step out to the drawing set whenever the scheme is ready. The analysis nodes orbit the model and are available to every stage.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig 1 · Design loop.</b> Five stages around one shared model. Enter at any stage, move in either direction or jump across, and step out to the drawing set whenever the scheme is ready. The analysis nodes orbit the model and are available to every stage.</figcaption></figure>
       <figure class="v2fig tdt" id="rs-next-why"><div class="v2scroll"><div id="tdtWhy" class="v2host"></div></div>
         <div class="v2info" id="tdtWhyinfo" aria-live="polite"><span class="muted">Tap a row to compare the two ways of working.</span></div>
-        <figcaption><b>Fig 2 · Why one platform.</b> The research still happens. The difference is where: inside the massing loop while the form is cheap to change, instead of after a handoff, when a bad answer means starting over.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig 2 · Why one platform.</b> The research still happens. The difference is where: inside the massing loop while the form is cheap to change, instead of after a handoff, when a bad answer means starting over.</figcaption></figure>
       <figure class="v2fig tdt" id="rs-next-open"><div class="v2scroll"><div id="tdtOpen" class="v2host"></div></div>
         <div class="v2info" id="tdtOpeninfo" aria-live="polite"><span class="muted">Tap a step in the loop.</span></div>
-        <figcaption><b>Fig 3 · Open-source loop.</b> Tools travel as skills, and new ones come back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig 3 · Open-source loop.</b> Tools travel as skills, and new ones come back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop.</figcaption></figure>
       <details class="more"><summary>Fig 1 developed: two designers, two paths</summary>
         <div class="tdt-dev">
       <figure class="v2fig tdt" id="rs-next-a"><div class="v2scroll"><div id="tdtA" class="v2host"></div></div>
         <div class="v2info" id="tdtAinfo" aria-live="polite"><span class="muted">Tap Designer A or Designer B to follow one path, or tap a point.</span></div>
-        <figcaption><b>Fig A · Constellation.</b> Stages and nodes are fixed points inside one model. The red line is a form-first path, numbered by visit; the blue dashed line is a brief-first path through the same points. Nothing is upstream of anything else.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig A · Constellation.</b> Stages and nodes are fixed points inside one model. The red line is a form-first path, numbered by visit; the blue dashed line is a brief-first path through the same points. Nothing is upstream of anything else.</figcaption></figure>
       <figure class="v2fig tdt" id="rs-next-c"><div class="v2scroll"><div id="tdtC" class="v2host"></div></div>
         <div class="v2info" id="tdtCinfo" aria-live="polite"><span class="muted">Tap a canvas title or a node.</span></div>
-        <figcaption><b>Fig C · Canvas.</b> How it could look: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, blue wires carry the model and dashed red wires are loops back. Both draw from the same library tray.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig C · Canvas.</b> How it could look: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, blue wires carry the model and dashed red wires are loops back. Both draw from the same library tray.</figcaption></figure>
         </div>
       </details>
     </div>
@@ -2171,12 +2167,14 @@ say();
       <p class="muted" id="editHint" hidden>You can edit this page. Use Edit beside a heading; your text is saved for everyone who opens it.</p>
     </div>
     <div class="gallery" aria-label="What we have built so far">
-      <figure><img src="images/about-vista-intro.jpg" alt="Vista opening screen: explore a building in Vancouver's protected views" loading="lazy"><figcaption><b>Vista</b>Ruijie's view-protection tool, Assignment 1</figcaption></figure>
-      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool showing a tower on 1189 Howe Street with FSR over the limit" loading="lazy"><figcaption><b>Downtown Massing Tool</b>Sinnie's massing tool, Assignment 1</figcaption></figure>
-      <figure><img src="images/about-form-studio.jpg" alt="Form Studio: a tower with mega floors and outriggers" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
-      <figure><img src="images/about-rooftop-view.jpg" alt="Vista checking a proposed tower from a rooftop viewpoint" loading="lazy"><figcaption><b>Standing at a viewpoint</b>Vista's rooftop view check</figcaption></figure>
+      <figure><img src="images/tool-vista.jpg" alt="Vista: a proposed 209 m tower among the downtown towers with the mountains behind" loading="lazy"><figcaption><b>Vista</b>Ruijie's view-protection tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/tool-dtmass-report.jpg" alt="Downtown Massing Tool report: the Howe and Davie tower study with its findings" loading="lazy"><figcaption><b>Downtown Massing Tool</b>Sinnie's massing tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer: a tower section beside the verdict and where the money goes" loading="lazy"><figcaption><b>Program Value Visualizer</b>Ruijie's floor-by-floor value tool</figcaption></figure>
+      <figure><img src="images/tool-form.jpg" alt="Form Studio: a tapered diagrid tower with height, width, depth and twist handles" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
+      <figure><img src="images/tool-streetflow.jpg" alt="Street Flow Lab: pedestrian flow heat on the sidewalks around a downtown site" loading="lazy"><figcaption><b>Street Flow Lab</b>Sinnie and Ruijie's street traffic simulation</figcaption></figure>
+      <figure><img src="images/tool-tdt.jpg" alt="Tower Design Toolkit: the node graph of checks beside the massing panel" loading="lazy"><figcaption><b>Tower Design Toolkit</b>Our shared toolkit, Assignment 2</figcaption></figure>
     </div>
-    <div class="band-h"><h3>What we read</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
+    <div class="band-h"><h3>Reference Documents</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
     <div class="shelf" aria-label="Documents and readings">
       <figure><img src="images/doc-vtc-brief.jpg" alt="Cover of the Vancouver Tall Challenge competition conditions" loading="lazy" style="object-fit:cover;object-position:center"><figcaption><b>Vancouver Tall Challenge</b><span>Competition conditions, 2026</span></figcaption></figure>
       <figure><img src="images/doc-a2-brief.jpg" alt="First page of the ARCH 540 Assignment 2 brief" loading="lazy"><figcaption><b>From a Real Workflow to a Working Tool</b><span>ARCH 540 Assignment 2 brief, UBC SALA</span></figcaption></figure>
@@ -2196,7 +2194,7 @@ say();
 </main>
 
 <footer class="wrap">
-  <div>Tower Design Toolkits · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
+  <div>Tower Design Toolkit · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
 </footer>
 
 <div class="join" id="join" hidden role="dialog" aria-modal="true" aria-labelledby="joinTitle">
@@ -2230,36 +2228,49 @@ say();
 <script>
 /* ---------- data ---------- */
 const TOOLS = [
-  { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'Vancouver view protection', by: 'Ruijie Liu', ours: true,
-    url: 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'view cones · sky exposure · pedestrian experience', by: 'Ruijie Liu', ours: true,
+    url: 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
     does: ['Places a proposed tower in a 3D Vancouver built from OpenStreetMap, terrain and shoreline', "Checks it against the City's mapped public view corridors", 'Lets you stand at a viewpoint and look, then export a study report'],
     limit: 'The geometry is approximate, so use it to study views. It can\'t tell you whether a tower complies.',
     worked: ['View cones were clear', '3D city context', 'Standing at a viewpoint', 'The exported report', 'Fast to place a tower'],
     blocked: ['Geometry too approximate', 'Hard to place my tower', 'Unclear what passes or fails', 'Slow to load', 'Missing a viewpoint I need'] },
-  { id: 'dtmass', img: 'images/tool-dtmass.jpg', name: 'Downtown Massing Tool', sub: 'Tower massing against downtown documents', by: 'Sinnie Choi', ours: true,
-    url: 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+  { id: 'dtmass', img: 'images/tool-dtmass-report.jpg', name: 'Downtown Massing Tool', sub: 'massing · building code · compliance', by: 'Sinnie Choi', ours: true,
+    url: 'https://xubynii.github.io/dtmass/',
     does: ['Loads what City data says about a real downtown parcel', 'Push and pull blocks by use: residential, office, retail, parking', 'Checks live against FSR, height and your floor-area target; compare options and export'],
     limit: 'Planning limits come from City documents. Check the current by-law before you rely on a number.',
     worked: ['Real parcel data', 'Live FSR and height check', 'Blocks by use', 'Comparing options', 'The report'],
     blocked: ['Blocks hard to edit', 'My parcel or rule was missing', 'Numbers I could not trace', 'Too simple for a supertall', 'Unclear interface'] },
-  { id: 'pvv', img: 'images/tool-pvv.jpg', name: 'Program Value Visualizer', sub: 'Which floors pay for which', by: 'Ruijie Liu', ours: true,
-    url: 'https://ruijieliu6.github.io/program-value-visualizer/',
-    does: ['Set the programme floor by floor from 112 activity-based programmes', 'See value minus cost and profit on every floor, beside the section', "Verdict on land value, City charges, and the competition's 9.0 FSR non-residential rule"],
-    limit: 'It gives early-design estimates, and every default shows its source, date and grade. It is no substitute for a feasibility study.',
-    worked: ['Floor-by-floor value', 'Sources on every number', 'The verdict', 'The 9.0 FSR check', 'Asking the AI in plain words'],
-    blocked: ['Too many inputs', 'A number I did not trust', 'Finance jargon', 'Missing a programme I need', 'Unclear how to start'] },
-  { id: 'form', img: 'images/about-form-studio.jpg', name: 'Form Studio', sub: 'Shape a tower and export it to Rhino', by: 'Ruijie Liu', ours: true,
-    url: 'https://ruijieliu6.github.io/form-studio/',
-    does: ['Starts from a plan shape (ellipse, rectangle, clover, or one you draw) and lets you drag its taper and twist', 'Choose core and columns, a diagrid or perimeter bracing, then add terraces, a podium or sky bridges', 'Place it on a real downtown parcel and export it to Rhino as a .3dm file'],
-    limit: 'Areas and structure are concept-stage geometry, not a code or structural check. The public copy leaves out the competition base model.',
-    worked: ['Shaping by dragging', 'Plan and profile controls', 'Structural expression', 'Terraces and sky bridges', 'Rhino export'],
-    blocked: ['Hard to get the form I wanted', 'Too many controls', 'Rhino export did not work', 'Missing my site context', 'Unclear what the checks mean'] },
-  { id: 'tdt', img: 'images/tool-tdt.jpg', name: 'Tower Design Toolkit', sub: 'Shape a tower, switch on evaluation nodes, read the evidence', by: 'Ruijie Liu and Sinnie Choi', ours: true,
+  { id: 'tdt', img: 'images/tool-tdt.jpg', name: 'Tower Design Toolkit', sub: 'nodes · design workflow', by: 'Ruijie Liu and Sinnie Choi', ours: true,
     url: 'https://ruijieliu6.github.io/tower-design-toolkit/',
     does: ['Shape a parametric tower on the competition block or in real downtown Vancouver, or import your own massing (.3dm, OBJ, glTF, IFC)', 'Switch on evaluation nodes: program and FSR, view-cone heights, sun and shadow, program value, structure and wind screening, and more', 'Every result shows its source and an evidence flag, from verified to unresolved'],
     limit: 'A study tool for early design: it does not determine compliance, and view-cone heights are estimates. The web version leaves out the competition base model.',
     worked: ['Shaping the tower', 'Evaluation nodes', 'Evidence and sources', 'Real Vancouver context', 'Importing my own massing'],
     blocked: ['Too much at once', 'Slow to load', 'Hard to read the results', 'Import did not work', 'Unclear what the checks mean'] },
+  { id: 'pvv', img: 'images/tool-pvv.jpg', name: 'Program Value Visualizer', sub: 'value · cost · city charges', by: 'Ruijie Liu', ours: true,
+    url: 'https://ruijieliu6.github.io/program-value-visualizer/',
+    does: ['Set the programme floor by floor from 112 activity-based programmes', 'See value minus cost and profit on every floor, beside the section', "Verdict on land value, City charges, and the competition's 9.0 FSR non-residential rule"],
+    limit: 'It gives early-design estimates, and every default shows its source, date and grade. It is no substitute for a feasibility study.',
+    worked: ['Floor-by-floor value', 'Sources on every number', 'The verdict', 'The 9.0 FSR check', 'Asking the AI in plain words'],
+    blocked: ['Too many inputs', 'A number I did not trust', 'Finance jargon', 'Missing a programme I need', 'Unclear how to start'] },
+  { id: 'form', img: 'images/tool-form.jpg', name: 'Form Studio', sub: 'form · structure', by: 'Ruijie Liu', ours: true,
+    url: 'https://ruijieliu6.github.io/form-studio/',
+    does: ['Starts from a plan shape (ellipse, rectangle, clover, or one you draw) and lets you drag its taper and twist', 'Choose core and columns, a diagrid or perimeter bracing, then add terraces, a podium or sky bridges', 'Place it on a real downtown parcel and export it to Rhino as a .3dm file'],
+    limit: 'Areas and structure are concept-stage geometry, not a code or structural check. The public copy leaves out the competition base model.',
+    worked: ['Shaping by dragging', 'Plan and profile controls', 'Structural expression', 'Terraces and sky bridges', 'Rhino export'],
+    blocked: ['Hard to get the form I wanted', 'Too many controls', 'Rhino export did not work', 'Missing my site context', 'Unclear what the checks mean'] },
+  { id: 'streetflow', img: 'images/tool-streetflow.jpg', name: 'Street Flow Lab', sub: 'pedestrians · traffic · streets', by: 'Sinnie Choi and Ruijie Liu', ours: true,
+    url: 'https://github.com/xubynii/street-flow-lab',
+    does: ['Builds the streets, sidewalks, crossings and signals around a real downtown lot from OpenStreetMap and City data', 'Takes a massing with its programme, entrances, parking ramp and loading, or an imported Downtown Massing Tool project', 'Simulates a peak window, today against the project: sidewalk and junction grades, flow heat, who is on the street, and a printable report'],
+    limit: 'A design-stage estimate, not a traffic impact assessment. Trip rates and shares are team assumptions you can edit.',
+    access: 'Runs on your computer: download it from GitHub and open src/index.html in Chrome or Edge.',
+    worked: ['Today against the project', 'Flow heat and grades', 'Entrances and the kerb', 'Who is on the street', 'The report'],
+    blocked: ['Slow to run', 'Numbers I could not trace', 'Hard to set up the building', 'Missing my street or lot', 'Unclear what the grades mean'] },
+  { id: 'sunwind', img: 'images/tool-sunwind.jpg', name: 'Sun & Wind Studio', sub: 'sun · wind · daylight · energy', by: 'Sinnie Choi', ours: true,
+    url: 'https://xubynii.github.io/sun-wind-studio/',
+    does: ['Upload a Rhino massing or shape one, and place it on the competition parcel with its future neighbours', 'Massing phase: new shadow on neighbours and plazas, sun hours per face, pedestrian wind comfort with and without the tower', 'Design development: facade zones and devices, daylight against LEED, natural ventilation, and a monthly energy model against Vancouver targets'],
+    limit: 'Indicative studies with simplified rules in the manner of the standards they cite. Not a Radiance, CFD or EnergyPlus model for a permit or a LEED submission.',
+    worked: ['Shadow on neighbours', 'Wind comfort map', 'Facade zones and devices', 'Daylight and ventilation checks', 'The energy scorecard'],
+    blocked: ['Slow to run', 'My model did not import', 'Numbers I could not trace', 'Too many settings', 'Unclear what the bands mean'] },
 ];
 
 const ROLES = ['Vancouver Tall Challenge entrant', 'Architecture student, not entering', 'Practitioner at a Vancouver firm', 'Instructor or reviewer', 'Other'];
@@ -2493,9 +2504,9 @@ $('#fb').addEventListener('submit', async e => {
     } catch (err) { canWrite = false; }
   }
   if (btn) btn.disabled = false;
-  const box = $('#copyBox'); box.value = 'Tower Design Toolkits feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
+  const box = $('#copyBox'); box.value = 'Tower Design Toolkit feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
   $('#copyWrap').hidden = false;
-  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Tower Design Toolkits feedback';
+  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Tower Design Toolkit feedback';
   $('#gmailLink').href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(MAIL_TO) + '&su=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 6000));
   $('#mailtoLink').href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 1800));
   if (FORM_PREFILL) { $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000))); $('#formSend').hidden = false; }
@@ -2552,7 +2563,7 @@ $('#copyCsv').addEventListener('click', async () => {
 
 /* ---------- project tab ---------- */
 const SECTIONS = [
-  { id: 'who', title: 'Who we are', text: "We're Ruijie Liu and Sinnie Choi, and we're in Xun Liu's ARCH 540 studio at UBC SALA, “Designing the Design”. In this studio we build our own design tools, with AI helping us write the code.\n\nThis term we're working on one question: what would actually help someone design a high-rise in Vancouver?" },
+  { id: 'who', title: 'Who we are', text: "We're Ruijie Liu and Sinnie Choi, and we're in Xun Liu's ARCH 540 studio at UBC SALA, “Designing the Design”. In this studio we build our own design tools, with AI helping us write the code.\n\nThis term we're working on one question: what type of tools would actually help someone design a high-rise in Vancouver?" },
   { id: 'problem', vis: 'problem', title: 'The problem: too many rule books', text: "A Vancouver tower gets checked against a lot of rules at once: density, height and protected views, floor plate size, shadows on parks, the building code and, in the end, money. Each of these lives in a different document, and most of our time went into flipping between them.\n\nThe tools don't share a file either. We kept re-entering the same tower in a view checker, a massing model and a spreadsheet, and converting coordinates by hand each time." },
   { id: 'built', vis: 'built', title: 'What we built first', text: "In Assignment 1 we each built one tool. Sinnie's Downtown Massing Tool loads what the City's data says about a real downtown lot, and as you push and pull blocks it checks them against FSR, height and your floor-area target. Ruijie's Vista puts a proposed tower into a 3D model of Vancouver and checks it against the City's protected view corridors.\n\nThen came the Program Value Visualizer. It asks the question every tower runs into sooner or later: after construction, City charges and a normal profit, is there enough money left to pay for the land?" },
   { id: 'learned', vis: 'learned', title: 'What building them taught us', text: "Every number needs a source. If a tool shows a height limit or a price, you should be able to see where it came from and how old it is.\n\nAI is great at writing code fast, but the rules and numbers have to come from real documents, reports and existing towers.\n\nAnd one tool per rule isn't enough. A tower is one design, so the checks need to talk to each other." },
@@ -2589,9 +2600,9 @@ const VISUALS = {
     return frag(s + '<p class="pcap">Each rule set sits in its own document, and usually in its own tool.</p>');
   },
   built() {
-    return frag(`<div class="pshots">
-      <figure><img src="images/about-vista-intro.jpg" alt="Vista start screen" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
-      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool on 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · FSR and height</figcaption></figure>
+    return frag(`<div class="pshots wide">
+      <figure><img src="images/tool-vista.jpg" alt="Vista: a proposed tower among the downtown towers" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
+      <figure><img src="images/tool-dtmass-report.jpg" alt="Downtown Massing Tool report for 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · building code</figcaption></figure>
       <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer section view" loading="lazy"><figcaption><b>Program Value Visualizer</b> Ruijie · value and land</figcaption></figure></div>`);
   },
   learned() {
@@ -2620,8 +2631,8 @@ const VISUALS = {
   },
   users() {
     return frag(`<div class="pshots two">
-      <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy"><figcaption><b>Vancouver Tall Challenge entrants</b> mostly our classmates</figcaption></figure>
-      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers" loading="lazy"><figcaption><b>Vancouver high-rise designers</b> at firms in the city · photo Northwest, CC BY 4.0</figcaption></figure></div>`);
+      <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy"><figcaption><b>Vancouver Tall Challenge Participants</b></figcaption></figure>
+      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers" loading="lazy"><figcaption><b>Vancouver High-Rise Designers and Stakeholders</b> · photo Northwest, CC BY 4.0</figcaption></figure></div>`);
   },
 };
 function timelineVisual(next) {
@@ -2748,10 +2759,14 @@ const GATES = [
 
 /* clickable pictures: tools open the tool, documents open their source or PDF */
 const IMG_LINKS = {
-  'images/about-vista-intro.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
-  'images/about-rooftop-view.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
-  'images/tool-vista.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
-  'images/tool-dtmass.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+  'images/about-vista-intro.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/about-rooftop-view.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/tool-vista.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/tool-dtmass-report.jpg': 'https://xubynii.github.io/dtmass/',
+  'images/tool-form.jpg': 'https://ruijieliu6.github.io/form-studio/',
+  'images/tool-sunwind.jpg': 'https://xubynii.github.io/sun-wind-studio/',
+  'images/tool-streetflow.jpg': 'https://github.com/xubynii/street-flow-lab',
+  'images/tool-dtmass.jpg': 'https://xubynii.github.io/dtmass/',
   'images/tool-pvv.jpg': 'https://ruijieliu6.github.io/program-value-visualizer/',
   'images/about-form-studio.jpg': 'https://ruijieliu6.github.io/form-studio/',
   'images/tool-tdt.jpg': 'https://ruijieliu6.github.io/tower-design-toolkit/',
@@ -3009,8 +3024,8 @@ function linkImages(root = document) {
   /* ---------- D: who does what (the hand-offs between people, AI, code and tools) ---------- */
   const ROLES_D = {
     you: { name: 'People decide', role: 'you', icon: 'step-compare', x: 250, y: 300, r: 62, ic: 104, list: ['What the brief is and what matters', 'Which option goes forward', 'What is frozen and submitted'] },
-    ai: { name: 'AI can', role: 'ai', icon: 'icon-ai', x: 760, y: 130, r: 62, ic: 104, list: ['Turn what you ask into a structured request', 'Propose a revision within allowed limits', 'Draft an explanation with its sources'] },
-    code: { name: 'Code checks', role: 'code', icon: 'icon-check', x: 760, y: 470, r: 62, ic: 104, list: ['Units, coordinate frame, source date', 'Geometry and arithmetic, recomputed', 'Every number has a citation, or it stops'] },
+    ai: { name: 'AI can', role: 'ai', icon: 'ai', x: 760, y: 130, r: 62, ic: 104, list: ['Turn what you ask into a structured request', 'Propose a revision within allowed limits', 'Draft an explanation with its sources'] },
+    code: { name: 'Code checks', role: 'code', icon: 'check', x: 760, y: 470, r: 62, ic: 104, list: ['Units, coordinate frame, source date', 'Geometry and arithmetic, recomputed', 'Every number has a citation, or it stops'] },
     tool: { name: 'Tools compute', role: 'tool', icon: 'icon-tools', x: 1060, y: 470, r: 50, ic: 84, list: ['Vista, the Downtown Massing Tool, the Program Value Visualizer and others run on the same project file'] },
   };
   // bend: how far the curve's middle sits to the left of its direction of travel (negative = right)
@@ -3072,7 +3087,8 @@ function linkImages(root = document) {
     // the roles
     for (const [k, n] of Object.entries(R)) {
       s += `<g class="v2-dnode v2-cnode ${n.role}" data-k="n:${k}" tabindex="0" role="button" aria-label="${esc(n.name)}">`;
-      s += `<circle class="v2-cbg" cx="${n.x}" cy="${n.y}" r="${n.r}"/><image href="${P(n.icon)}" x="${n.x - n.ic / 2}" y="${n.y - n.ic / 2}" width="${n.ic}" height="${n.ic}" class="v2-pic"/>`;
+      const isoIcon = window.ISO_ICONS && window.ISO_ICONS[n.icon];   // the drawn pictograms, shared with chapter 4
+      s += `<circle class="v2-cbg" cx="${n.x}" cy="${n.y}" r="${n.r}"/>` + (isoIcon ? `<use href="#iso-${n.icon}" x="${n.x - n.ic * 0.6}" y="${n.y - n.ic * 0.6}" width="${n.ic * 1.2}" height="${n.ic * 1.2}"/>` : `<image href="${P(n.icon)}" x="${n.x - n.ic / 2}" y="${n.y - n.ic / 2}" width="${n.ic}" height="${n.ic}" class="v2-pic"/>`);
       const lab = k === 'you' ? [n.x - n.r - 16, n.y + 6, 'end'] : k === 'ai' ? [n.x, n.y - n.r - 16, 'middle'] : [n.x, n.y + n.r + 28, 'middle'];
       s += `<text class="v2-lab ${n.role}" x="${lab[0]}" y="${lab[1]}" text-anchor="${lab[2]}">${esc(n.name)}</text></g>`;
     }
@@ -3146,9 +3162,20 @@ function linkImages(root = document) {
 
 /*/V2DIAGRAMS*/
 /*TDTDIAGRAMS*/
-/* Tower Design Toolkits proposal diagrams, redrawn in the site's v2 diagram language. */
+/* Tower Design Toolkit proposal diagrams, redrawn in the site's v2 diagram language. */
+/*ISOICONS*/
+/* Isometric line pictograms for the diagrams, generated by iso-icons.mjs (scratch) in the style of images/picto/.
+   Each entry is the inner markup of a symbol with viewBox -24 -24 48 48. */
+window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -15.59,0\"/><ellipse class=\"iso-f\" cx=\"1\" cy=\"4\" rx=\"4.5\" ry=\"2\"/><polyline class=\"iso-l\" points=\"0,-17 0,-10\"/><polyline class=\"iso-l\" points=\"2.6,-13.5 2.6,-6.5\"/><polyline class=\"iso-l\" points=\"9.53,-12.5 9.53,-5.5\"/><polyline class=\"iso-l\" points=\"-3.46,-13 -3.46,-6\"/><polyline class=\"iso-l\" points=\"0.87,-9.5 0.87,-2.5\"/><polyline class=\"iso-l\" points=\"7.79,-8.5 7.79,-1.5\"/><polyline class=\"iso-l\" points=\"-9.53,-12.5 -9.53,-5.5\"/><polyline class=\"iso-l\" points=\"0.87,-5.5 0.87,1.5\"/><path class=\"iso-f\" d=\"M-9 -13 c-3 0 -4 -4 -1 -5 c0 -4 6 -5 8 -2 c2 -3 8 -1 7 3 c3 0 3 4 0 4 Z\"/>","traffic":"<polygon class=\"iso-f\" points=\"-7.79,-9.5 16.45,4.5 7.79,9.5 -16.45,-4.5\"/><polyline class=\"iso-l iso-d\" points=\"-11.26,-6.5 11.26,6.5\"/><polygon class=\"iso-f\" points=\"-14.29,-3.75 -7.36,0.25 -7.36,-2.35 -14.29,-6.35\"/><polygon class=\"iso-f\" points=\"-4.33,-1.5 -7.36,0.25 -7.36,-2.35 -4.33,-4.1\"/><polygon class=\"iso-f\" points=\"-11.26,-8.1 -4.33,-4.1 -7.36,-2.35 -14.29,-6.35\"/><polygon class=\"iso-f\" points=\"-12.56,-5.35 -9.09,-3.35 -9.09,-5.35 -12.56,-7.35\"/><polygon class=\"iso-f\" points=\"-6.06,-5.1 -9.09,-3.35 -9.09,-5.35 -6.06,-7.1\"/><polygon class=\"iso-f\" points=\"-9.53,-9.1 -6.06,-7.1 -9.09,-5.35 -12.56,-7.35\"/><polygon class=\"iso-f\" points=\"4.33,1.5 11.26,5.5 11.26,2.9 4.33,-1.1\"/><polygon class=\"iso-f\" points=\"14.29,3.75 11.26,5.5 11.26,2.9 14.29,1.15\"/><polygon class=\"iso-f\" points=\"7.36,-2.85 14.29,1.15 11.26,2.9 4.33,-1.1\"/><polygon class=\"iso-f\" points=\"5.2,-0.6 8.66,1.4 8.66,-0.6 5.2,-2.6\"/><polygon class=\"iso-f\" points=\"11.69,-0.35 8.66,1.4 8.66,-0.6 11.69,-2.35\"/><polygon class=\"iso-f\" points=\"8.23,-4.35 11.69,-2.35 8.66,-0.6 5.2,-2.6\"/>","circulation":"<polygon class=\"iso-f\" points=\"-19.05,0 0,11 0,9 -19.05,-2\"/><polygon class=\"iso-f\" points=\"19.05,0 0,11 0,9 19.05,-2\"/><polygon class=\"iso-f\" points=\"0,-13 19.05,-2 0,9 -19.05,-2\"/><polygon class=\"iso-f\" points=\"5.2,-3 10.39,0 10.39,-2 5.2,-5\"/><polygon class=\"iso-f\" points=\"13.86,-2 10.39,0 10.39,-2 13.86,-4\"/><polygon class=\"iso-f\" points=\"8.66,-7 13.86,-4 10.39,-2 5.2,-5\"/><polygon class=\"iso-f\" points=\"6.06,-4.5 10.39,-2 10.39,-4 6.06,-6.5\"/><polygon class=\"iso-f\" points=\"13.86,-4 10.39,-2 10.39,-4 13.86,-6\"/><polygon class=\"iso-f\" points=\"9.53,-8.5 13.86,-6 10.39,-4 6.06,-6.5\"/><polygon class=\"iso-f\" points=\"6.93,-6 10.39,-4 10.39,-6 6.93,-8\"/><polygon class=\"iso-f\" points=\"13.86,-6 10.39,-4 10.39,-6 13.86,-8\"/><polygon class=\"iso-f\" points=\"10.39,-10 13.86,-8 10.39,-6 6.93,-8\"/><polyline class=\"iso-l iso-d\" points=\"-13.86,-2 -1.73,-9 5.2,-5 -3.46,0 2.6,3.5\"/><polyline class=\"iso-l\" points=\"0.4,3.3 2.6,3.5 1,5.1\"/>","economics":"<polygon class=\"iso-f\" points=\"-3.46,-10 17.32,2 3.46,10 -17.32,-2\"/><polygon class=\"iso-f\" points=\"-10.39,-4 -6.06,-1.5 -6.06,-6.5 -10.39,-9\"/><polygon class=\"iso-f\" points=\"-1.73,-4 -6.06,-1.5 -6.06,-6.5 -1.73,-9\"/><polygon class=\"iso-f\" points=\"-6.06,-11.5 -1.73,-9 -6.06,-6.5 -10.39,-9\"/><polygon class=\"iso-f\" points=\"-4.33,-0.5 0,2 0,-8 -4.33,-10.5\"/><polygon class=\"iso-f\" points=\"4.33,-0.5 0,2 0,-8 4.33,-10.5\"/><polygon class=\"iso-f\" points=\"0,-13 4.33,-10.5 0,-8 -4.33,-10.5\"/><polygon class=\"iso-f\" points=\"1.73,3 6.06,5.5 6.06,-9.5 1.73,-12\"/><polygon class=\"iso-f\" points=\"10.39,3 6.06,5.5 6.06,-9.5 10.39,-12\"/><polygon class=\"iso-f\" points=\"6.06,-14.5 10.39,-12 6.06,-9.5 1.73,-12\"/><polyline class=\"iso-l iso-d\" points=\"-1.3,-13.75 4.76,-15.25 10.83,-16.75\"/>","energy":"<polygon class=\"iso-f\" points=\"-1.73,-11 19.05,1 1.73,11 -19.05,-1\"/><polygon class=\"iso-f\" points=\"-11.26,-0.5 -2.6,4.5 -2.6,-11.5 -11.26,-16.5\"/><polygon class=\"iso-f\" points=\"7.79,-1.5 -2.6,4.5 -2.6,-11.5 7.79,-17.5\"/><polygon class=\"iso-f\" points=\"-0.87,-22.5 7.79,-17.5 -2.6,-11.5 -11.26,-16.5\"/><polygon class=\"iso-f\" points=\"5.64,-14.24 1.31,-11.74 3.47,-8.5 0.44,-6.74 6.07,-2.49 4.77,-7.24 7.37,-8.75\"/>","structure":"<polygon class=\"iso-f\" points=\"-3.46,-10 17.32,2 3.46,10 -17.32,-2\"/><polygon class=\"iso-f\" points=\"-6.93,-4 -5.2,-3 -5.2,-19 -6.93,-20\"/><polygon class=\"iso-f\" points=\"-3.46,-4 -5.2,-3 -5.2,-19 -3.46,-20\"/><polygon class=\"iso-f\" points=\"-5.2,-21 -3.46,-20 -5.2,-19 -6.93,-20\"/><polygon class=\"iso-f\" points=\"5.2,3 6.93,4 6.93,-12 5.2,-13\"/><polygon class=\"iso-f\" points=\"8.66,3 6.93,4 6.93,-12 8.66,-13\"/><polygon class=\"iso-f\" points=\"6.93,-14 8.66,-13 6.93,-12 5.2,-13\"/><polygon class=\"iso-f\" points=\"-6.93,-20 6.93,-12 6.93,-14 -6.93,-22\"/><polygon class=\"iso-f\" points=\"8.66,-13 6.93,-12 6.93,-14 8.66,-15\"/><polygon class=\"iso-f\" points=\"-5.2,-23 8.66,-15 6.93,-14 -6.93,-22\"/><polyline class=\"iso-l\" points=\"-5.2,-2.99 5.19,-12.99\"/><polyline class=\"iso-l\" points=\"-5.2,-18.99 5.19,3.01\"/><polygon class=\"iso-f\" points=\"-6.93,-12 6.93,-4 6.93,-5.2 -6.93,-13.2\"/><polygon class=\"iso-f\" points=\"8.66,-5 6.93,-4 6.93,-5.2 8.66,-6.2\"/><polygon class=\"iso-f\" points=\"-5.2,-14.2 8.66,-6.2 6.93,-5.2 -6.93,-13.2\"/>","code":"<polygon class=\"iso-f\" points=\"0,-12 20.78,0 0,12 -20.78,0\"/><polygon class=\"iso-f\" points=\"-15.59,0 0,9 0,4 -15.59,-5\"/><polygon class=\"iso-f\" points=\"15.59,0 0,9 0,4 15.59,-5\"/><polygon class=\"iso-f\" points=\"0,-14 15.59,-5 0,4 -15.59,-5\"/><polygon class=\"iso-f\" points=\"-10.39,-5 0,1 0,-4 -10.39,-10\"/><polygon class=\"iso-f\" points=\"10.39,-5 0,1 0,-4 10.39,-10\"/><polygon class=\"iso-f\" points=\"0,-16 10.39,-10 0,-4 -10.39,-10\"/><polygon class=\"iso-f\" points=\"-5.2,-10 0,-7 0,-13 -5.2,-16\"/><polygon class=\"iso-f\" points=\"5.2,-10 0,-7 0,-13 5.2,-16\"/><polygon class=\"iso-f\" points=\"0,-19 5.2,-16 0,-13 -5.2,-16\"/><polyline class=\"iso-l iso-d\" points=\"-15.59,0 -15.59,-20 0,-11 0,9\"/><polyline class=\"iso-l iso-d\" points=\"0,-11 15.59,-20 15.59,0\"/>","plus":"<polygon class=\"iso-f iso-d\" points=\"0,-11 19.05,0 0,11 -19.05,0\"/><polygon class=\"iso-f\" points=\"-7.79,2.5 -4.33,4.5 -4.33,1.5 -7.79,-0.5\"/><polygon class=\"iso-f\" points=\"7.79,-2.5 -4.33,4.5 -4.33,1.5 7.79,-5.5\"/><polygon class=\"iso-f\" points=\"4.33,-7.5 7.79,-5.5 -4.33,1.5 -7.79,-0.5\"/><polygon class=\"iso-f\" points=\"-7.79,-2.5 4.33,4.5 4.33,1.5 -7.79,-5.5\"/><polygon class=\"iso-f\" points=\"7.79,2.5 4.33,4.5 4.33,1.5 7.79,-0.5\"/><polygon class=\"iso-f\" points=\"-4.33,-7.5 7.79,-0.5 4.33,1.5 -7.79,-5.5\"/><polygon class=\"iso-f\" points=\"4.33,-7.5 7.79,-5.5 3.46,-3 7.79,-0.5 4.33,1.5 0,-1 -4.33,1.5 -7.79,-0.5 -3.46,-3 -7.79,-5.5 -4.33,-7.5 0,-5\"/>","ai":"<polygon class=\"iso-f\" points=\"-19.05,0 0,11 0,9 -19.05,-2\"/><polygon class=\"iso-f\" points=\"19.05,0 0,11 0,9 19.05,-2\"/><polygon class=\"iso-f\" points=\"0,-13 19.05,-2 0,9 -19.05,-2\"/><polyline class=\"iso-l\" points=\"-14.72,0 -16.89,1.25\"/><polyline class=\"iso-l\" points=\"14.72,0 16.89,1.25\"/><polyline class=\"iso-l\" points=\"-11.26,2 -13.42,3.25\"/><polyline class=\"iso-l\" points=\"11.26,2 13.42,3.25\"/><polyline class=\"iso-l\" points=\"-7.79,4 -9.96,5.25\"/><polyline class=\"iso-l\" points=\"7.79,4 9.96,5.25\"/><polyline class=\"iso-l\" points=\"-4.33,6 -6.5,7.25\"/><polyline class=\"iso-l\" points=\"4.33,6 6.5,7.25\"/><polygon class=\"iso-f\" points=\"-10.39,-2 0,4 0,1 -10.39,-5\"/><polygon class=\"iso-f\" points=\"10.39,-2 0,4 0,1 10.39,-5\"/><polygon class=\"iso-f\" points=\"0,-11 10.39,-5 0,1 -10.39,-5\"/><polygon class=\"iso-f\" points=\"2.6,-6.5 1.73,-5 2.6,-3.5 0,-4 -2.6,-3.5 -1.73,-5 -2.6,-6.5 0,-6\"/><polyline class=\"iso-l\" points=\"0,-17 1,-15 3,-14 1,-13 0,-11 -1,-13 -3,-14 -1,-15 0,-17\"/>","check":"<polygon class=\"iso-f\" points=\"-20.78,0 0,12 0,10.5 -20.78,-1.5\"/><polygon class=\"iso-f\" points=\"20.78,0 0,12 0,10.5 20.78,-1.5\"/><polygon class=\"iso-f\" points=\"0,-13.5 20.78,-1.5 0,10.5 -20.78,-1.5\"/><polygon class=\"iso-f\" points=\"-0.87,-10 10.39,-3.5 -3.46,4.5 -14.72,-2\"/><polygon class=\"iso-f\" points=\"2.6,-9 8.66,-5.5 6.93,-4.5 0.87,-8\"/><polyline class=\"iso-l\" points=\"-2.6,-7 -2.6,-5.5 2.17,-5.75\"/><polyline class=\"iso-l\" points=\"2.17,-4.25 6.06,-2\"/><polyline class=\"iso-l\" points=\"-6.93,-4.5 -6.93,-3 -2.17,-3.25\"/><polyline class=\"iso-l\" points=\"-2.17,-1.75 1.73,0.5\"/><polyline class=\"iso-l\" points=\"-11.26,-2 -11.26,-0.5 -6.5,-0.75\"/><polyline class=\"iso-l\" points=\"-6.5,0.75 -2.6,3\"/><polygon class=\"iso-f\" points=\"0,4.5 3.46,6.5 3.46,4.5 0,2.5\"/><polygon class=\"iso-f\" points=\"6.93,4.5 3.46,6.5 3.46,4.5 6.93,2.5\"/><polygon class=\"iso-f\" points=\"3.46,0.5 6.93,2.5 3.46,4.5 0,2.5\"/><polygon class=\"iso-f\" points=\"1.73,2.5 3.46,3.5 3.46,0.5 1.73,-0.5\"/><polygon class=\"iso-f\" points=\"5.2,2.5 3.46,3.5 3.46,0.5 5.2,-0.5\"/><polygon class=\"iso-f\" points=\"3.46,-1.5 5.2,-0.5 3.46,0.5 1.73,-0.5\"/>","copy-skill":"<polygon class=\"iso-f\" points=\"-19.05,-1 1.73,11 1.73,9.5 -19.05,-2.5\"/><polygon class=\"iso-f\" points=\"19.05,1 1.73,11 1.73,9.5 19.05,-0.5\"/><polygon class=\"iso-f\" points=\"-1.73,-12.5 19.05,-0.5 1.73,9.5 -19.05,-2.5\"/><polygon class=\"iso-f\" points=\"-2.6,-9 7.79,-3 -4.33,4 -14.72,-2\"/><polygon class=\"iso-f\" points=\"-0.87,-10 9.53,-4 -2.6,3 -12.99,-3\"/><polygon class=\"iso-f\" points=\"0.87,-12.5 11.26,-6.5 -0.87,0.5 -11.26,-5.5\"/><polyline class=\"iso-l\" points=\"0,-10 6.06,-6.5\"/><polyline class=\"iso-l\" points=\"-2.6,-8.5 3.46,-5\"/><polyline class=\"iso-l\" points=\"-5.2,-7 0.87,-3.5\"/><polyline class=\"iso-l iso-d\" points=\"-14.72,-1 -14.72,-6.5 -11.26,-4.5\"/>","machine":"<polygon class=\"iso-f\" points=\"-14.72,-2.5 4.33,8.5 4.33,7 -14.72,-4\"/><polygon class=\"iso-f\" points=\"16.45,1.5 4.33,8.5 4.33,7 16.45,0\"/><polygon class=\"iso-f\" points=\"-2.6,-11 16.45,0 4.33,7 -14.72,-4\"/><polyline class=\"iso-l\" points=\"-5.2,-7.5 10.39,1.5\"/><polyline class=\"iso-l\" points=\"-7.79,-6 7.79,3\"/><polyline class=\"iso-l\" points=\"-10.39,-4.5 5.2,4.5\"/><polygon class=\"iso-f\" points=\"-2.6,-11 16.45,0 16.45,-13.5 -2.6,-24.5\"/><polygon class=\"iso-f\" points=\"-0.86,-11.5 14.73,-2.5 14.73,-13 -0.86,-22\"/><polyline class=\"iso-l\" points=\"1.75,-17.01 6.08,-11.51\"/><polyline class=\"iso-l\" points=\"6.08,-11.51 11.28,-11.51\"/><polyline class=\"iso-l\" points=\"6.08,-11.51 11.28,-6.51\"/><circle class=\"iso-f\" cx=\"1.75\" cy=\"-17.01\" r=\"1.1\"/><circle class=\"iso-f\" cx=\"6.08\" cy=\"-11.51\" r=\"1.1\"/><circle class=\"iso-f\" cx=\"11.28\" cy=\"-11.51\" r=\"1.1\"/><circle class=\"iso-f\" cx=\"11.28\" cy=\"-6.51\" r=\"1.1\"/>","teach-agent":"<polygon class=\"iso-f\" points=\"-19.05,0 0,11 0,9.5 -19.05,-1.5\"/><polygon class=\"iso-f\" points=\"19.05,0 0,11 0,9.5 19.05,-1.5\"/><polygon class=\"iso-f\" points=\"0,-12.5 19.05,-1.5 0,9.5 -19.05,-1.5\"/><polygon class=\"iso-f\" points=\"-6.93,-1.5 0,2.5 0,-5.5 -6.93,-9.5\"/><polygon class=\"iso-f\" points=\"6.93,-1.5 0,2.5 0,-5.5 6.93,-9.5\"/><polygon class=\"iso-f\" points=\"0,-13.5 6.93,-9.5 0,-5.5 -6.93,-9.5\"/><polyline class=\"iso-l\" points=\"-5.2,-5.99 -5.2,-3.99\"/><polyline class=\"iso-l\" points=\"-1.74,-3.99 -1.74,-1.99\"/><polygon class=\"iso-f\" points=\"-8,-25 8,-25 8,-17 1,-17 -2,-14 -2,-17 -8,-17\"/><polyline class=\"iso-l\" points=\"-3,-21 3,-21\"/><polyline class=\"iso-l\" points=\"0,-24 0,-18\"/>","library":"<polygon class=\"iso-f\" points=\"-17.32,-2 3.46,10 3.46,8.5 -17.32,-3.5\"/><polygon class=\"iso-f\" points=\"17.32,2 3.46,10 3.46,8.5 17.32,0.5\"/><polygon class=\"iso-f\" points=\"-3.46,-11.5 17.32,0.5 3.46,8.5 -17.32,-3.5\"/><polygon class=\"iso-f\" points=\"-7.79,-7 -2.6,-4 -2.6,-9 -7.79,-12\"/><polygon class=\"iso-f\" points=\"1.73,-6.5 -2.6,-4 -2.6,-9 1.73,-11.5\"/><polygon class=\"iso-f\" points=\"-3.46,-14.5 1.73,-11.5 -2.6,-9 -7.79,-12\"/><polygon class=\"iso-f\" points=\"-13.86,-3.5 -8.66,-0.5 -8.66,-5.5 -13.86,-8.5\"/><polygon class=\"iso-f\" points=\"-4.33,-3 -8.66,-0.5 -8.66,-5.5 -4.33,-8\"/><polygon class=\"iso-f\" points=\"-9.53,-11 -4.33,-8 -8.66,-5.5 -13.86,-8.5\"/><polygon class=\"iso-f\" points=\"-1.73,-3.5 3.46,-0.5 3.46,-5.5 -1.73,-8.5\"/><polygon class=\"iso-f\" points=\"7.79,-3 3.46,-0.5 3.46,-5.5 7.79,-8\"/><polygon class=\"iso-f\" points=\"2.6,-11 7.79,-8 3.46,-5.5 -1.73,-8.5\"/><polygon class=\"iso-f\" points=\"-7.79,0 -2.6,3 -2.6,-2 -7.79,-5\"/><polygon class=\"iso-f\" points=\"1.73,0.5 -2.6,3 -2.6,-2 1.73,-4.5\"/><polygon class=\"iso-f\" points=\"-3.46,-7.5 1.73,-4.5 -2.6,-2 -7.79,-5\"/><polygon class=\"iso-f\" points=\"4.33,0 9.53,3 9.53,-2 4.33,-5\"/><polygon class=\"iso-f\" points=\"13.86,0.5 9.53,3 9.53,-2 13.86,-4.5\"/><polygon class=\"iso-f\" points=\"8.66,-7.5 13.86,-4.5 9.53,-2 4.33,-5\"/><polygon class=\"iso-f\" points=\"-1.73,3.5 3.46,6.5 3.46,1.5 -1.73,-1.5\"/><polygon class=\"iso-f\" points=\"7.79,4 3.46,6.5 3.46,1.5 7.79,-1\"/><polygon class=\"iso-f\" points=\"2.6,-4 7.79,-1 3.46,1.5 -1.73,-1.5\"/>"};
+/*/ISOICONS*/
 (function () {
   'use strict';
+  // the isometric pictograms above live in one hidden svg, so every figure can <use> them
+  if (window.ISO_ICONS && !document.getElementById('iso-icon-defs')) {
+    const holder = document.createElement('div'); holder.id = 'iso-icon-defs'; holder.hidden = true; holder.setAttribute('aria-hidden', 'true');
+    holder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">' + Object.entries(window.ISO_ICONS).map(([k, v]) => `<symbol id="iso-${k}" viewBox="-24 -24 48 48">${v}</symbol>`).join('') + '</svg>';
+    document.body.append(holder);
+  }
 
   const P = n => (window.TDT_PICTO_BASE || 'images/picto/') + n + '.png';
   const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -3221,18 +3248,6 @@ function linkImages(root = document) {
       <marker id="${p}arrow-signal" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" class="tdt-arrow-signal"/></marker>
       <marker id="${p}arrow-harbour" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" class="tdt-arrow-harbour"/></marker>
       <marker id="${p}arrow-stop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M1 1L9 5L1 9Z" class="tdt-arrow-stop"/></marker>
-      <symbol id="${p}rain" viewBox="-24 -24 48 48"><path d="M-17 -2C-17-9-11-14-4-13C0-20 13-18 15-9C21-8 23-3 20 2H-17C-21 1-21-1-17-2M-12 8L-16 17M-2 8L-6 17M8 8L4 17M18 8L14 17"/></symbol>
-      <symbol id="${p}traffic" viewBox="-24 -24 48 48"><path d="M-19-9H13M6-16L13-9L6-2M19 9H-13M-6 2L-13 9L-6 16"/></symbol>
-      <symbol id="${p}circulation" viewBox="-24 -24 48 48"><path d="M2-1A3 3 0 1 1-4-1A8 8 0 1 1 12-1A14 14 0 1 1-16-1A19 19 0 0 1 17-14M12-16L18-14L17-8"/></symbol>
-      <symbol id="${p}economics" viewBox="-24 -24 48 48"><path d="M-20 18H20M-16 18V6H-8V18M-4 18V-5H4V18M8 18V-17H16V18M-18-4L-7-10L1-7L16-19M10-19H16V-13"/></symbol>
-      <symbol id="${p}energy" viewBox="-24 -24 48 48"><path d="M5-22L-14 3H-3L-7 22L15-7H4Z"/></symbol>
-      <symbol id="${p}structure" viewBox="-24 -24 48 48"><path d="M-19-17H19M-19 17H19M-15-17V17M15-17V17M-15-17L15 17M15-17L-15 17M-19 0H19"/></symbol>
-      <symbol id="${p}code" viewBox="-24 -24 48 48"><path d="M-19 20V1H-11V-8H-3V-17H19V20ZM-21 7L8-22M7-22H14V-15"/></symbol>
-      <symbol id="${p}plus" viewBox="-24 -24 48 48"><path d="M-14 0H14M0-14V14"/></symbol>
-      <symbol id="${p}copy-skill" viewBox="-24 -24 48 48"><path d="M-17-14H7V12H-17ZM-8-20H16V6M-11-7H1M-5-13V-1M7 13L12 18L21 7"/></symbol>
-      <symbol id="${p}machine" viewBox="-24 -24 48 48"><path d="M-20-16H20V10H-20ZM-9 18H9M0 10V18M-14-10H8M-14-4H14M-14 2H4"/></symbol>
-      <symbol id="${p}teach-agent" viewBox="-24 -24 48 48"><path d="M-17-14H17V10H4L-5 18V10H-17ZM-8-2H8M0-10V6M15 14L20 19M20 14L15 19"/></symbol>
-      <symbol id="${p}library" viewBox="-24 -24 48 48"><path d="M-20-18H20V18H-20ZM-7-18V18M7-18V18M-20-6H20M-20 7H20M-16-14H-11M-3-2H3M11 12H16"/></symbol>
     </defs>`;
   }
 
@@ -3241,7 +3256,8 @@ function linkImages(root = document) {
   }
 
   function symbolIcon(id, name, x, y, size) {
-    return `<use href="#${id}-${name}" x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" class="tdt-ic"/>`;
+    size *= 1.3;                                   // the drawn pictograms carry more air than the old glyphs
+    return `<use href="#iso-${name}" x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" class="tdt-ic"/>`;
   }
 
   function itemIcon(id, item, x, y, size) {
@@ -3266,7 +3282,7 @@ function linkImages(root = document) {
     const id = 'tdtLoop', W = 1240, H = 820, cx = 520, cy = 385;
     const stages = [
       { ...STAGES[0], x: 235, y: 215, lx: 155, ly: 104, anchor: 'start' },
-      { ...STAGES[1], x: 520, y: 105, lx: 598, ly: 62, anchor: 'start' },   // label beside the circle: there is no room above it
+      { ...STAGES[1], x: 520, y: 105, lx: 598, ly: 40, anchor: 'start' },   // label beside the circle, above Program's label
       { ...STAGES[2], x: 805, y: 215, lx: 885, ly: 104, anchor: 'end' },
       { ...STAGES[3], x: 775, y: 595, lx: 842, ly: 667, anchor: 'end' },
       { ...STAGES[4], x: 265, y: 595, lx: 198, ly: 667, anchor: 'start' },
@@ -3300,7 +3316,7 @@ function linkImages(root = document) {
 
     s += `<circle class="v2-hub" cx="${cx}" cy="${cy}" r="86"/>${pic('icon-engine', cx, cy - 30, 68)}`;
     s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap tdt-inhub" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
-    s += `<g class="tdt-switch" transform="translate(${cx - 71} ${cy + 52})"><rect width="142" height="28" rx="14"/><g class="tdt-switch-on"><rect x="2" y="2" width="66" height="24" rx="12"/><text x="35" y="19" text-anchor="middle">basic</text></g><text x="103" y="19" text-anchor="middle">advanced</text></g>`;
+    s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><text x="40" y="19" text-anchor="middle">basic</text><text x="78" y="19" text-anchor="middle">·</text><text x="122" y="19" text-anchor="middle">advanced</text></g>`;   // neither mode is highlighted: both are available
     s += `<text class="v2-cap" x="${cx}" y="${cy + 106}" text-anchor="middle">reads and writes the model</text>`;
 
     stages.forEach(st => {
@@ -3309,17 +3325,15 @@ function linkImages(root = document) {
       s += `<text class="v2-num" x="${st.lx}" y="${st.ly}" text-anchor="${st.anchor}">${st.n}</text><text class="v2-lab you" x="${st.lx}" y="${st.ly + 22}" text-anchor="${st.anchor}">${esc(st.name)}</text><text class="v2-cap" x="${st.lx}" y="${st.ly + 43}" text-anchor="${st.anchor}">${esc(st.sub)}</text></g>`;
     });
 
-    s += `<g class="tdt-entry"><circle cx="182" cy="177" r="5"/><path d="M186 174Q203 157 222 158"/><text x="172" y="181" text-anchor="end">start here</text><circle cx="420" cy="64" r="5"/><path d="M425 64H466"/><text x="410" y="69" text-anchor="end">or here</text><circle cx="213" cy="653" r="5"/><path d="M218 651Q236 641 248 628"/><text x="151" y="658">or here</text></g>`;
-
     analysis.forEach(a => {
-      const nudge = { your: [0, -18], structure: [0, -16], code: [-8, 0] }[a.k] || [0, 0];   // keep these labels off the spokes
+      const nudge = { your: [-6, 44], structure: [0, -16], code: [-8, 0], view: [6, 46] }[a.k] || [0, 0];   // keep these labels off the spokes
       const tx = a.x + a.ux * 42 + nudge[0], ty = a.y + a.uy * 42 + 5 + nudge[1];
       const anchor = a.ux > 0.28 ? 'start' : a.ux < -0.28 ? 'end' : 'middle';
       s += `<g class="tdt-analysis${a.k === 'your' ? ' tdt-dashed' : ''}" data-key="${a.k}" tabindex="0" role="button" aria-label="Analysis node: ${esc(a.name)}.">`;
       s += `<circle class="v2-hit" cx="${a.x}" cy="${a.y}" r="35"/><circle class="v2-cbg tool" cx="${a.x}" cy="${a.y}" r="28"/>${itemIcon(id, a, a.x, a.y, 38)}<text class="v2-cap" x="${tx}" y="${ty}" text-anchor="${anchor}">${esc(a.name)}</text></g>`;
     });
 
-    s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="855" y="326" text-anchor="middle">exit at any point</text>`;
+    s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="892" y="326" text-anchor="middle">exit at any point</text>`;
     s += `<g class="tdt-output" data-key="output" tabindex="0" role="button" aria-label="Output: drawing set with plans, sections, diagrams and renders."><circle class="v2-hit" cx="${output.x}" cy="${output.y}" r="74"/><circle class="v2-cbg tool" cx="${output.x}" cy="${output.y}" r="${output.r}"/>${pic('step-submit', output.x, output.y, 90)}<text class="v2-num" x="${output.x}" y="${output.y + 88}" text-anchor="middle">OUTPUT</text><text class="v2-lab" x="${output.x}" y="${output.y + 110}" text-anchor="middle">Drawing set</text><text class="v2-cap" x="${output.x}" y="${output.y + 131}" text-anchor="middle">Plans, sections, diagrams, renders</text></g>`;
     s += roleLegend(24, 800) + '</svg>';
     host.innerHTML = s;
@@ -3343,7 +3357,7 @@ function linkImages(root = document) {
   }
 
   function flowNode(id, x, y, role, label, icon, sym, extra) {
-    const iconMarkup = icon ? pic(icon, x, y, 58) : symbolIcon(id, sym, x, y, 34);
+    const iconMarkup = icon ? pic(icon, x, y, 58) : symbolIcon(id, sym, x, y, 50);
     return `<g class="tdt-node ${extra || ''}"><circle class="v2-cbg ${role}" cx="${x}" cy="${y}" r="40"/>${iconMarkup}<text class="v2-lab" x="${x}" y="${y + 61}" text-anchor="middle">${esc(label)}</text></g>`;
   }
 
@@ -3351,7 +3365,7 @@ function linkImages(root = document) {
     const id = 'tdtWhy', W = 1240, H = 450;
     let s = `<svg viewBox="0 -30 ${W} ${H + 30}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
     s += `<g class="tdt-row" data-row="today" tabindex="0" role="button" aria-label="Today: five separate steps can end by starting over."><rect class="tdt-hit" x="12" y="18" width="1216" height="188" rx="10"/>`;
-    s += `<text class="v2-num" x="28" y="40">TODAY</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
+    s += `<text class="v2-lab" x="28" y="42">Today</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
     const top = [
       [135, 'Research', 'step-brief', null, 'you'], [330, 'Model in CAD', 'step-options', null, 'tool'],
       [525, 'Export to analysis', 'icon-documents', null, 'code'], [720, 'Wait for results', 'icon-tools', null, 'tool'],
@@ -3361,9 +3375,9 @@ function linkImages(root = document) {
     top.forEach((n, i) => { s += flowNode(id, n[0], 105, n[4], n[1], n[2], n[3], i === 4 ? 'tdt-stop' : ''); });
     s += `<path class="v2-loop" d="M915 58C760 5 280 5 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="0" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;
 
-    s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-num" x="28" y="246">IN THE LOOP</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
-    const low = [[220, 'Mass', 'step-options', 'you'], [435, 'Analyse', 'icon-tools', 'tool'], [650, 'Learn', 'icon-check', 'code']];
-    low.forEach(n => { s += flowNode(id, n[0], 310, n[3], n[1], n[2], null, ''); });
+    s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-lab" x="28" y="248">In the loop</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
+    const low = [[220, 'Mass', 'step-options', 'you', null], [435, 'Analyse', 'icon-tools', 'tool', null], [650, 'Learn', null, 'code', 'check']];
+    low.forEach(n => { s += flowNode(id, n[0], 310, n[3], n[1], n[2], n[4], ''); });
     s += `<path class="tdt-link" d="M263 310H390" marker-end="url(#${id}-arrow-ink)"/><path class="tdt-link" d="M478 310H605" marker-end="url(#${id}-arrow-ink)"/>`;
     s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="226" text-anchor="middle">Minutes, same model</text>`;
     s += `<path class="tdt-link" d="M695 310H895" marker-end="url(#${id}-arrow-ink)"/>${flowNode(id, 945, 310, 'you', 'Proceed, knowing it works', 'step-submit', null, '')}<text class="v2-cap" x="1120" y="306" text-anchor="middle">one platform, one model,</text><text class="v2-cap" x="1120" y="326" text-anchor="middle">all the nodes</text></g>`;
@@ -3388,10 +3402,11 @@ function linkImages(root = document) {
     { k: 'contribute', name: 'Contribute it back', detail: 'Reviewed, versioned, listed in the node library', sym: 'library', x: 290, y: 315, tx: 226, ty: 285, anchor: 'end' },
   ];
 
-  function twoLineDetail(text, x, y, anchor) {
-    const split = text.length > 47 ? text.lastIndexOf(' ', 47) : -1;
-    if (split < 0) return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}">${esc(text)}</text>`;
-    return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}"><tspan x="${x}" dy="0">${esc(text.slice(0, split))}</tspan><tspan x="${x}" dy="19">${esc(text.slice(split + 1))}</tspan></text>`;
+  function twoLineDetail(text, x, y, anchor) {           // wraps at about 30 characters so the outer labels stay inside the canvas
+    const lines = []; let cur = '';
+    for (const w of text.split(' ')) { if (cur && (cur + ' ' + w).length > 30) { lines.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }
+    if (cur) lines.push(cur);
+    return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}">${lines.map((l, i) => `<tspan x="${x}" dy="${i ? 18 : 0}">${esc(l)}</tspan>`).join('')}</text>`;
   }
 
   function buildOpen(host, info) {
@@ -3478,8 +3493,8 @@ function linkImages(root = document) {
     s += `<path class="tdt-path-a" d="${pathD(visitsA)}" marker-end="url(#${id}-arrow-signal)"/>`;
     Object.entries(A_POINTS).forEach(([k, p]) => { s += pointNode(id, k, p); });
     s += `<g class="tdt-path-badges tdt-path-a-badges">${visitBadges(visitsA)}</g>`;
-    s += `<g class="tdt-legend-button tdt-designer-a" data-path="a" tabindex="0" role="button" aria-label="Show only Designer A's form-first path."><rect class="tdt-hit" x="734" y="24" width="218" height="42" rx="10"/><rect class="tdt-panel-bg" x="740" y="30" width="206" height="30" rx="8"/><path class="tdt-path-a" d="M754 45H792"/><text x="804" y="50">Designer A · form-first</text></g>`;
-    s += `<g class="tdt-legend-button tdt-designer-b" data-path="b" tabindex="0" role="button" aria-label="Show only Designer B's brief-first path."><rect class="tdt-hit" x="958" y="24" width="250" height="42" rx="10"/><rect class="tdt-panel-bg" x="964" y="30" width="238" height="30" rx="8"/><path class="tdt-path-b" d="M978 45H1016"/><text x="1028" y="50">Designer B · brief-first</text></g>`;
+    s += `<g class="tdt-legend-button tdt-designer-a" data-path="a" tabindex="0" role="button" aria-label="Show only Designer A's form-first path."><rect class="tdt-hit" x="700" y="24" width="248" height="42" rx="10"/><rect class="tdt-panel-bg" x="706" y="30" width="236" height="30" rx="8"/><path class="tdt-path-a" d="M720 45H758"/><text x="770" y="50">Designer A · form-first</text></g>`;
+    s += `<g class="tdt-legend-button tdt-designer-b" data-path="b" tabindex="0" role="button" aria-label="Show only Designer B's brief-first path."><rect class="tdt-hit" x="954" y="24" width="256" height="42" rx="10"/><rect class="tdt-panel-bg" x="960" y="30" width="244" height="30" rx="8"/><path class="tdt-path-b" d="M974 45H1012"/><text x="1024" y="50">Designer B · brief-first</text></g>`;
     s += `<text class="v2-cap" x="620" y="772" text-anchor="middle">Nothing in this drawing is upstream of anything else. The numbers belong to the visits, not the stages.</text>`;
     s += roleLegend(24, 794) + '</svg>';
     host.innerHTML = s;
@@ -3496,22 +3511,14 @@ function linkImages(root = document) {
     }, clear, info);
   }
 
-  // a long title wraps onto two lines so it stays inside its card
-  function splitTitle(label) {
-    if (label.length <= 12 || !label.includes(' ')) return [label];
-    const words = label.split(' ');
-    let best = [label], diff = Infinity;
-    for (let i = 1; i < words.length; i++) {
-      const a = words.slice(0, i).join(' '), b = words.slice(i).join(' ');
-      if (Math.abs(a.length - b.length) < diff) { diff = Math.abs(a.length - b.length); best = [a, b]; }
-    }
-    return best;
-  }
   function card(id, x, y, w, h, label, icon, mode) {
-    const lines = [...splitTitle(label).map(l => ['tdt-card-title', l]), ...(mode ? [['v2-cap acc', mode]] : [])];
-    const y0 = y + h / 2 - (lines.length - 1) * 9 + 5;
-    const text = lines.map(([cls, l], i) => `<text class="${cls}" x="${x + 64}" y="${y0 + i * 18}">${esc(l)}</text>`).join('');
-    return `<g class="tdt-stage-card-group"><rect class="tdt-stage-card" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>${pic(icon, x + 34, y + h / 2, 48)}${text}</g>`;
+    // a long title wraps onto two lines so it stays inside its card
+    const cut = label.length > 13 ? label.lastIndexOf(' ', 12) : -1;
+    const lines = cut > 0 ? [label.slice(0, cut), label.slice(cut + 1)] : [label];
+    const cy = y + h / 2, step = 18, top = cy + (mode ? -4 : 5) - (lines.length - 1) * step / 2;
+    const title = `<text class="tdt-card-title" x="${x + 64}" y="${top}">${lines.map((l, i) => `<tspan x="${x + 64}" dy="${i ? step : 0}">${esc(l)}</tspan>`).join('')}</text>`;
+    const modeY = top + (lines.length - 1) * step + 21;
+    return `<g class="tdt-stage-card-group"><rect class="tdt-stage-card" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>${pic(icon, x + 34, cy, 48)}${title}${mode ? `<text class="v2-cap acc" x="${x + 64}" y="${modeY}">${esc(mode)}</text>` : ''}</g>`;
   }
 
   function pill(id, key, label, x, y, w, source) {
@@ -3520,7 +3527,7 @@ function linkImages(root = document) {
   }
 
   function canvasTitle(x, y, w, key, title, subtitle) {
-    return `<g class="tdt-canvas-title" data-title="${key}" tabindex="0" role="button" aria-label="Highlight ${esc(title)}."><rect class="tdt-hit" x="${x - 6}" y="${y - 24}" width="${w}" height="50" rx="8"/><text x="${x}" y="${y}">${esc(title)}</text><text class="v2-cap" x="${x}" y="${y + 20}">${esc(subtitle)}</text></g>`;
+    return `<g class="tdt-canvas-title" data-title="${key}" tabindex="0" role="button" aria-label="Highlight ${esc(title)}."><rect class="tdt-hit" x="${x - 6}" y="${y - 24}" width="${w}" height="50" rx="8"/><text class="tdt-canvas-h" x="${x}" y="${y}">${esc(title)}</text><text class="v2-cap" x="${x}" y="${y + 20}">${esc(subtitle)}</text></g>`;
   }
 
   function buildC(host, info) {
@@ -3538,14 +3545,14 @@ function linkImages(root = document) {
     s += `<path class="tdt-wire" data-wire="economics" d="M805 147H830V193"/><path class="tdt-wire" data-wire="code" d="M805 207H818V207H830"/>`;
     s += `<path class="tdt-wire" data-wire="traffic" d="M805 327H830V382"/><path class="tdt-wire" data-wire="energy" d="M805 387H830"/><path class="tdt-wire" data-wire="structure" d="M805 447H818V417H830"/>`;
     s += `<path class="tdt-wire" d="M1000 202H1020"/><path class="tdt-wire" d="M915 240V365"/><path class="v2-loop" d="M855 365C790 325 800 275 855 240" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="796" y="290" text-anchor="end">re-stack</text>`;
-    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1100 425V500"/>`;
+    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1111 425V500"/>`;
     s += pill(id, 'economics', 'Economics', 655, 130, 150, 'b') + pill(id, 'code', 'Building code', 655, 190, 150, 'b') + pill(id, 'traffic', 'Traffic', 655, 310, 150, 'b') + pill(id, 'energy', 'Energy', 655, 370, 150, 'b') + pill(id, 'structure', 'Structure', 655, 430, 150, 'b');
-    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 165, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 165, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 165, 75, 'Drawing set', 'step-submit', '');
+    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 182, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 182, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 182, 75, 'Drawing set', 'step-submit', '');
     s += `<text class="tdt-note" x="660" y="620">No schematic node yet: added when the numbers close</text></g>`;
 
     s += `<rect class="tdt-library" x="25" y="675" width="1190" height="150" rx="10"/><text class="v2-hubt" x="50" y="705">Node library</text><text class="v2-cap" x="50" y="726">The ten analysis nodes</text>`;
     ANALYSES.forEach((a, i) => {
-      const x = 235 + i * 96, y = 744;
+      const x = 265 + i * 96, y = 744;   // starts clear of the library caption
       s += `<g class="tdt-analysis${a.k === 'your' ? ' tdt-dashed' : ''}"><circle class="v2-cbg tool" cx="${x}" cy="${y}" r="24"/>${itemIcon(id, a, x, y, 31)}<text class="v2-cap" x="${x}" y="${y + 42}" text-anchor="middle">${esc(a.name)}</text></g>`;
     });
     s += roleLegend(24, 856) + '</svg>';
@@ -3674,9 +3681,10 @@ const landing = (() => {
   api.reset = reset;
   return api;
 })();
+function openGate() { document.documentElement.classList.remove('gated'); }
 function diveIn(done) {
   if (diving) return;
-  const toSite = () => window.scrollTo({ top: $('#site').offsetTop, behavior: 'instant' });
+  const toSite = () => { openGate(); window.scrollTo({ top: $('#site').offsetTop, behavior: 'instant' }); };
   if (REDUCE || !landing.ghost) { toSite(); landing.reset(); if (done) done(); return; }
   diving = true;
   const L = $('#landing'), M = L.querySelector('.land-model'), veil = $('#enterVeil');
@@ -3722,7 +3730,7 @@ const TOUR = [
   { p: 2, tab: 'research', el: '#rs-next-open', t: 'An open library', d: 'Copy a tool as a skill, run it yourself, teach your agent, and contribute it back.' },
   { p: 2, tab: 'research', el: '#rs-method', t: 'How this research was made', d: 'Drafted by a GPT model, reviewed by Claude in two rounds. 59 of 60 sources checked.' },
   { p: 3, tab: 'tools', el: '#toolGrid', t: 'Five tools to try', d: 'Vista, Downtown Massing Tool, Program Value Visualizer, Form Studio and the Tower Design Toolkit.' },
-  { p: 3, tab: 'tools', el: '#toolGrid .tool', t: 'Vista checks protected views', d: 'Place a tower and see whether it cuts into a protected view. A study tool, not a compliance test.' },
+  { p: 3, tab: 'tools', el: '#toolGrid .tool', end: true, t: 'Vista checks protected views', d: 'Place a tower and see whether it cuts into a protected view. A study tool, not a compliance test.' },
   { p: 3, tab: 'tools', el: '#toolGrid', t: 'Pick one for five minutes', d: 'Every tool shows where its numbers come from, so you can check them yourself.' },
   { p: 4, tab: 'feedback', el: '#fbHead', t: 'Tell us what you think', d: 'About five minutes, mostly taps. The questions change with how much you trust AI.' },
   { p: 4, tab: 'feedback', el: '#steps', t: 'Four short steps', d: 'You, AI and you, The tools, Reflect and send. You can stay anonymous.' },
@@ -3736,6 +3744,8 @@ function tourScroll(s, el) {
   if (s.top) return window.scrollTo({ top: document.querySelector(s.top).offsetTop, behavior });
   if (!el) return;
   const r = el.getBoundingClientRect(), top = $('nav.tabs').offsetHeight + 10, room = innerHeight - tourBar.offsetHeight - 22 - top;
+  // end: a target taller than the screen shows its bottom (the Open button) just above the bar
+  if (s.end && r.height > room) return window.scrollTo({ top: Math.max(0, scrollY + r.bottom - (innerHeight - tourBar.offsetHeight - 22)), behavior });
   window.scrollTo({ top: Math.max(0, scrollY + r.top - top - (r.height < room ? (room - r.height) / 2 : 0)), behavior });
 }
 function tourLeave(s) {
@@ -3747,6 +3757,7 @@ function tourGo(i) {
   i = Math.max(0, Math.min(TOUR.length - 1, i));
   if (diving) return;
   const s = TOUR[i]; tourLeave(TOUR[tour.i]); tour.i = i;
+  openGate();                                       // every stop is inside the site
   if (s.tab) showTab(s.tab);
   const el = s.el ? document.querySelector(s.el) : null;
   tour.el = s.qr ? null : el;
@@ -3804,7 +3815,7 @@ TOUR_PARTS.forEach((name, p) => {
   $('#tbTrack').append(b);
 });
 // the tour runs inside the site: pressed on the landing, it dives in first
-const onLanding = () => scrollY < $('#site').offsetTop - 4;
+const onLanding = () => document.documentElement.classList.contains('gated') || scrollY < $('#site').offsetTop - 4;
 document.querySelectorAll('[data-tour-start]').forEach(b => b.addEventListener('click', () => (onLanding() ? diveIn(() => tourStart(0)) : tourStart(0))));
 $('#tbNext').addEventListener('click', () => (tour.i === TOUR.length - 1 ? tourEnd() : tourGo(tour.i + 1)));
 $('#tbBack').addEventListener('click', () => tourGo(tour.i - 1));
@@ -3840,5 +3851,192 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
       if (editable) { $('#resp').hidden = false; loadResponses(); }
     }
   } catch (e) { db = null; }
+})();
+</script>
+
+<!-- Presentation mode: the talk as slides, on the page itself. Each slide switches to the right tab, scrolls its section
+     or figure into view and dims everything else, the way the guided tour does, so the context stays around the slide.
+     The page is frozen while presenting: only the slides scroll it. The slides walk About us, How it works and Try the
+     tools in order (PRESENT below); where the presentation script has words for a slide they are the notes, otherwise
+     the notes are the section's own text. Arrow keys or a clicker move between slides, N shows the notes, F asks for
+     full screen, Esc leaves. -->
+<style>
+.present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
+.present-btn svg { width: 15px; height: 15px; }
+@media (max-width: 720px) { .present-btn { display: none; } }
+.pres-top, .pres-foot { position: fixed; left: 0; right: 0; z-index: 72; display: flex; align-items: center; gap: 16px; background: var(--sheet); padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
+.pres-top { top: 0; padding-top: calc(10px + env(safe-area-inset-top, 0px)); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.pres-foot { bottom: 0; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
+.pres-n { font: 600 12px var(--mono); color: var(--muted); min-width: 52px; font-variant-numeric: tabular-nums; }
+.pres-tab { font: 600 11px var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--harbour); white-space: nowrap; }
+.pres-title { font: 600 18px var(--display); letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pres-who { font: 500 13px var(--body); color: var(--muted); white-space: nowrap; }
+.pres-who b { color: var(--signal); font-weight: 600; }
+.pres-clock { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
+.pres-clock.over { color: var(--stop); }
+.pres-foot .grow { flex: 1; }
+.pres-foot button { min-height: 38px; font-size: 14px; }
+.pres-foot .pres-dots { display: flex; gap: 4px; }
+.pres-foot .pres-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: block; }
+.pres-foot .pres-dots i.on { background: var(--harbour); }
+.pres-foot .pres-dots i.tab { margin-left: 6px; }
+.pres-notes { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; z-index: 72; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
+.pres-notes .sect-h { margin-bottom: -4px; }
+.pres-notes p { max-width: none; }
+.pres-notes .cue { color: var(--signal); font-weight: 600; }
+/* frozen: only the slides move the page */
+body.presenting { overflow: hidden; padding-bottom: 80px; }
+body.presenting .tourbar, body.presenting .tourring, body.presenting .ed-pill, body.presenting .join-btn { display: none; }
+/* the spotlight: on the path from the body down to the slide's element, every sibling that is not on the path is dimmed */
+body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(#enterVeil):not(#join) { opacity: .18; transition: opacity var(--t-chrome) var(--ease); }
+body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
+body.presenting [data-pres="on"] { outline: 2px solid var(--harbour); outline-offset: 12px; border-radius: 12px; }
+body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
+</style>
+<div class="pres-top" id="presTop" hidden>
+  <span class="pres-n" id="presN"></span>
+  <span class="pres-tab" id="presTab"></span>
+  <span class="pres-title" id="presTitle"></span>
+  <span class="pres-who" id="presWho"></span>
+  <span class="pres-clock" id="presClock">0:00</span>
+</div>
+<div class="pres-foot" id="presFoot" hidden>
+  <button type="button" id="presPrev">← Back</button>
+  <button type="button" class="primary" id="presNext">Next →</button>
+  <span class="grow"></span>
+  <span class="pres-dots" id="presDots" aria-hidden="true"></span>
+  <span class="grow"></span>
+  <button type="button" id="presNotesBtn" aria-pressed="false">Notes <kbd>N</kbd></button>
+  <button type="button" id="presFull">Full screen <kbd>F</kbd></button>
+  <button type="button" id="presExit">Exit <kbd>Esc</kbd></button>
+</div>
+<div class="pres-notes" id="presNotes" hidden></div>
+<script>
+(() => {
+  const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
+  const S = {   // the presentation script, by section
+    intro1: "For Assignment 2, Ruijie and I decided to continue exploring high-rise design in downtown Vancouver, building on the individual tools we developed in Assignment 1. In our first assignment, we each focused on a specific part of tower design. Ruijie developed Vista, which looks at protected views, while I developed a massing tool that explores programming and zoning constraints.",
+    intro2: "But moving into Assignment 2, we wanted to take this further. Rather than developing another standalone tool, we started thinking about how these tools could work together to support the overall design process. So our main question became: How can we create a more flexible and connected design workflow that allows architects to quickly test ideas, understand constraints, and make decisions without constantly switching between different software?",
+    research1: "We started by researching how high-rise buildings are typically designed, from the initial brief all the way to City review. Especially in the early design stages, architects often want to quickly explore different massing options and understand how they perform in terms of sunlight, views, energy, structure, and building regulations.",
+    research2: "But currently, a lot of these analyses happen separately. You might have to move between multiple software platforms, look through different regulations, and sometimes rebuild the same model just to test another aspect of the design.",
+    research3: "Through mapping this process, we identified several pain points, particularly the lack of connection between tools, the time spent transferring information, and the uncertainty around automated compliance checks. So we started asking ourselves whether the workflow itself could be redesigned, rather than simply making each individual task faster.",
+    tools1: "We also looked at existing tools like Forma, Grasshopper, and TestFit, and mapped where they fit within the architectural design process. They're all powerful in different ways, but what we're interested in is the transition between them.",
+    tools2: "For example, you might generate a massing in one tool, analyze sunlight in another, and then move to a completely different workflow for code or structural analysis. So the opportunity we identified isn't necessarily to invent every analysis tool from scratch, but to create a system where different tools can communicate and become part of one design workflow.",
+    proposal1: "This brings us to our proposal, which we're calling the Tower Design Toolkit. We're looking at the design process through five broad stages: concept and research, form, program, schematic design, and design development. Our idea is to develop a collection of smaller tools, or nodes, that support different parts of this process.",
+    proposal2: "For example, you could start by creating a basic building mass, then connect it to tools that analyze sunlight, views, circulation, energy, structure, or building codes. We're also proposing basic and advanced modelling modes, so users could quickly generate simple massing studies at the beginning, and gradually introduce more complex geometry and detailed analysis as the project develops.",
+    proposal3: "But what's important is that we don't want this workflow to be linear or predetermined. Instead, designers could choose which nodes they want to use, arrange them in different sequences, and go back and forth between analyses as their design develops.",
+    open1: "Another part of our proposal is to make the system open-source and expandable. Ideally, other designers and experts could create their own tool nodes, share them, or use AI agents to help develop new ones that could be contributed to a shared library. So rather than being a single fixed software, we're imagining this as an adaptable system that can grow with its users.",
+    open2: "And eventually, we'd like the same workflow to support the production of basic architectural drawings, diagrams, and renders.",
+    ai1: "Another question we've been exploring is what AI should actually be responsible for in this process. We're not necessarily interested in having AI design a tower automatically. Instead, we're exploring how AI could help users communicate with different tools, interpret requests, or eventually help generate new tool functions.",
+    ai2: "So in our proposed system, AI helps interpret requests, code performs calculations and checks, and designers remain responsible for making decisions. We're also trying to make the results transparent, so that instead of simply giving a pass-or-fail answer, the system can explain what information was used and where it came from. That becomes especially important when we're dealing with building regulations, where automated results still require professional verification.",
+    dev1: "For Assignment 2, our first attempt has been to explore how information from different tools could be brought together and compared. We've developed an initial prototype that can read actual exports from our existing tools, compare tower options using a consistent set of area calculations, and keep a record of the results and decisions.",
+    dev2: "So rather than looking at each analysis separately, the idea is that a designer could begin comparing different options within a shared system. We've also been testing the logic behind it, particularly how the inputs are validated and how calculations can remain consistent between tools. So far, the prototype has passed 89 hand-written checks. Of course, it's still an early attempt. We haven't connected a live AI model yet, the current workflow is fixed rather than fully node-based, and we haven't tested it with external users.",
+    dev3: "But it has helped us understand one of the bigger technical challenges of this project: how to transfer design information between tools without losing its meaning or having to recreate the model each time.",
+    next1: "So moving forward, our main focus for Assignment 2 is figuring out how to develop this initial prototype into a more connected and customizable workflow. We want to explore how different tool nodes could exchange information, how users could arrange their own design processes, and where AI could meaningfully support those interactions.",
+    next2: "We're also planning to test the workflow with potential users, particularly architects and designers who work on high-rise projects, to understand which functions are genuinely useful. Ultimately, we're interested in not just designing individual tools, but redesigning how these tools work together and how architects interact with them.",
+    next3: "That's where we are right now, and we'd be interested in hearing your feedback on the direction and what we should prioritize next.",
+  };
+  // tab: which tab the slide lives on · targets: what stays bright · notes: the script, or notesFrom: the section whose own text is read out
+  const PRESENT = [
+    { tab: 1, title: 'Introduction', who: 'Sinnie', secs: 30, targets: ['#aboutHead', '#project .gallery'], notes: ["For Assignment 2, Ruijie and I decided to keep working on high-rise design in downtown Vancouver, building on the tools we each made in Assignment 1. Ruijie built Vista, which looks at protected views. I built a massing tool that explores program and zoning constraints. The question on the screen is the one we kept coming back to: what would actually help someone design a tower here?"] },
+    { tab: 1, title: 'The problem: too many rule books', who: 'Sinnie', secs: 25, targets: ['#p-problem'], notesFrom: '#p-problem .text' },
+    { tab: 1, title: 'What we built first', who: 'Sinnie', secs: 25, targets: ['#p-built'], notesFrom: '#p-built .text' },
+    { tab: 1, title: 'What building them taught us', who: 'Ruijie', secs: 20, targets: ['#p-learned'], notesFrom: '#p-learned .text' },
+    { tab: 1, title: 'Assignment 2: one toolkit', who: 'Sinnie', secs: 25, targets: ['#p-plan'], notes: ["So rather than build another standalone tool, we're building a toolkit that links the tools a designer already uses through one project file. That file keeps the units, coordinates, sources and decisions together, so nothing gets re-typed.", S.intro2, "The toolkit won't make the call for you. Every result says which rule it comes from and how sure it is, and when it can't know, it says so."] },
+    { tab: 1, title: 'Timeline', who: 'Sinnie', secs: 10, targets: ['#p-timeline'], notes: ['Where we are: Phase 2 started on 6 October, we showed the tools to the SuperTall studio on the 20th, and today is the mid review. Next is a confirmed user by 6 November, three user sessions through November and early December, two peer reviews, and the final review on 10 December, where every tool runs live.'] },
+    { tab: 2, title: 'We link the tools you already use', who: 'Ruijie', secs: 15, targets: ['#research .rs-hero'], notes: ['We link the tools you already use and leave the decisions to you. We mapped how a Vancouver high-rise gets designed today and where that process tends to break: ten steps from brief to City decision, seven places where it breaks, eleven tools mapped against the steps. The toolkit is built around those spots.'] },
+    { tab: 2, title: '1 · How a tower is designed today', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'], notes: [S.research1, S.research2, 'Point to the workflow diagram and the pain points.', S.research3] },
+    { tab: 2, title: "2 · Where today's tools stop", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'], notes: [S.tools1, S.tools2] },
+    { tab: 2, title: '3 · Who does what', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'], notes: [S.ai1, 'Point to the AI / code / people diagram.', S.ai2] },
+    { tab: 2, title: '4 · How the toolkit runs: the design loop', who: 'Sinnie', secs: 60, targets: ['#rs-next-loop'], notes: [S.proposal1, 'Point to the ring of nodes.', S.proposal2, S.proposal3 + ' You can step out to the drawing set at any point.'] },
+    { tab: 2, title: '4 · Why one platform', who: 'Ruijie', secs: 20, targets: ['#rs-next-why'], notes: ["The research still happens. The difference is where. Today you research, model in CAD, export to analysis, wait for results, and when it doesn't work you start over, often weeks later and across five tools and five files. In the loop, massing, analysis and learning happen on the same model in minutes, while the form is still cheap to change, so you proceed knowing it works."] },
+    { tab: 2, title: '4 · Open source and expandable', who: 'Sinnie', secs: 25, targets: ['#rs-next-open'], notes: ["Another part of the proposal is that the system is open source and expandable. Tools travel as skills: copy a node, run it on your own machine, teach your agent a new one, and contribute it back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop. So rather than one fixed piece of software, it's a system that grows with its users.", S.open2] },
+    { tab: 2, title: '4 · Two designers, two paths', who: 'Sinnie', secs: 20, targets: ['#rs-next-a'], notes: ["Here's what that freedom looks like. Stages and nodes are fixed points inside one model. The solid line is a form-first designer, numbered by visit: form, then sun, program, back to form, building code, concept, schematic, form again, design development, output. The dashed line is a brief-first designer through the same points, starting from economics. Nothing is upstream of anything else."] },
+    { tab: 2, title: '4 · How it could look: the canvas', who: 'Sinnie', secs: 15, targets: ['#rs-next-c'], notes: ["And how it could look in use: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, the wires carry the model, and the dashed loops go back to re-mass or re-stack. Both draw from the same library of ten nodes along the bottom."] },
+    { tab: 2, title: '5 · How this research was made', who: 'Ruijie', secs: 15, targets: ['#rs-method'], notes: ['One note on method. The research behind these diagrams was drafted with a GPT model from the Assignment 2 brief and 53 sources, peer-reviewed by Claude on method and sources, and revised with 26 findings applied. Every number on the site keeps its source and date, which is the same rule we want the toolkit to follow.'] },
+    { tab: 3, title: 'Try the tools', who: 'Ruijie', secs: 20, targets: ['#tools .try-banner', '#toolGrid'], notes: ["Everything we've shown runs in a browser. Seven tools so far: Vista for view cones, sky exposure and the pedestrian experience; the Downtown Massing Tool for massing, building code and compliance; the Tower Design Toolkit, which links them; the Program Value Visualizer for value, cost and City charges; Form Studio for form and structure; Street Flow Lab for pedestrians and traffic on the streets around a site; and Sun & Wind Studio for sun, wind, daylight and energy. Each card says what the tool does and where it stops, and each opens on your own scheme."] },
+    { tab: 3, title: "What we've developed for Assignment 2 so far", who: 'Ruijie', secs: 50, targets: [() => toolCard('Tower Design Toolkit')], notes: ['Our first attempt for Assignment 2 is the Tower Design Toolkit itself: a place where information from the different tools comes together and can be compared. It reads actual exports from our existing tools, compares tower options with one consistent set of area calculations, and keeps a record of the results and the decisions.', 'Point to the node graph in the picture.', S.dev2, S.dev3] },
+    { tab: 2, title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'], notes: [S.next1, S.next2, S.next3] },
+  ];
+  const TAB_NAME = { 1: 'About us', 2: 'How it works', 3: 'Try the tools' };
+  const $ = s => document.querySelector(s);
+  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
+  if (!top || !foot) return;
+  let on = false, i = -1, startAt = 0, timer = 0;
+  const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
+  const reduce = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const clearMarks = () => document.querySelectorAll('[data-pres]').forEach(n => n.removeAttribute('data-pres'));
+  function spotlight(els) {                              // mark the elements and the path down to them; everything beside the path dims
+    clearMarks();
+    for (const el of els) {
+      el.setAttribute('data-pres', 'on');
+      for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) if (!a.hasAttribute('data-pres')) a.setAttribute('data-pres', 'path');
+    }
+  }
+  const notesOf = s => { if (s.notes) return s.notes; const root = document.querySelector(s.notesFrom); if (!root) return []; const nodes = root.matches('p, figcaption, li') ? [root] : [...root.querySelectorAll('p, figcaption, li')]; return nodes.map(n => n.textContent.trim()).filter(Boolean).slice(0, 6); };
+  function show(k) {
+    k = Math.max(0, Math.min(PRESENT.length - 1, k)); i = k;
+    const s = PRESENT[k], els = s.targets.map(resolve).filter(Boolean);
+    for (const el of els) { const d = el.closest('details'); if (d) d.open = true; }      // a figure inside a folded section
+    const panel = els[0] && els[0].closest('section.panel[role=tabpanel]');
+    if (panel && typeof showTab === 'function') showTab(panel.id);
+    spotlight(els);
+    if (els[0]) {
+      const r = els[0].getBoundingClientRect(), head = top.offsetHeight + 16, room = innerHeight - head - foot.offsetHeight - 16;
+      const y = scrollY + r.top - head - (r.height < room ? (room - r.height) / 2 : 0);
+      window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
+    }
+    $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
+    $('#presTab').textContent = `${s.tab} · ${TAB_NAME[s.tab]}`;
+    $('#presTitle').textContent = s.title;
+    $('#presWho').innerHTML = `<b>${s.who}</b>${s.secs ? ' · ' + (s.secs >= 60 ? Math.floor(s.secs / 60) + ' min ' + (s.secs % 60 ? s.secs % 60 + ' s' : '') : s.secs + ' s') : ''}`;
+    notes.innerHTML = `<span class="sect-h">Notes · ${s.who}</span>` + notesOf(s).map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
+    dots.innerHTML = PRESENT.map((x, j) => `<i class="${j === k ? 'on' : ''}${j && PRESENT[j - 1].tab !== x.tab ? ' tab' : ''}"></i>`).join('');
+    $('#presPrev').disabled = k === 0; $('#presNext').textContent = k === PRESENT.length - 1 ? 'Finish' : 'Next →';
+    startAt = Date.now(); tick();
+  }
+  function tick() {
+    const s = PRESENT[i] || {}, el = Math.round((Date.now() - startAt) / 1000);
+    clock.textContent = Math.floor(el / 60) + ':' + String(el % 60).padStart(2, '0');
+    clock.classList.toggle('over', !!s.secs && el > s.secs);
+  }
+  function start() {
+    if (on) return; on = true;
+    if (typeof tourEnd === 'function' && window.tour && tour.on) tourEnd();
+    if (typeof openGate === 'function') openGate();
+    top.hidden = false; foot.hidden = false; document.body.classList.add('presenting');
+    timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
+  }
+  function end() {
+    if (!on) return; on = false; clearInterval(timer); clearMarks();
+    top.hidden = true; foot.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    const b = $('#talkBtn'); if (b) b.focus({ preventScroll: true });
+  }
+  const toggleNotes = () => { notes.hidden = !notes.hidden; $('#presNotesBtn').setAttribute('aria-pressed', String(!notes.hidden)); };
+  const full = () => { const el = document.documentElement; if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {}); else if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); };
+  $('#talkBtn') && $('#talkBtn').addEventListener('click', start);
+  $('#presPrev').addEventListener('click', () => show(i - 1));
+  $('#presNext').addEventListener('click', () => (i === PRESENT.length - 1 ? end() : show(i + 1)));
+  $('#presExit').addEventListener('click', end);
+  $('#presNotesBtn').addEventListener('click', toggleNotes);
+  $('#presFull').addEventListener('click', full);
+  // frozen page: the wheel, touch and scroll keys do nothing while presenting; the slides move the page
+  const block = e => { if (on && !e.target.closest('.pres-notes')) e.preventDefault(); };
+  document.addEventListener('wheel', block, { passive: false });
+  document.addEventListener('touchmove', block, { passive: false });
+  document.addEventListener('keydown', e => {
+    if (!on || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
+    const k = e.key;
+    if (k === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); end(); return; }
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); e.stopImmediatePropagation(); if (i === PRESENT.length - 1) end(); else show(i + 1); return; }
+    if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); e.stopImmediatePropagation(); show(i - 1); return; }
+    if (k === 'ArrowUp' || k === 'ArrowDown') { e.preventDefault(); return; }
+    if (k === 'n' || k === 'N') { e.preventDefault(); toggleNotes(); return; }
+    if (k === 'f' || k === 'F') { e.preventDefault(); full(); return; }
+    if (k === 'Home') { e.preventDefault(); show(0); } else if (k === 'End') { e.preventDefault(); show(PRESENT.length - 1); }
+  }, true);
+  if ((location.hash || '') === '#present') start();
 })();
 </script>

@@ -237,8 +237,8 @@
   /* ---------- D: who does what (the hand-offs between people, AI, code and tools) ---------- */
   const ROLES_D = {
     you: { name: 'People decide', role: 'you', icon: 'step-compare', x: 250, y: 300, r: 62, ic: 104, list: ['What the brief is and what matters', 'Which option goes forward', 'What is frozen and submitted'] },
-    ai: { name: 'AI can', role: 'ai', icon: 'icon-ai', x: 760, y: 130, r: 62, ic: 104, list: ['Turn what you ask into a structured request', 'Propose a revision within allowed limits', 'Draft an explanation with its sources'] },
-    code: { name: 'Code checks', role: 'code', icon: 'icon-check', x: 760, y: 470, r: 62, ic: 104, list: ['Units, coordinate frame, source date', 'Geometry and arithmetic, recomputed', 'Every number has a citation, or it stops'] },
+    ai: { name: 'AI can', role: 'ai', icon: 'ai', x: 760, y: 130, r: 62, ic: 104, list: ['Turn what you ask into a structured request', 'Propose a revision within allowed limits', 'Draft an explanation with its sources'] },
+    code: { name: 'Code checks', role: 'code', icon: 'check', x: 760, y: 470, r: 62, ic: 104, list: ['Units, coordinate frame, source date', 'Geometry and arithmetic, recomputed', 'Every number has a citation, or it stops'] },
     tool: { name: 'Tools compute', role: 'tool', icon: 'icon-tools', x: 1060, y: 470, r: 50, ic: 84, list: ['Vista, the Downtown Massing Tool, the Program Value Visualizer and others run on the same project file'] },
   };
   // bend: how far the curve's middle sits to the left of its direction of travel (negative = right)
@@ -300,7 +300,8 @@
     // the roles
     for (const [k, n] of Object.entries(R)) {
       s += `<g class="v2-dnode v2-cnode ${n.role}" data-k="n:${k}" tabindex="0" role="button" aria-label="${esc(n.name)}">`;
-      s += `<circle class="v2-cbg" cx="${n.x}" cy="${n.y}" r="${n.r}"/><image href="${P(n.icon)}" x="${n.x - n.ic / 2}" y="${n.y - n.ic / 2}" width="${n.ic}" height="${n.ic}" class="v2-pic"/>`;
+      const isoIcon = window.ISO_ICONS && window.ISO_ICONS[n.icon];   // the drawn pictograms, shared with chapter 4
+      s += `<circle class="v2-cbg" cx="${n.x}" cy="${n.y}" r="${n.r}"/>` + (isoIcon ? `<use href="#iso-${n.icon}" x="${n.x - n.ic * 0.6}" y="${n.y - n.ic * 0.6}" width="${n.ic * 1.2}" height="${n.ic * 1.2}"/>` : `<image href="${P(n.icon)}" x="${n.x - n.ic / 2}" y="${n.y - n.ic / 2}" width="${n.ic}" height="${n.ic}" class="v2-pic"/>`);
       const lab = k === 'you' ? [n.x - n.r - 16, n.y + 6, 'end'] : k === 'ai' ? [n.x, n.y - n.r - 16, 'middle'] : [n.x, n.y + n.r + 28, 'middle'];
       s += `<text class="v2-lab ${n.role}" x="${lab[0]}" y="${lab[1]}" text-anchor="${lab[2]}">${esc(n.name)}</text></g>`;
     }
