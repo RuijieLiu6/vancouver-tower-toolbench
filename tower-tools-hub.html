@@ -3861,6 +3861,9 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
      full screen, Esc leaves. -->
 <style>
 [data-tour-start] { display: none !important; }   /* guided tour archived 23 Oct 2026: still reachable with #tour */
+/* the preview opening out of the toolkit card's picture: a ghost of the screenshot grows from the card to full size */
+.pres-ghost { position: fixed; z-index: 71; overflow: hidden; border: 1px solid var(--line); background: var(--sheet); pointer-events: none; }
+.pres-ghost img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
 .tdt-preview { margin: 0 calc((100% - min(100vw - 32px, 1400px)) / 2); display: flex; flex-direction: column; gap: 8px; }   /* as wide as the diagrams */
 .tdt-preview img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--sheet); }
 .present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
@@ -3961,7 +3964,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
       notes: ['These are the two Assignment 1 tools we started from. Vista, by Ruijie, puts a proposed tower into a 3D model of Downtown Vancouver and checks it against the protected view cones, sky exposure and the pedestrian experience. The Downtown Massing Tool, mine, loads what the City data says about a real lot, and as you push and pull blocks it checks the massing against the building code for compliance.'] },
     { tab: 3, title: 'Our current model: the Tower Design Toolkit', who: 'Ruijie', secs: 50, targets: [() => toolCard('Tower Design Toolkit')],
       notes: ['Our first attempt for Assignment 2 is the Tower Design Toolkit itself: a place where information from the different tools comes together and can be compared. It reads actual exports from our existing tools, compares tower options with one consistent set of area calculations, and keeps a record of the results and the decisions.', S.dev2, S.dev3] },
-    { tab: 3, title: 'The Tower Design Toolkit: the node interface', who: 'Ruijie', secs: 30, reveal: '#tdtPreview', targets: ['#tdtPreview'],
+    { tab: 3, title: 'The Tower Design Toolkit: the node interface', who: 'Ruijie', secs: 30, reveal: '#tdtPreview', targets: ['#tdtPreview'], openFrom: () => { const c = toolCard('Tower Design Toolkit'); return c && c.querySelector('.shot'); },
       notes: ['This is what it looks like. On the left, the checks: VTC rules, program and FSR, view cones, sun and shadow, structure, wind and more, each switched on or off. In the middle, the node graph: the site, the massing and the program feed every check, and every check feeds one evidence report. On the right, the design panel where you set the height, the floor plate and the program by floor band.', 'Point to a check node and its result line.', 'So a designer changes the tower on the right and sees every check update in the graph, each with its source and evidence flag, instead of exporting the model to separate tools.'] },
     { tab: 3, title: 'The rest of the tools', who: 'Ruijie', secs: 20, targets: ['#toolGrid'], cls: 'pres-rest',
       notes: ['Four more tools feed the same workflow: the Program Value Visualizer for value, cost and City charges; Form Studio for form and structure; Street Flow Lab for pedestrians and traffic on the streets around a site; and Sun & Wind Studio for sun, wind, daylight and energy. Each card says what the tool does and where it stops, and each opens on your own scheme.'] },
@@ -3984,9 +3987,39 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     }
   }
   const notesOf = s => { if (s.notes) return s.notes; const root = document.querySelector(s.notesFrom); if (!root) return []; const nodes = root.matches('p, figcaption, li') ? [root] : [...root.querySelectorAll('p, figcaption, li')]; return nodes.map(n => n.textContent.trim()).filter(Boolean).slice(0, 6); };
+  let ghost = null, ghostAnim = null;
+  function dropGhost() {                                   // end an opening animation at once and show the real element
+    if (ghostAnim) { ghostAnim.onfinish = null; ghostAnim.cancel(); ghostAnim = null; }
+    if (ghost) { ghost.remove(); ghost = null; }
+    document.querySelectorAll('[data-pres-opening]').forEach(n => { n.style.visibility = ''; n.removeAttribute('data-pres-opening'); });
+    document.querySelectorAll('[data-pres-capfade]').forEach(n => { n.style.opacity = ''; n.removeAttribute('data-pres-capfade'); });
+  }
+  function openFrom(fig, from, done) {                     // the screenshot grows from the card's picture to its place, then the caption fades in
+    const img = fig.querySelector('img'), cap = fig.querySelector('figcaption'), to = img.getBoundingClientRect();
+    ghost = document.createElement('div'); ghost.className = 'pres-ghost'; ghost.setAttribute('aria-hidden', 'true');
+    const gi = document.createElement('img'); gi.src = img.getAttribute('src'); gi.alt = ''; ghost.append(gi);
+    Object.assign(ghost.style, { left: to.left + 'px', top: to.top + 'px', width: to.width + 'px', height: to.height + 'px' });
+    document.body.append(ghost);
+    img.style.visibility = 'hidden'; img.setAttribute('data-pres-opening', '');
+    if (cap) { cap.style.opacity = '0'; cap.setAttribute('data-pres-capfade', ''); }
+    ghostAnim = ghost.animate([
+      { left: from.left + 'px', top: from.top + 'px', width: from.width + 'px', height: from.height + 'px', borderRadius: '8px', boxShadow: '0 0 0 0 rgba(31,35,40,0)' },
+      { left: to.left + 'px', top: to.top + 'px', width: to.width + 'px', height: to.height + 'px', borderRadius: '12px', boxShadow: '0 28px 70px -24px rgba(31,35,40,.45)' }
+    ], { duration: 820, easing: 'cubic-bezier(.45,0,.15,1)', fill: 'forwards' });
+    ghostAnim.onfinish = () => {
+      ghostAnim = null; img.style.visibility = ''; img.removeAttribute('data-pres-opening');
+      if (cap) { cap.style.transition = 'opacity .3s ease'; cap.style.opacity = ''; cap.removeAttribute('data-pres-capfade'); }
+      if (ghost) { ghost.remove(); ghost = null; }
+      done();
+    };
+  }
   function show(k) {
-    k = Math.max(0, Math.min(PRESENT.length - 1, k)); i = k;
+    k = Math.max(0, Math.min(PRESENT.length - 1, k));
+    dropGhost();
     const s = PRESENT[k];
+    let from = null;                                      // going forward from the slide before: open out of that slide's element
+    if (on && s.openFrom && k === i + 1 && !reduce()) { const o = resolve(s.openFrom); if (o && o.getClientRects().length) from = o.getBoundingClientRect(); }
+    i = k;
     document.querySelectorAll('[data-pres-revealed]').forEach(n => { n.hidden = true; n.removeAttribute('data-pres-revealed'); });
     if (s.reveal) { const r = document.querySelector(s.reveal); if (r) { r.hidden = false; r.setAttribute('data-pres-revealed', ''); } }
     const els = (s.targets || []).map(resolve).filter(Boolean);
@@ -4007,12 +4040,14 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
       const k = Math.min(1, room / r.height, wide / r.width);
       if (k < 1) for (const el of els) { el.style.transformOrigin = 'top center'; el.style.transform = `scale(${k.toFixed(3)})`; scaled.push(el); }
       const y = scrollY + r.top - head - (room - r.height * k) / 2;
-      window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
-      requestAnimationFrame(() => {                       // one ring around everything highlighted, measured after the scaling
+      window.scrollTo({ top: Math.max(0, y), behavior: reduce() || from ? 'auto' : 'smooth' });
+      const placeRing = () => {                           // one ring around everything highlighted, measured after the scaling
         const qs = els.map(el => el.getBoundingClientRect()), pad = 12;
         const l = Math.min(...qs.map(x => x.left)) - pad, t = Math.min(...qs.map(x => x.top)) - pad, rt = Math.max(...qs.map(x => x.right)) + pad, bt = Math.max(...qs.map(x => x.bottom)) + pad;
         ring.style.left = (l + scrollX) + 'px'; ring.style.top = (t + scrollY) + 'px'; ring.style.width = (rt - l) + 'px'; ring.style.height = (bt - t) + 'px'; ring.hidden = false;
-      });
+      };
+      if (from) { ring.hidden = true; const mine = i; requestAnimationFrame(() => openFrom(els[0], from, () => { if (on && i === mine) placeRing(); })); }
+      else requestAnimationFrame(placeRing);
     } else ring.hidden = true;
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
     $('#presTab').textContent = s.tab ? `${s.tab} · ${TAB_NAME[s.tab]}` : '';
@@ -4034,7 +4069,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     startAt = Date.now(); timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
   }
   function end() {
-    if (!on) return; on = false; clearInterval(timer); clearMarks();
+    if (!on) return; on = false; clearInterval(timer); dropGhost(); clearMarks();
     document.querySelectorAll('[data-pres-revealed]').forEach(n => { n.hidden = true; n.removeAttribute('data-pres-revealed'); });
     if (!$('#join').hidden && typeof closeJoin === 'function') closeJoin();
     for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
