@@ -3859,6 +3859,7 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
      the notes are the section's own text. Arrow keys or a clicker move between slides, N shows the notes, F asks for
      full screen, Esc leaves. -->
 <style>
+[data-tour-start] { display: none !important; }   /* guided tour archived 23 Oct 2026: still reachable with #tour */
 .present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
 .present-btn svg { width: 15px; height: 15px; }
 @media (max-width: 720px) { .present-btn { display: none; } }
@@ -3900,7 +3901,6 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   <span class="pres-n" id="presN"></span>
   <span class="pres-tab" id="presTab"></span>
   <span class="pres-title" id="presTitle"></span>
-  <span class="pres-who" id="presWho"></span>
   <span class="pres-clock" id="presClock">0:00</span>
 </div>
 <div class="pres-foot" id="presFoot" hidden>
@@ -3942,12 +3942,12 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   };
   // tab: which tab the slide lives on · targets: what stays bright · notes: the script, or notesFrom: the section whose own text is read out
   const PRESENT = [
+    { tab: 0, title: 'Scan to follow along', qr: true, notes: ['The code opens this site on your phone. No sign-in needed.'] },
     { tab: 1, title: 'Introduction', who: 'Sinnie', secs: 30, targets: ['#aboutIntro'], notes: ["For Assignment 2, Ruijie and I decided to keep working on high-rise design in Downtown Vancouver, building on the tools we each made in Assignment 1. Ruijie built Vista, which looks at protected views. I built a massing tool that explores program and zoning constraints. The question on the screen is the one we kept coming back to: what would actually help someone design a tower here?"] },
     { tab: 1, title: 'The problem: too many rule books', who: 'Sinnie', secs: 25, targets: ['#p-problem'], notesFrom: '#p-problem .text' },
     { tab: 1, title: 'What we built first', who: 'Sinnie', secs: 25, targets: ['#p-built'], notesFrom: '#p-built .text' },
     { tab: 1, title: 'What building them taught us', who: 'Ruijie', secs: 20, targets: ['#p-learned'], notesFrom: '#p-learned .text' },
     { tab: 1, title: 'Assignment 2: one toolkit', who: 'Sinnie', secs: 25, targets: ['#p-plan'], notes: ["So rather than build another standalone tool, we're building a toolkit that links the tools a designer already uses through one project file. That file keeps the units, coordinates, sources and decisions together, so nothing gets re-typed.", S.intro2, "The toolkit won't make the call for you. Every result says which rule it comes from and how sure it is, and when it can't know, it says so."] },
-    { tab: 2, title: 'We link the tools you already use', who: 'Ruijie', secs: 15, targets: ['#research .rs-hero'], notes: ['We link the tools you already use and leave the decisions to you. We mapped how a Downtown Vancouver high-rise gets designed today and where that process tends to break: ten steps from brief to City decision, seven places where it breaks, eleven tools mapped against the steps. The toolkit is built around those spots.'] },
     { tab: 2, title: '1 · How a tower is designed today', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'], notes: [S.research1, S.research2, 'Point to the workflow diagram and the pain points.', S.research3] },
     { tab: 2, title: "2 · Where today's tools stop", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'], notes: [S.tools1, S.tools2] },
     { tab: 2, title: '3 · Who does what', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'], notes: [S.ai1, 'Point to the AI / code / people diagram.', S.ai2] },
@@ -3962,6 +3962,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     { tab: 3, title: 'The rest of the tools', who: 'Ruijie', secs: 20, targets: ['#toolGrid'], cls: 'pres-rest',
       notes: ['Four more tools feed the same workflow: the Program Value Visualizer for value, cost and City charges; Form Studio for form and structure; Street Flow Lab for pedestrians and traffic on the streets around a site; and Sun & Wind Studio for sun, wind, daylight and energy. Each card says what the tool does and where it stops, and each opens on your own scheme.'] },
     { tab: 2, title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'], notes: [S.next1, S.next2, S.next3] },
+    { tab: 0, title: 'Thank you · scan to try the tools', qr: true, notes: ['Scan the code to try the tools and leave feedback. We are happy to take questions.'] },
   ];
   const TAB_NAME = { 1: 'About us', 2: 'How it works', 3: 'Try the tools' };
   const $ = s => document.querySelector(s);
@@ -3981,7 +3982,8 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   const notesOf = s => { if (s.notes) return s.notes; const root = document.querySelector(s.notesFrom); if (!root) return []; const nodes = root.matches('p, figcaption, li') ? [root] : [...root.querySelectorAll('p, figcaption, li')]; return nodes.map(n => n.textContent.trim()).filter(Boolean).slice(0, 6); };
   function show(k) {
     k = Math.max(0, Math.min(PRESENT.length - 1, k)); i = k;
-    const s = PRESENT[k], els = s.targets.map(resolve).filter(Boolean);
+    const s = PRESENT[k], els = (s.targets || []).map(resolve).filter(Boolean);
+    if (s.qr) { if (typeof openJoin === 'function') openJoin(true); } else if (!$('#join').hidden && typeof closeJoin === 'function') closeJoin();
     for (const el of els) { const d = el.closest('details'); if (d) d.open = true; }      // a figure inside a folded section
     const panel = els[0] && els[0].closest('section.panel[role=tabpanel]');
     if (panel && typeof showTab === 'function') showTab(panel.id);
@@ -4006,28 +4008,27 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
       });
     } else ring.hidden = true;
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
-    $('#presTab').textContent = `${s.tab} · ${TAB_NAME[s.tab]}`;
+    $('#presTab').textContent = s.tab ? `${s.tab} · ${TAB_NAME[s.tab]}` : '';
     $('#presTitle').textContent = s.title;
-    $('#presWho').innerHTML = `<b>${s.who}</b>${s.secs ? ' · ' + (s.secs >= 60 ? Math.floor(s.secs / 60) + ' min ' + (s.secs % 60 ? s.secs % 60 + ' s' : '') : s.secs + ' s') : ''}`;
-    notes.innerHTML = `<span class="sect-h">Notes · ${s.who}</span>` + notesOf(s).map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
+    notes.innerHTML = `<span class="sect-h">Notes</span>` + notesOf(s).map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
     dots.innerHTML = PRESENT.map((x, j) => `<i class="${j === k ? 'on' : ''}${j && PRESENT[j - 1].tab !== x.tab ? ' tab' : ''}"></i>`).join('');
     $('#presPrev').disabled = k === 0; $('#presNext').textContent = k === PRESENT.length - 1 ? 'Finish' : 'Next →';
-    startAt = Date.now(); tick();
+    tick();
   }
-  function tick() {
-    const s = PRESENT[i] || {}, el = Math.round((Date.now() - startAt) / 1000);
+  function tick() {                                       // time since the first slide
+    const el = Math.round((Date.now() - startAt) / 1000);
     clock.textContent = Math.floor(el / 60) + ':' + String(el % 60).padStart(2, '0');
-    clock.classList.toggle('over', !!s.secs && el > s.secs);
   }
   function start() {
     if (on) return; on = true;
     if (typeof tourEnd === 'function' && window.tour && tour.on) tourEnd();
     if (typeof openGate === 'function') openGate();
     top.hidden = false; foot.hidden = false; document.body.classList.add('presenting');
-    timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
+    startAt = Date.now(); timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
   }
   function end() {
     if (!on) return; on = false; clearInterval(timer); clearMarks();
+    if (!$('#join').hidden && typeof closeJoin === 'function') closeJoin();
     for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
     scaled = [];
     document.querySelectorAll('.pres-rest').forEach(n => n.classList.remove('pres-rest'));
