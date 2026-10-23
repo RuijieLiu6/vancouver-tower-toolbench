@@ -3886,9 +3886,10 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
 body.presenting { overflow: hidden; padding-bottom: 80px; }
 body.presenting .tourbar, body.presenting .tourring, body.presenting .ed-pill, body.presenting .join-btn { display: none; }
 /* the spotlight: on the path from the body down to the slide's element, every sibling that is not on the path is dimmed */
-body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(#enterVeil):not(#join) { opacity: .18; transition: opacity var(--t-chrome) var(--ease); }
+body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(.pres-ring):not(#enterVeil):not(#join) { opacity: .18 !important; animation: none !important; transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
-body.presenting [data-pres="on"] { outline: 2px solid var(--harbour); outline-offset: 12px; border-radius: 12px; }
+body.presenting [data-pres="on"] { animation: none !important; }   /* an entrance animation would override the fit-to-room scaling */
+.pres-ring { position: absolute; z-index: 71; pointer-events: none; border: 2px solid var(--harbour); border-radius: 16px; box-sizing: border-box; }
 body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
 /* the rest-of-the-tools slide: the three cards already shown step aside and the other four share one row */
 body.presenting #toolGrid.pres-rest { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -3913,6 +3914,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   <button type="button" id="presExit">Exit <kbd>Esc</kbd></button>
 </div>
 <div class="pres-notes" id="presNotes" hidden></div>
+<div class="pres-ring" id="presRing" hidden aria-hidden="true"></div>
 <script>
 (() => {
   const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
@@ -3953,7 +3955,6 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     { tab: 2, title: '4 · Why one platform', who: 'Ruijie', secs: 20, targets: ['#rs-next-why'], notes: ["The research still happens. The difference is where. Today you research, model in CAD, export to analysis, wait for results, and when it doesn't work you start over, often weeks later and across five tools and five files. In the loop, massing, analysis and learning happen on the same model in minutes, while the form is still cheap to change, so you proceed knowing it works."] },
     { tab: 2, title: '4 · Open source and expandable', who: 'Sinnie', secs: 25, targets: ['#rs-next-open'], notes: ["Another part of the proposal is that the system is open source and expandable. Tools travel as skills: copy a node, run it on your own machine, teach your agent a new one, and contribute it back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop. So rather than one fixed piece of software, it's a system that grows with its users.", S.open2] },
     { tab: 2, title: '4 · Fig 4: how it could look', who: 'Sinnie', secs: 15, targets: ['#rs-next-c'], notes: ["And how it could look in use: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, the wires carry the model, and the dashed loops go back to re-mass or re-stack. Both draw from the same library of ten nodes along the bottom."] },
-    { tab: 2, title: '5 · How this research was made', who: 'Ruijie', secs: 15, targets: ['#rs-method'], notes: ['One note on method. The research behind these diagrams was drafted with a GPT model from the Assignment 2 brief and 53 sources, peer-reviewed by Claude on method and sources, and revised with 26 findings applied. Every number on the site keeps its source and date, which is the same rule we want the toolkit to follow.'] },
     { tab: 3, title: 'Previous tools: Vista and the Downtown Massing Tool', who: 'Sinnie', secs: 25, targets: [() => toolCard('Vista'), () => toolCard('Downtown Massing Tool')],
       notes: ['These are the two Assignment 1 tools we started from. Vista, by Ruijie, puts a proposed tower into a 3D model of Downtown Vancouver and checks it against the protected view cones, sky exposure and the pedestrian experience. The Downtown Massing Tool, mine, loads what the City data says about a real lot, and as you push and pull blocks it checks the massing against the building code for compliance.'] },
     { tab: 3, title: 'Our current model: the Tower Design Toolkit', who: 'Ruijie', secs: 50, targets: [() => toolCard('Tower Design Toolkit')],
@@ -3964,7 +3965,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   ];
   const TAB_NAME = { 1: 'About us', 2: 'How it works', 3: 'Try the tools' };
   const $ = s => document.querySelector(s);
-  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
+  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots'), ring = $('#presRing');
   if (!top || !foot) return;
   let on = false, i = -1, startAt = 0, timer = 0, scaled = [];
   const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
@@ -3998,7 +3999,12 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
       if (k < 1) for (const el of els) { el.style.transformOrigin = 'top center'; el.style.transform = `scale(${k.toFixed(3)})`; scaled.push(el); }
       const y = scrollY + r.top - head - (room - r.height * k) / 2;
       window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
-    }
+      requestAnimationFrame(() => {                       // one ring around everything highlighted, measured after the scaling
+        const qs = els.map(el => el.getBoundingClientRect()), pad = 12;
+        const l = Math.min(...qs.map(x => x.left)) - pad, t = Math.min(...qs.map(x => x.top)) - pad, rt = Math.max(...qs.map(x => x.right)) + pad, bt = Math.max(...qs.map(x => x.bottom)) + pad;
+        ring.style.left = (l + scrollX) + 'px'; ring.style.top = (t + scrollY) + 'px'; ring.style.width = (rt - l) + 'px'; ring.style.height = (bt - t) + 'px'; ring.hidden = false;
+      });
+    } else ring.hidden = true;
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
     $('#presTab').textContent = `${s.tab} · ${TAB_NAME[s.tab]}`;
     $('#presTitle').textContent = s.title;
@@ -4025,7 +4031,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
     scaled = [];
     document.querySelectorAll('.pres-rest').forEach(n => n.classList.remove('pres-rest'));
-    top.hidden = true; foot.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
+    top.hidden = true; foot.hidden = true; notes.hidden = true; ring.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
     const b = $('#talkBtn'); if (b) b.focus({ preventScroll: true });
   }
