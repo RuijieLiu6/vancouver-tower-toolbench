@@ -664,7 +664,6 @@ path.tdt-canvas {
 .tdt-stage,
 .tdt-analysis,
 .tdt-output,
-.tdt-input,
 .tdt-row,
 .tdt-canvas,
 .tdt-pill-group,
@@ -688,11 +687,6 @@ path.tdt-canvas {
 .tdt-analysis .v2-cbg {
   fill: var(--harbour-soft);
   stroke: var(--harbour);
-}
-
-.tdt-input .v2-cbg {
-  fill: var(--signal-soft);
-  stroke: var(--signal);
 }
 
 .tdt-analysis.tdt-dashed .v2-cbg {
@@ -866,7 +860,6 @@ text.tdt-badge.tdt-designer-b {
 #tdtLoop svg.v2-focus .tdt-stage,
 #tdtLoop svg.v2-focus .tdt-analysis,
 #tdtLoop svg.v2-focus .tdt-output,
-#tdtLoop svg.v2-focus .tdt-input,
 #tdtWhy svg.v2-focus .tdt-row,
 #tdtOpen svg.v2-focus .tdt-node,
 #tdtA svg.v2-focus .tdt-node,
@@ -2097,7 +2090,7 @@ say();
       <div class="ch-head"><span class="ch-n">4</span><div><h2>How the toolkit runs</h2><p class="muted">Mass it, test it, learn from it: five stages around one shared model, with analysis nodes that every stage can call.</p></div></div>
       <figure class="v2fig tdt" id="rs-next-loop"><div class="v2scroll"><div id="tdtLoop" class="v2host"></div></div>
         <div class="v2info" id="tdtLoopinfo" aria-live="polite"><span class="muted">Tap a stage or an analysis node to see what it does.</span></div>
-        <figcaption class="small muted"><b>Fig 1 · Design loop.</b> Five stages around one shared model. Enter at any stage, move in either direction or jump across, and step out to the drawing set whenever the scheme is ready. The analysis nodes orbit the model and are available to every stage. On the left, anyone can contribute a node of their own: it joins the loop at the Your tool slot.</figcaption></figure>
+        <figcaption class="small muted"><b>Fig 1 · Design loop.</b> Five stages around one shared model. Enter at any stage, move in either direction or jump across, and step out to the drawing set whenever the scheme is ready. The analysis nodes orbit the model and are available to every stage.</figcaption></figure>
       <figure class="v2fig tdt" id="rs-next-why"><div class="v2scroll"><div id="tdtWhy" class="v2host"></div></div>
         <div class="v2info" id="tdtWhyinfo" aria-live="polite"><span class="muted">Tap a row to compare the two ways of working.</span></div>
         <figcaption class="small muted"><b>Fig 2 · Why one platform.</b> The research still happens. The difference is where: inside the massing loop while the form is cheap to change, instead of after a handoff, when a bad answer means starting over.</figcaption></figure>
@@ -3294,7 +3287,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       return { ...a, x, y, ux: Math.cos(angle), uy: Math.sin(angle) };
     });
     const output = { x: 1085, y: 390, r: 62 };
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five design stages move both ways around one shared model, ten analysis nodes read that model, anyone can contribute a node of their own, and a drawing set can be produced at any point.">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five design stages move both ways around one shared model, ten analysis nodes read that model, and a drawing set can be produced at any point.">`;
     s += defs(id);
 
     for (let i = 0; i < stages.length; i++) {
@@ -3336,16 +3329,12 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
 
     s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="892" y="326" text-anchor="middle">exit at any point</text>`;
     s += `<g class="tdt-output" data-key="output" tabindex="0" role="button" aria-label="Output: drawing set with plans, sections, diagrams and renders."><circle class="v2-hit" cx="${output.x}" cy="${output.y}" r="74"/><circle class="v2-cbg tool" cx="${output.x}" cy="${output.y}" r="${output.r}"/>${pic('step-submit', output.x, output.y, 90)}<text class="v2-num" x="${output.x}" y="${output.y + 88}" text-anchor="middle">OUTPUT</text><text class="v2-lab" x="${output.x}" y="${output.y + 110}" text-anchor="middle">Drawing set</text><text class="v2-cap" x="${output.x}" y="${output.y + 131}" text-anchor="middle">Plans, sections, diagrams, renders</text></g>`;
-    // input, on the left: nodes contributed by professionals, students, anyone with a tool; they join at the Your tool slot
-    const input = { x: 110, y: 390, r: 62 };
-    s += `<path class="v2-loop" data-connect="input your" d="M${input.x + input.r + 6} ${input.y - 18}C230 372 300 293 352 293" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="250" y="352" text-anchor="middle">add your own node</text>`;
-    s += `<g class="tdt-input" data-key="input" tabindex="0" role="button" aria-label="Input: nodes contributed by professionals, students, anyone with a tool. They join the loop at the Your tool slot."><circle class="v2-hit" cx="${input.x}" cy="${input.y}" r="74"/><circle class="v2-cbg you" cx="${input.x}" cy="${input.y}" r="${input.r}"/>${symbolIcon(id, 'teach-agent', input.x, input.y, 70)}<text class="v2-num" x="${input.x}" y="${input.y + 88}" text-anchor="middle">INPUT</text><text class="v2-lab" x="${input.x}" y="${input.y + 110}" text-anchor="middle">Contributed nodes</text><text class="v2-cap" x="${input.x}" y="${input.y + 131}" text-anchor="middle">Professionals, students,</text><text class="v2-cap" x="${input.x}" y="${input.y + 150}" text-anchor="middle">anyone with a tool</text></g>`;
     s += roleLegend(24, 800) + '</svg>';
     host.innerHTML = s;
 
     const svg = host.querySelector('svg');
     const clear = () => clearFocus(svg);
-    bindClicks(svg, '.tdt-stage, .tdt-analysis, .tdt-output, .tdt-input', el => {
+    bindClicks(svg, '.tdt-stage, .tdt-analysis, .tdt-output', el => {
       clear(); svg.classList.add('v2-focus'); el.classList.add('on');
       const key = el.dataset.key;
       svg.querySelectorAll(`[data-connect~="${key}"]`).forEach(n => n.classList.add('on'));
@@ -3355,8 +3344,6 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       } else if (el.classList.contains('tdt-stage')) {
         const st = STAGES.find(x => x.k === key);
         panel(info, `${st.n} · ${st.name}`, [['At this stage', st.sub], ['Shared model', 'Reads and writes the model']]);
-      } else if (el.classList.contains('tdt-input')) {
-        panel(info, 'Input · contributed nodes', [['Who', 'Professionals, students, anyone with a tool'], ['How', 'Copy a node as a skill, teach your agent a new one, or build your own, then contribute it back to the shared library'], ['Where it lands', 'The Your tool slot, available to every stage like any other node']]);
       } else {
         panel(info, 'Output · drawing set', [['Includes', 'Plans, sections, diagrams, renders'], ['When', 'Exit at any point']]);
       }
@@ -3955,7 +3942,7 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
     { tab: 2, title: '1 · How a tower is designed today', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'], notes: [S.research1, S.research2, 'Point to the workflow diagram and the pain points.', S.research3] },
     { tab: 2, title: "2 · Where today's tools stop", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'], notes: [S.tools1, S.tools2] },
     { tab: 2, title: '3 · Who does what', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'], notes: [S.ai1, 'Point to the AI / code / people diagram.', S.ai2] },
-    { tab: 2, title: '4 · How the toolkit runs: the design loop', who: 'Sinnie', secs: 60, targets: ['#rs-next-loop'], notes: [S.proposal1, 'Point to the ring of nodes.', S.proposal2, S.proposal3 + ' You can step out to the drawing set at any point.', 'Point to the input on the left. And the loop is open: professionals, students, anyone with a tool can contribute a node of their own, and it joins the loop at the Your tool slot like any other.'] },
+    { tab: 2, title: '4 · How the toolkit runs: the design loop', who: 'Sinnie', secs: 60, targets: ['#rs-next-loop'], notes: [S.proposal1, 'Point to the ring of nodes.', S.proposal2, S.proposal3 + ' You can step out to the drawing set at any point.'] },
     { tab: 2, title: '4 · Why one platform', who: 'Ruijie', secs: 20, targets: ['#rs-next-why'], notes: ["The research still happens. The difference is where. Today you research, model in CAD, export to analysis, wait for results, and when it doesn't work you start over, often weeks later and across five tools and five files. In the loop, massing, analysis and learning happen on the same model in minutes, while the form is still cheap to change, so you proceed knowing it works."] },
     { tab: 2, title: '4 · Open source and expandable', who: 'Sinnie', secs: 25, targets: ['#rs-next-open'], notes: ["Another part of the proposal is that the system is open source and expandable. Tools travel as skills: copy a node, run it on your own machine, teach your agent a new one, and contribute it back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop. So rather than one fixed piece of software, it's a system that grows with its users.", S.open2] },
     { tab: 2, title: '4 · Fig 4: how it could look', who: 'Sinnie', secs: 15, targets: ['#rs-next-c'], notes: ["And how it could look in use: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, the wires carry the model, and the dashed loops go back to re-mass or re-stack. Both draw from the same library of ten nodes along the bottom."] },
