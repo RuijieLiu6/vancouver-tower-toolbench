@@ -3862,14 +3862,21 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
 <style>
 [data-tour-start] { display: none !important; }   /* guided tour archived 23 Oct 2026: still reachable with #tour */
 /* the preview opening out of the toolkit card's picture: a ghost of the screenshot grows from the card to full size */
-.pres-ghost { position: fixed; z-index: 71; overflow: hidden; border: 1px solid var(--line); background: var(--sheet); pointer-events: none; }
+.pres-ghost { position: fixed; z-index: 72; overflow: hidden; border: 1px solid var(--line); background: var(--sheet); pointer-events: none; }
 .pres-ghost img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+/* a slide that opens a window over the slide before: the page stays as it was, under a light veil */
+.pres-scrim { position: fixed; inset: 0; z-index: 71; background: color-mix(in srgb, var(--ground) 38%, transparent); pointer-events: none; }
+.pres-overlay { position: fixed; left: 0; right: 0; z-index: 72; display: grid; place-items: center; pointer-events: none; }
+.pres-overlay figure { pointer-events: auto; margin: 0; padding: 12px; background-color: var(--sheet); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 28px 70px -24px rgba(31,35,40,.45); transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease; }
+.pres-overlay figure.opening { background-color: transparent; border-color: transparent; box-shadow: none; }   /* while the picture grows, the window's frame waits */
+@media (prefers-reduced-motion: no-preference) { .pres-scrim:not([hidden]) { animation: presFade .35s ease both; } }
+@keyframes presFade { from { opacity: 0; } }
 .tdt-preview { margin: 0 calc((100% - min(100vw - 32px, 1400px)) / 2); display: flex; flex-direction: column; gap: 8px; }   /* as wide as the diagrams */
 .tdt-preview img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: 12px; background: var(--sheet); }
 .present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
 .present-btn svg { width: 15px; height: 15px; }
 @media (max-width: 720px) { .present-btn { display: none; } }
-.pres-top, .pres-foot { position: fixed; left: 0; right: 0; z-index: 72; display: flex; align-items: center; gap: 16px; background: var(--sheet); padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
+.pres-top, .pres-foot { position: fixed; left: 0; right: 0; z-index: 74; display: flex; align-items: center; gap: 16px; background: var(--sheet); padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
 .pres-top { top: 0; padding-top: calc(10px + env(safe-area-inset-top, 0px)); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-sm); }
 .pres-foot { bottom: 0; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
 .pres-n { font: 600 12px var(--mono); color: var(--muted); min-width: 52px; font-variant-numeric: tabular-nums; }
@@ -3885,7 +3892,7 @@ if (START_HASH === 'tour') {                         // a #tour link opens strai
 .pres-foot .pres-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: block; }
 .pres-foot .pres-dots i.on { background: var(--harbour); }
 .pres-foot .pres-dots i.tab { margin-left: 6px; }
-.pres-notes { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; z-index: 72; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
+.pres-notes { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; z-index: 74; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
 .pres-notes .sect-h { margin-bottom: -4px; }
 .pres-notes p { max-width: none; }
 .pres-notes .cue { color: var(--signal); font-weight: 600; }
@@ -3896,7 +3903,7 @@ body.presenting .tourbar, body.presenting .tourring, body.presenting .ed-pill, b
 body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(.pres-ring):not(#enterVeil):not(#join) { opacity: .18 !important; animation: none !important; transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres="on"] { animation: none !important; }   /* an entrance animation would override the fit-to-room scaling */
-.pres-ring { position: absolute; z-index: 71; pointer-events: none; border: 2px solid var(--harbour); border-radius: 16px; box-sizing: border-box; }
+.pres-ring { position: absolute; z-index: 70; pointer-events: none; border: 2px solid var(--harbour); border-radius: 16px; box-sizing: border-box; }
 body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
 /* the rest-of-the-tools slide: the three cards already shown step aside and the other four share one row */
 body.presenting #toolGrid.pres-rest { grid-template-columns: repeat(4, minmax(0, 1fr)); }
@@ -3921,6 +3928,8 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
 </div>
 <div class="pres-notes" id="presNotes" hidden></div>
 <div class="pres-ring" id="presRing" hidden aria-hidden="true"></div>
+<div class="pres-scrim" id="presScrim" hidden aria-hidden="true"></div>
+<div class="pres-overlay" id="presOverlay" hidden></div>
 <script>
 (() => {
   const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
@@ -3964,7 +3973,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
       notes: ['These are the two Assignment 1 tools we started from. Vista, by Ruijie, puts a proposed tower into a 3D model of Downtown Vancouver and checks it against the protected view cones, sky exposure and the pedestrian experience. The Downtown Massing Tool, mine, loads what the City data says about a real lot, and as you push and pull blocks it checks the massing against the building code for compliance.'] },
     { tab: 3, title: 'Our current model: the Tower Design Toolkit', who: 'Ruijie', secs: 50, targets: [() => toolCard('Tower Design Toolkit')],
       notes: ['Our first attempt for Assignment 2 is the Tower Design Toolkit itself: a place where information from the different tools comes together and can be compared. It reads actual exports from our existing tools, compares tower options with one consistent set of area calculations, and keeps a record of the results and the decisions.', S.dev2, S.dev3] },
-    { tab: 3, title: 'The Tower Design Toolkit: the node interface', who: 'Ruijie', secs: 30, reveal: '#tdtPreview', targets: ['#tdtPreview'], openFrom: () => { const c = toolCard('Tower Design Toolkit'); return c && c.querySelector('.shot'); },
+    { tab: 3, title: 'The Tower Design Toolkit: the node interface', who: 'Ruijie', secs: 30, targets: [() => toolCard('Tower Design Toolkit')], overlay: '#tdtPreview', openFrom: () => { const c = toolCard('Tower Design Toolkit'); return c && c.querySelector('.shot'); },
       notes: ['This is what it looks like. On the left, the checks: VTC rules, program and FSR, view cones, sun and shadow, structure, wind and more, each switched on or off. In the middle, the node graph: the site, the massing and the program feed every check, and every check feeds one evidence report. On the right, the design panel where you set the height, the floor plate and the program by floor band.', 'Point to a check node and its result line.', 'So a designer changes the tower on the right and sees every check update in the graph, each with its source and evidence flag, instead of exporting the model to separate tools.'] },
     { tab: 3, title: 'The rest of the tools', who: 'Ruijie', secs: 20, targets: ['#toolGrid'], cls: 'pres-rest',
       notes: ['Four more tools feed the same workflow: the Program Value Visualizer for value, cost and City charges; Form Studio for form and structure; Street Flow Lab for pedestrians and traffic on the streets around a site; and Sun & Wind Studio for sun, wind, daylight and energy. Each card says what the tool does and where it stops, and each opens on your own scheme.'] },
@@ -3973,7 +3982,8 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   ];
   const TAB_NAME = { 1: 'About us', 2: 'How it works', 3: 'Try the tools' };
   const $ = s => document.querySelector(s);
-  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots'), ring = $('#presRing');
+  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots'), ring = $('#presRing'), scrim = $('#presScrim'), overlay = $('#presOverlay');
+  const closeOverlay = () => { overlay.hidden = true; overlay.replaceChildren(); scrim.hidden = true; };
   if (!top || !foot) return;
   let on = false, i = -1, startAt = 0, timer = 0, scaled = [];
   const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
@@ -4015,7 +4025,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
   }
   function show(k) {
     k = Math.max(0, Math.min(PRESENT.length - 1, k));
-    dropGhost();
+    dropGhost(); closeOverlay();
     const s = PRESENT[k];
     let from = null;                                      // going forward from the slide before: open out of that slide's element
     if (on && s.openFrom && k === i + 1 && !reduce()) { const o = resolve(s.openFrom); if (o && o.getClientRects().length) from = o.getBoundingClientRect(); }
@@ -4046,9 +4056,19 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
         const l = Math.min(...qs.map(x => x.left)) - pad, t = Math.min(...qs.map(x => x.top)) - pad, rt = Math.max(...qs.map(x => x.right)) + pad, bt = Math.max(...qs.map(x => x.bottom)) + pad;
         ring.style.left = (l + scrollX) + 'px'; ring.style.top = (t + scrollY) + 'px'; ring.style.width = (rt - l) + 'px'; ring.style.height = (bt - t) + 'px'; ring.hidden = false;
       };
-      if (from) { ring.hidden = true; const mine = i; requestAnimationFrame(() => openFrom(els[0], from, () => { if (on && i === mine) placeRing(); })); }
+      if (from && !s.overlay) { ring.hidden = true; const mine = i; requestAnimationFrame(() => openFrom(els[0], from, () => { if (on && i === mine) placeRing(); })); }
       else requestAnimationFrame(placeRing);
     } else ring.hidden = true;
+    const src = s.overlay && document.querySelector(s.overlay);
+    if (src) {                                             // the window: a copy of the element, sized to the room between the bars
+      const fig = src.cloneNode(true); fig.removeAttribute('id'); fig.hidden = false; fig.style.margin = '0';
+      const head = top.offsetHeight, tail = foot.offsetHeight, room = innerHeight - head - tail - 40;
+      overlay.style.top = head + 'px'; overlay.style.bottom = tail + 'px';
+      const im = fig.querySelector('img'), ratio = im ? (+im.getAttribute('width') || 2) / (+im.getAttribute('height') || 1) : 2;
+      fig.style.width = Math.round(Math.min(innerWidth * 0.84, 1400, (room * 0.86 - 24 - 56) * ratio + 24)) + 'px';   /* slide 14 stays visible around it */
+      overlay.append(fig); overlay.hidden = false; scrim.hidden = false;
+      if (from) { fig.classList.add('opening'); const mine = i; requestAnimationFrame(() => { if (on && i === mine) openFrom(fig, from, () => fig.classList.remove('opening')); }); }
+    }
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
     $('#presTab').textContent = s.tab ? `${s.tab} · ${TAB_NAME[s.tab]}` : '';
     $('#presTitle').textContent = s.title;
@@ -4069,7 +4089,7 @@ body.presenting #toolGrid.pres-rest .tool ul { display: none; }
     startAt = Date.now(); timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
   }
   function end() {
-    if (!on) return; on = false; clearInterval(timer); dropGhost(); clearMarks();
+    if (!on) return; on = false; clearInterval(timer); dropGhost(); closeOverlay(); clearMarks();
     document.querySelectorAll('[data-pres-revealed]').forEach(n => { n.hidden = true; n.removeAttribute('data-pres-revealed'); });
     if (!$('#join').hidden && typeof closeJoin === 'function') closeJoin();
     for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
