@@ -3844,8 +3844,10 @@ if (START_HASH === 'tour') tourStart(0);
 
 <!-- Presentation mode: the talk as slides, on the page itself. Each slide switches to the right tab, scrolls its section
      or figure into view and dims everything else, the way the guided tour does, so the context stays around the slide.
-     The order follows the presentation script (PRESENT below). Arrow keys or a clicker move between slides, N shows the
-     speaker notes, F asks for full screen, Esc leaves. -->
+     The page is frozen while presenting: only the slides scroll it. The slides walk About us, How it works and Try the
+     tools in order (PRESENT below); where the presentation script has words for a slide they are the notes, otherwise
+     the notes are the section's own text. Arrow keys or a clicker move between slides, N shows the notes, F asks for
+     full screen, Esc leaves. -->
 <style>
 .present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
 .present-btn svg { width: 15px; height: 15px; }
@@ -3854,6 +3856,7 @@ if (START_HASH === 'tour') tourStart(0);
 .pres-top { top: 0; padding-top: calc(10px + env(safe-area-inset-top, 0px)); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-sm); }
 .pres-foot { bottom: 0; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
 .pres-n { font: 600 12px var(--mono); color: var(--muted); min-width: 52px; font-variant-numeric: tabular-nums; }
+.pres-tab { font: 600 11px var(--body); text-transform: uppercase; letter-spacing: .08em; color: var(--harbour); white-space: nowrap; }
 .pres-title { font: 600 18px var(--display); letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pres-who { font: 500 13px var(--body); color: var(--muted); white-space: nowrap; }
 .pres-who b { color: var(--signal); font-weight: 600; }
@@ -3861,16 +3864,18 @@ if (START_HASH === 'tour') tourStart(0);
 .pres-clock.over { color: var(--stop); }
 .pres-foot .grow { flex: 1; }
 .pres-foot button { min-height: 38px; font-size: 14px; }
-.pres-foot .pres-dots { display: flex; gap: 5px; }
-.pres-foot .pres-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+.pres-foot .pres-dots { display: flex; gap: 4px; }
+.pres-foot .pres-dots i { width: 7px; height: 7px; border-radius: 50%; background: var(--line); display: block; }
 .pres-foot .pres-dots i.on { background: var(--harbour); }
+.pres-foot .pres-dots i.tab { margin-left: 6px; }
 .pres-notes { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; z-index: 72; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
 .pres-notes .sect-h { margin-bottom: -4px; }
 .pres-notes p { max-width: none; }
 .pres-notes .cue { color: var(--signal); font-weight: 600; }
-/* the spotlight: on the path from the body down to the slide's element, every sibling that is not on the path is dimmed */
-body.presenting { padding-bottom: 80px; }
+/* frozen: only the slides move the page */
+body.presenting { overflow: hidden; padding-bottom: 80px; }
 body.presenting .tourbar, body.presenting .tourring, body.presenting .ed-pill, body.presenting .join-btn { display: none; }
+/* the spotlight: on the path from the body down to the slide's element, every sibling that is not on the path is dimmed */
 body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(#enterVeil):not(#join) { opacity: .18; transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres="on"] { outline: 2px solid var(--harbour); outline-offset: 12px; border-radius: 12px; }
@@ -3878,6 +3883,7 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
 </style>
 <div class="pres-top" id="presTop" hidden>
   <span class="pres-n" id="presN"></span>
+  <span class="pres-tab" id="presTab"></span>
   <span class="pres-title" id="presTitle"></span>
   <span class="pres-who" id="presWho"></span>
   <span class="pres-clock" id="presClock">0:00</span>
@@ -3896,41 +3902,51 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
 <script>
 (() => {
   const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
+  const S = {   // the presentation script, by section
+    intro1: "For Assignment 2, Ruijie and I decided to continue exploring high-rise design in downtown Vancouver, building on the individual tools we developed in Assignment 1. In our first assignment, we each focused on a specific part of tower design. Ruijie developed Vista, which looks at protected views, while I developed a massing tool that explores programming and zoning constraints.",
+    intro2: "But moving into Assignment 2, we wanted to take this further. Rather than developing another standalone tool, we started thinking about how these tools could work together to support the overall design process. So our main question became: How can we create a more flexible and connected design workflow that allows architects to quickly test ideas, understand constraints, and make decisions without constantly switching between different software?",
+    research1: "We started by researching how high-rise buildings are typically designed, from the initial brief all the way to City review. Especially in the early design stages, architects often want to quickly explore different massing options and understand how they perform in terms of sunlight, views, energy, structure, and building regulations.",
+    research2: "But currently, a lot of these analyses happen separately. You might have to move between multiple software platforms, look through different regulations, and sometimes rebuild the same model just to test another aspect of the design.",
+    research3: "Through mapping this process, we identified several pain points, particularly the lack of connection between tools, the time spent transferring information, and the uncertainty around automated compliance checks. So we started asking ourselves whether the workflow itself could be redesigned, rather than simply making each individual task faster.",
+    tools1: "We also looked at existing tools like Forma, Grasshopper, and TestFit, and mapped where they fit within the architectural design process. They're all powerful in different ways, but what we're interested in is the transition between them.",
+    tools2: "For example, you might generate a massing in one tool, analyze sunlight in another, and then move to a completely different workflow for code or structural analysis. So the opportunity we identified isn't necessarily to invent every analysis tool from scratch, but to create a system where different tools can communicate and become part of one design workflow.",
+    proposal1: "This brings us to our proposal, which we're calling the Tower Design Toolkit. We're looking at the design process through five broad stages: concept and research, form, program, schematic design, and design development. Our idea is to develop a collection of smaller tools, or nodes, that support different parts of this process.",
+    proposal2: "For example, you could start by creating a basic building mass, then connect it to tools that analyze sunlight, views, circulation, energy, structure, or building codes. We're also proposing basic and advanced modelling modes, so users could quickly generate simple massing studies at the beginning, and gradually introduce more complex geometry and detailed analysis as the project develops.",
+    proposal3: "But what's important is that we don't want this workflow to be linear or predetermined. Instead, designers could choose which nodes they want to use, arrange them in different sequences, and go back and forth between analyses as their design develops.",
+    open1: "Another part of our proposal is to make the system open-source and expandable. Ideally, other designers and experts could create their own tool nodes, share them, or use AI agents to help develop new ones that could be contributed to a shared library. So rather than being a single fixed software, we're imagining this as an adaptable system that can grow with its users.",
+    open2: "And eventually, we'd like the same workflow to support the production of basic architectural drawings, diagrams, and renders.",
+    ai1: "Another question we've been exploring is what AI should actually be responsible for in this process. We're not necessarily interested in having AI design a tower automatically. Instead, we're exploring how AI could help users communicate with different tools, interpret requests, or eventually help generate new tool functions.",
+    ai2: "So in our proposed system, AI helps interpret requests, code performs calculations and checks, and designers remain responsible for making decisions. We're also trying to make the results transparent, so that instead of simply giving a pass-or-fail answer, the system can explain what information was used and where it came from. That becomes especially important when we're dealing with building regulations, where automated results still require professional verification.",
+    dev1: "For Assignment 2, our first attempt has been to explore how information from different tools could be brought together and compared. We've developed an initial prototype that can read actual exports from our existing tools, compare tower options using a consistent set of area calculations, and keep a record of the results and decisions.",
+    dev2: "So rather than looking at each analysis separately, the idea is that a designer could begin comparing different options within a shared system. We've also been testing the logic behind it, particularly how the inputs are validated and how calculations can remain consistent between tools. So far, the prototype has passed 89 hand-written checks. Of course, it's still an early attempt. We haven't connected a live AI model yet, the current workflow is fixed rather than fully node-based, and we haven't tested it with external users.",
+    dev3: "But it has helped us understand one of the bigger technical challenges of this project: how to transfer design information between tools without losing its meaning or having to recreate the model each time.",
+    next1: "So moving forward, our main focus for Assignment 2 is figuring out how to develop this initial prototype into a more connected and customizable workflow. We want to explore how different tool nodes could exchange information, how users could arrange their own design processes, and where AI could meaningfully support those interactions.",
+    next2: "We're also planning to test the workflow with potential users, particularly architects and designers who work on high-rise projects, to understand which functions are genuinely useful. Ultimately, we're interested in not just designing individual tools, but redesigning how these tools work together and how architects interact with them.",
+    next3: "That's where we are right now, and we'd be interested in hearing your feedback on the direction and what we should prioritize next.",
+  };
+  // tab: which tab the slide lives on · targets: what stays bright · notes: the script, or notesFrom: the section whose own text is read out
   const PRESENT = [
-    { n: '1', title: 'Introduction', who: 'Sinnie', secs: 40, targets: ['#aboutHead', '#project .gallery'],
-      notes: ["For Assignment 2, Ruijie and I decided to continue exploring high-rise design in downtown Vancouver, building on the individual tools we developed in Assignment 1. In our first assignment, we each focused on a specific part of tower design. Ruijie developed Vista, which looks at protected views, while I developed a massing tool that explores programming and zoning constraints.",
-        "But moving into Assignment 2, we wanted to take this further. Rather than developing another standalone tool, we started thinking about how these tools could work together to support the overall design process. So our main question became: How can we create a more flexible and connected design workflow that allows architects to quickly test ideas, understand constraints, and make decisions without constantly switching between different software?"] },
-    { n: '2', title: 'Research: understanding the existing workflow', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'],
-      notes: ["We started by researching how high-rise buildings are typically designed, from the initial brief all the way to City review. Especially in the early design stages, architects often want to quickly explore different massing options and understand how they perform in terms of sunlight, views, energy, structure, and building regulations.",
-        "But currently, a lot of these analyses happen separately. You might have to move between multiple software platforms, look through different regulations, and sometimes rebuild the same model just to test another aspect of the design.",
-        "Point to the workflow diagram and the pain points.",
-        "Through mapping this process, we identified several pain points, particularly the lack of connection between tools, the time spent transferring information, and the uncertainty around automated compliance checks. So we started asking ourselves whether the workflow itself could be redesigned, rather than simply making each individual task faster."] },
-    { n: '3', title: "Existing tools and their limitations", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'],
-      notes: ["We also looked at existing tools like Forma, Grasshopper, and TestFit, and mapped where they fit within the architectural design process. They're all powerful in different ways, but what we're interested in is the transition between them.",
-        "For example, you might generate a massing in one tool, analyze sunlight in another, and then move to a completely different workflow for code or structural analysis. So the opportunity we identified isn't necessarily to invent every analysis tool from scratch, but to create a system where different tools can communicate and become part of one design workflow."] },
-    { n: '4', title: 'Our proposal: a node-based design toolkit', who: 'Sinnie', secs: 80, targets: ['#rs-next-loop'],
-      notes: ["This brings us to our proposal, which we're calling the Tower Design Toolkit. We're looking at the design process through five broad stages: concept and research, form, program, schematic design, and design development. Our idea is to develop a collection of smaller tools, or nodes, that support different parts of this process.",
-        "For example, you could start by creating a basic building mass, then connect it to tools that analyze sunlight, views, circulation, energy, structure, or building codes. We're also proposing basic and advanced modelling modes, so users could quickly generate simple massing studies at the beginning, and gradually introduce more complex geometry and detailed analysis as the project develops.",
-        "But what's important is that we don't want this workflow to be linear or predetermined. Instead, designers could choose which nodes they want to use, arrange them in different sequences, and go back and forth between analyses as their design develops."] },
-    { n: '4', title: 'Our proposal: open source and expandable', who: 'Sinnie', secs: 0, targets: ['#rs-next-open'],
-      notes: ["Another part of our proposal is to make the system open-source and expandable. Ideally, other designers and experts could create their own tool nodes, share them, or use AI agents to help develop new ones that could be contributed to a shared library. So rather than being a single fixed software, we're imagining this as an adaptable system that can grow with its users.",
-        "And eventually, we'd like the same workflow to support the production of basic architectural drawings, diagrams, and renders."] },
-    { n: '5', title: 'How AI fits into the workflow', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'],
-      notes: ["Another question we've been exploring is what AI should actually be responsible for in this process. We're not necessarily interested in having AI design a tower automatically. Instead, we're exploring how AI could help users communicate with different tools, interpret requests, or eventually help generate new tool functions.",
-        "Point to the AI / code / people diagram.",
-        "So in our proposed system, AI helps interpret requests, code performs calculations and checks, and designers remain responsible for making decisions. We're also trying to make the results transparent, so that instead of simply giving a pass-or-fail answer, the system can explain what information was used and where it came from. That becomes especially important when we're dealing with building regulations, where automated results still require professional verification."] },
-    { n: '5', title: 'How the toolkit runs', who: 'Ruijie', secs: 0, targets: ['#rs-next-why'],
-      notes: ["The research still happens. The difference is where: inside the massing loop while the form is cheap to change, instead of after a hand-off, when a bad answer means starting over."] },
-    { n: '6', title: "What we've developed for Assignment 2 so far", who: 'Ruijie', secs: 65, targets: [() => toolCard('Tower Design Toolkit')],
-      notes: ["For Assignment 2, our first attempt has been to explore how information from different tools could be brought together and compared. We've developed an initial prototype that can read actual exports from our existing tools, compare tower options using a consistent set of area calculations, and keep a record of the results and decisions.",
-        "Show the comparison interface. So rather than looking at each analysis separately, the idea is that a designer could begin comparing different options within a shared system.",
-        "We've also been testing the logic behind it, particularly how the inputs are validated and how calculations can remain consistent between tools. So far, the prototype has passed 89 hand-written checks. Of course, it's still an early attempt. We haven't connected a live AI model yet, the current workflow is fixed rather than fully node-based, and we haven't tested it with external users.",
-        "But it has helped us understand one of the bigger technical challenges of this project: how to transfer design information between tools without losing its meaning or having to recreate the model each time."] },
-    { n: '7', title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'],
-      notes: ["So moving forward, our main focus for Assignment 2 is figuring out how to develop this initial prototype into a more connected and customizable workflow. We want to explore how different tool nodes could exchange information, how users could arrange their own design processes, and where AI could meaningfully support those interactions.",
-        "We're also planning to test the workflow with potential users, particularly architects and designers who work on high-rise projects, to understand which functions are genuinely useful. Ultimately, we're interested in not just designing individual tools, but redesigning how these tools work together and how architects interact with them.",
-        "That's where we are right now, and we'd be interested in hearing your feedback on the direction and what we should prioritize next."] },
+    { tab: 1, title: 'Introduction', who: 'Sinnie', secs: 40, targets: ['#aboutHead', '#project .gallery'], notes: [S.intro1, S.intro2] },
+    { tab: 1, title: 'The problem: too many rule books', who: 'Sinnie', secs: 0, targets: ['#p-problem'], notesFrom: '#p-problem .text' },
+    { tab: 1, title: 'What we built first', who: 'Sinnie', secs: 0, targets: ['#p-built'], notes: [S.intro1] },
+    { tab: 1, title: 'What building them taught us', who: 'Ruijie', secs: 0, targets: ['#p-learned'], notesFrom: '#p-learned .text' },
+    { tab: 1, title: 'Assignment 2: one toolkit', who: 'Sinnie', secs: 0, targets: ['#p-plan'], notes: [S.intro2] },
+    { tab: 1, title: 'Timeline', who: 'Sinnie', secs: 0, targets: ['#p-timeline'], notes: ['Where we are in the term, and what comes next: mid review today, user testing, then the final review.'] },
+    { tab: 2, title: 'We link the tools you already use', who: 'Ruijie', secs: 0, targets: ['#research .rs-hero'], notesFrom: '#research .rs-hero' },
+    { tab: 2, title: '1 · How a tower is designed today', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'], notes: [S.research1, S.research2, 'Point to the workflow diagram and the pain points.', S.research3] },
+    { tab: 2, title: "2 · Where today's tools stop", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'], notes: [S.tools1, S.tools2] },
+    { tab: 2, title: '3 · Who does what', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'], notes: [S.ai1, 'Point to the AI / code / people diagram.', S.ai2] },
+    { tab: 2, title: '4 · How the toolkit runs: the design loop', who: 'Sinnie', secs: 80, targets: ['#rs-next-loop'], notes: [S.proposal1, S.proposal2, S.proposal3] },
+    { tab: 2, title: '4 · Why one platform', who: 'Ruijie', secs: 0, targets: ['#rs-next-why'], notesFrom: '#rs-next-why figcaption' },
+    { tab: 2, title: '4 · Open source and expandable', who: 'Sinnie', secs: 0, targets: ['#rs-next-open'], notes: [S.open1, S.open2] },
+    { tab: 2, title: '4 · Two designers, two paths', who: 'Sinnie', secs: 0, targets: ['#rs-next-a'], notesFrom: '#rs-next-a figcaption' },
+    { tab: 2, title: '4 · How it could look: the canvas', who: 'Sinnie', secs: 0, targets: ['#rs-next-c'], notesFrom: '#rs-next-c figcaption' },
+    { tab: 2, title: '5 · How this research was made', who: 'Ruijie', secs: 0, targets: ['#rs-method'], notesFrom: '#rs-method' },
+    { tab: 3, title: 'Try the tools', who: 'Ruijie', secs: 0, targets: ['#tools .try-banner', '#toolGrid'], notes: ['Seven tools so far, each card saying what it does and where it stops. Every one opens on your own scheme.'] },
+    { tab: 3, title: "What we've developed for Assignment 2 so far", who: 'Ruijie', secs: 65, targets: [() => toolCard('Tower Design Toolkit')], notes: [S.dev1, 'Show the comparison interface.', S.dev2, S.dev3] },
+    { tab: 2, title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'], notes: [S.next1, S.next2, S.next3] },
   ];
+  const TAB_NAME = { 1: 'About us', 2: 'How it works', 3: 'Try the tools' };
   const $ = s => document.querySelector(s);
   const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
   if (!top || !foot) return;
@@ -3945,9 +3961,11 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
       for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) if (!a.hasAttribute('data-pres')) a.setAttribute('data-pres', 'path');
     }
   }
+  const notesOf = s => { if (s.notes) return s.notes; const root = document.querySelector(s.notesFrom); if (!root) return []; const nodes = root.matches('p, figcaption, li') ? [root] : [...root.querySelectorAll('p, figcaption, li')]; return nodes.map(n => n.textContent.trim()).filter(Boolean).slice(0, 6); };
   function show(k) {
     k = Math.max(0, Math.min(PRESENT.length - 1, k)); i = k;
     const s = PRESENT[k], els = s.targets.map(resolve).filter(Boolean);
+    for (const el of els) { const d = el.closest('details'); if (d) d.open = true; }      // a figure inside a folded section
     const panel = els[0] && els[0].closest('section.panel[role=tabpanel]');
     if (panel && typeof showTab === 'function') showTab(panel.id);
     spotlight(els);
@@ -3957,10 +3975,11 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
       window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
     }
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
-    $('#presTitle').textContent = `${s.n} · ${s.title}`;
+    $('#presTab').textContent = `${s.tab} · ${TAB_NAME[s.tab]}`;
+    $('#presTitle').textContent = s.title;
     $('#presWho').innerHTML = `<b>${s.who}</b>${s.secs ? ' · ' + (s.secs >= 60 ? Math.floor(s.secs / 60) + ' min ' + (s.secs % 60 ? s.secs % 60 + ' s' : '') : s.secs + ' s') : ''}`;
-    notes.innerHTML = `<span class="sect-h">Notes · ${s.who}</span>` + s.notes.map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
-    dots.innerHTML = PRESENT.map((_, j) => `<i class="${j === k ? 'on' : ''}"></i>`).join('');
+    notes.innerHTML = `<span class="sect-h">Notes · ${s.who}</span>` + notesOf(s).map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
+    dots.innerHTML = PRESENT.map((x, j) => `<i class="${j === k ? 'on' : ''}${j && PRESENT[j - 1].tab !== x.tab ? ' tab' : ''}"></i>`).join('');
     $('#presPrev').disabled = k === 0; $('#presNext').textContent = k === PRESENT.length - 1 ? 'Finish' : 'Next →';
     startAt = Date.now(); tick();
   }
@@ -3990,6 +4009,10 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
   $('#presExit').addEventListener('click', end);
   $('#presNotesBtn').addEventListener('click', toggleNotes);
   $('#presFull').addEventListener('click', full);
+  // frozen page: the wheel, touch and scroll keys do nothing while presenting; the slides move the page
+  const block = e => { if (on && !e.target.closest('.pres-notes')) e.preventDefault(); };
+  document.addEventListener('wheel', block, { passive: false });
+  document.addEventListener('touchmove', block, { passive: false });
   document.addEventListener('keydown', e => {
     if (!on || e.altKey || e.ctrlKey || e.metaKey) return;
     if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
@@ -3997,6 +4020,7 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
     if (k === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); end(); return; }
     if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); e.stopImmediatePropagation(); if (i === PRESENT.length - 1) end(); else show(i + 1); return; }
     if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); e.stopImmediatePropagation(); show(i - 1); return; }
+    if (k === 'ArrowUp' || k === 'ArrowDown') { e.preventDefault(); return; }
     if (k === 'n' || k === 'N') { e.preventDefault(); toggleNotes(); return; }
     if (k === 'f' || k === 'F') { e.preventDefault(); full(); return; }
     if (k === 'Home') { e.preventDefault(); show(0); } else if (k === 'End') { e.preventDefault(); show(PRESENT.length - 1); }
