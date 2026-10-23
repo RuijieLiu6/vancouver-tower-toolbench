@@ -3842,66 +3842,57 @@ if (START_HASH === 'tour') tourStart(0);
 })();
 </script>
 
-<!-- Presentation mode: the talk as slides. Each slide lifts the real section or figure off the page into a full-screen
-     stage (and puts it back on exit), so what is presented is exactly what is on the site. The order follows the
-     presentation script (PRESENT below). Arrow keys or a clicker move between slides, N shows the speaker notes,
-     F asks for full screen, Esc leaves. -->
+<!-- Presentation mode: the talk as slides, on the page itself. Each slide switches to the right tab, scrolls its section
+     or figure into view and dims everything else, the way the guided tour does, so the context stays around the slide.
+     The order follows the presentation script (PRESENT below). Arrow keys or a clicker move between slides, N shows the
+     speaker notes, F asks for full screen, Esc leaves. -->
 <style>
 .present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
 .present-btn svg { width: 15px; height: 15px; }
 @media (max-width: 720px) { .present-btn { display: none; } }
-.pres { position: fixed; inset: 0; z-index: 70; background: var(--ground); color: var(--ink); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding-top: env(safe-area-inset-top, 0px); }
-.pres-top, .pres-foot { display: flex; align-items: center; gap: 16px; padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
-.pres-top { border-bottom: 1px solid var(--line); background: var(--sheet); }
-.pres-foot { border-top: 1px solid var(--line); background: var(--sheet); padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+.pres-top, .pres-foot { position: fixed; left: 0; right: 0; z-index: 72; display: flex; align-items: center; gap: 16px; background: var(--sheet); padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
+.pres-top { top: 0; padding-top: calc(10px + env(safe-area-inset-top, 0px)); border-bottom: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+.pres-foot { bottom: 0; padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); border-top: 1px solid var(--line); }
 .pres-n { font: 600 12px var(--mono); color: var(--muted); min-width: 52px; font-variant-numeric: tabular-nums; }
 .pres-title { font: 600 18px var(--display); letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .pres-who { font: 500 13px var(--body); color: var(--muted); white-space: nowrap; }
 .pres-who b { color: var(--signal); font-weight: 600; }
 .pres-clock { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
 .pres-clock.over { color: var(--stop); }
-.pres-stage { overflow: auto; display: grid; place-items: center; padding: 18px max(20px, env(safe-area-inset-right, 0px)) 18px max(20px, env(safe-area-inset-left, 0px)); }
-.pres-stage > .pres-lift { width: min(1500px, 100%); display: flex; flex-direction: column; gap: 14px; }
-.pres-stage .v2fig { margin: 0; }
-.pres-stage .v2host svg { min-width: 0; }
-.pres-stage #v2D svg, .pres-stage #tdtLoop svg, .pres-stage #tdtA svg, .pres-stage #tdtC svg { max-width: min(1180px, calc((100vh - 230px) * 1.5)); }
-.pres-stage .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.pres-stage .tool { max-width: 560px; margin: 0 auto; }
-.pres-stage .tool .shot { height: 260px; }
-.pres-stage #aboutHead h2 { font-size: clamp(28px, 4vw, 44px); }
 .pres-foot .grow { flex: 1; }
 .pres-foot button { min-height: 38px; font-size: 14px; }
 .pres-foot .pres-dots { display: flex; gap: 5px; }
 .pres-foot .pres-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
 .pres-foot .pres-dots i.on { background: var(--harbour); }
-.pres-notes { position: absolute; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
+.pres-notes { position: fixed; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; z-index: 72; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
 .pres-notes .sect-h { margin-bottom: -4px; }
 .pres-notes p { max-width: none; }
 .pres-notes .cue { color: var(--signal); font-weight: 600; }
-body.presenting { overflow: hidden; }
-body.presenting .ed-pill, body.presenting .tourbar, body.presenting .tourring { display: none; }
-@media (prefers-reduced-motion: no-preference) { .pres-stage > .pres-lift { animation: fadeUp var(--t-stage-in) var(--ease) both; } }
+/* the spotlight: on the path from the body down to the slide's element, every sibling that is not on the path is dimmed */
+body.presenting { padding-bottom: 80px; }
+body.presenting .tourbar, body.presenting .tourring, body.presenting .ed-pill, body.presenting .join-btn { display: none; }
+body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-foot):not(.pres-notes):not(#enterVeil):not(#join) { opacity: .18; transition: opacity var(--t-chrome) var(--ease); }
+body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
+body.presenting [data-pres="on"] { outline: 2px solid var(--harbour); outline-offset: 12px; border-radius: 12px; }
+body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
 </style>
-<div class="pres" id="pres" hidden role="dialog" aria-modal="true" aria-label="Presentation">
-  <div class="pres-top">
-    <span class="pres-n" id="presN"></span>
-    <span class="pres-title" id="presTitle"></span>
-    <span class="pres-who" id="presWho"></span>
-    <span class="pres-clock" id="presClock">0:00</span>
-  </div>
-  <div class="pres-stage" id="presStage"></div>
-  <div class="pres-foot">
-    <button type="button" id="presPrev">← Back</button>
-    <button type="button" class="primary" id="presNext">Next →</button>
-    <span class="grow"></span>
-    <span class="pres-dots" id="presDots" aria-hidden="true"></span>
-    <span class="grow"></span>
-    <button type="button" id="presNotesBtn" aria-pressed="false">Notes <kbd>N</kbd></button>
-    <button type="button" id="presFull">Full screen <kbd>F</kbd></button>
-    <button type="button" id="presExit">Exit <kbd>Esc</kbd></button>
-  </div>
-  <div class="pres-notes" id="presNotes" hidden></div>
+<div class="pres-top" id="presTop" hidden>
+  <span class="pres-n" id="presN"></span>
+  <span class="pres-title" id="presTitle"></span>
+  <span class="pres-who" id="presWho"></span>
+  <span class="pres-clock" id="presClock">0:00</span>
 </div>
+<div class="pres-foot" id="presFoot" hidden>
+  <button type="button" id="presPrev">← Back</button>
+  <button type="button" class="primary" id="presNext">Next →</button>
+  <span class="grow"></span>
+  <span class="pres-dots" id="presDots" aria-hidden="true"></span>
+  <span class="grow"></span>
+  <button type="button" id="presNotesBtn" aria-pressed="false">Notes <kbd>N</kbd></button>
+  <button type="button" id="presFull">Full screen <kbd>F</kbd></button>
+  <button type="button" id="presExit">Exit <kbd>Esc</kbd></button>
+</div>
+<div class="pres-notes" id="presNotes" hidden></div>
 <script>
 (() => {
   const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
@@ -3941,23 +3932,30 @@ body.presenting .ed-pill, body.presenting .tourbar, body.presenting .tourring { 
         "That's where we are right now, and we'd be interested in hearing your feedback on the direction and what we should prioritize next."] },
   ];
   const $ = s => document.querySelector(s);
-  const pres = $('#pres'), stage = $('#presStage'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
-  if (!pres) return;
-  let on = false, i = -1, lifted = [], startAt = 0, timer = 0;
+  const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
+  if (!top || !foot) return;
+  let on = false, i = -1, startAt = 0, timer = 0;
   const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
-  function restore() {                                   // put every lifted element back where it came from
-    for (const { el, mark } of lifted) { mark.replaceWith(el); }
-    lifted = []; stage.replaceChildren();
+  const reduce = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const clearMarks = () => document.querySelectorAll('[data-pres]').forEach(n => n.removeAttribute('data-pres'));
+  function spotlight(els) {                              // mark the elements and the path down to them; everything beside the path dims
+    clearMarks();
+    for (const el of els) {
+      el.setAttribute('data-pres', 'on');
+      for (let a = el.parentElement; a && a !== document.documentElement; a = a.parentElement) if (!a.hasAttribute('data-pres')) a.setAttribute('data-pres', 'path');
+    }
   }
   function show(k) {
-    k = Math.max(0, Math.min(PRESENT.length - 1, k));
-    restore(); i = k;
-    const s = PRESENT[k], lift = document.createElement('div'); lift.className = 'pres-lift';
-    for (const t of s.targets) {
-      const el = resolve(t); if (!el) continue;
-      const mark = document.createComment('present'); el.before(mark); lifted.push({ el, mark }); lift.append(el);
+    k = Math.max(0, Math.min(PRESENT.length - 1, k)); i = k;
+    const s = PRESENT[k], els = s.targets.map(resolve).filter(Boolean);
+    const panel = els[0] && els[0].closest('section.panel[role=tabpanel]');
+    if (panel && typeof showTab === 'function') showTab(panel.id);
+    spotlight(els);
+    if (els[0]) {
+      const r = els[0].getBoundingClientRect(), head = top.offsetHeight + 16, room = innerHeight - head - foot.offsetHeight - 16;
+      const y = scrollY + r.top - head - (r.height < room ? (room - r.height) / 2 : 0);
+      window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
     }
-    stage.append(lift); stage.scrollTop = 0;
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
     $('#presTitle').textContent = `${s.n} · ${s.title}`;
     $('#presWho').innerHTML = `<b>${s.who}</b>${s.secs ? ' · ' + (s.secs >= 60 ? Math.floor(s.secs / 60) + ' min ' + (s.secs % 60 ? s.secs % 60 + ' s' : '') : s.secs + ' s') : ''}`;
@@ -3975,12 +3973,12 @@ body.presenting .ed-pill, body.presenting .tourbar, body.presenting .tourring { 
     if (on) return; on = true;
     if (typeof tourEnd === 'function' && window.tour && tour.on) tourEnd();
     if (typeof openGate === 'function') openGate();
-    pres.hidden = false; document.body.classList.add('presenting');
+    top.hidden = false; foot.hidden = false; document.body.classList.add('presenting');
     timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
   }
   function end() {
-    if (!on) return; on = false; clearInterval(timer);
-    restore(); pres.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
+    if (!on) return; on = false; clearInterval(timer); clearMarks();
+    top.hidden = true; foot.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
     const b = $('#talkBtn'); if (b) b.focus({ preventScroll: true });
   }

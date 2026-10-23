@@ -43,7 +43,7 @@ The whole page is one source file, `tower-tools-hub.html`. On every push to `mai
    Then open http://localhost:8031/ (or http://localhost:8031/#tour).
 4. **Open a pull request.** Once it is merged into `main`, the site republishes by itself.
 
-**Presenting.** The **Present** button at the right of the tab bar (or `#present` in the address) shows the talk as slides: each slide lifts the real section or figure off the page into a full-screen stage, in the order of the presentation script (`PRESENT` at the end of `tower-tools-hub.html`, with the speaker notes). Arrow keys or a clicker move between slides, N shows the notes, F asks for full screen, Esc leaves.
+**Presenting.** The **Present** button at the right of the tab bar (or `#present` in the address) shows the talk as slides on the page itself: each slide switches to the right tab, scrolls its section or figure into view and dims everything else, in the order of the presentation script (`PRESENT` at the end of `tower-tools-hub.html`, with the speaker notes). Arrow keys or a clicker move between slides, N shows the notes, F asks for full screen, Esc leaves.
 
 ## Rules for every change
 
