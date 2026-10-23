@@ -1,0 +1,15 @@
+# Build output: GitHub Actions makes these from the source on every push
+site/
+public/
+
+# Internal notes and drafts: kept on the team's own computers, never published
+/HANDOFF.md
+/GOOGLE_FORM_SETUP.md
+/presentation/
+
+# Retired scripts (the v1 diagrams and the one-off pictogram pass)
+inject_diagrams.py
+process_picto.py
+
+.DS_Store
+__pycache__/

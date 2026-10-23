@@ -1,29 +1,34 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA)."><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Tower Design Toolkits</title>
+<title>Original Website</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2222%22%20fill%3D%22%231f5f8b%22/%3E%3Crect%20x%3D%2227%22%20y%3D%2272%22%20width%3D%2246%22%20height%3D%2210%22%20fill%3D%22%23c9d8e4%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2258%22%20fill%3D%22%23f6f5f2%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2241%22%20width%3D%2220%22%20height%3D%224%22%20fill%3D%22%23eda100%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
 <style>
 /* Layout: a survey-sheet for towers. A section-strip header (heights in metres), three tabs, one reading column; tool cards in a two-up grid. */
 :root {
-  --ground: #eef1f0;   /* seawall concrete */
-  --sheet: #fbfcfb;
-  --ink: #17242c;      /* False Creek at dusk */
-  --muted: #56656d;
-  --line: #cfd7d6;
-  --harbour: #1d5a6e;  /* primary */
-  --harbour-soft: #dcebef;
-  --signal: #a8480c;   /* survey-marker orange, used sparingly; 4.8:1+ on all light surfaces */
-  --signal-soft: #f7e6d9;
-  --good: #2c7a4b;
-  --display: "Familjen Grotesk", "Avenir Next", "Segoe UI", system-ui, sans-serif;
-  --body: "IBM Plex Sans", "Helvetica Neue", Arial, system-ui, sans-serif;
-  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  /* Tower Design Toolkit palette (from the toolkit app's DESIGN_HANDOFF.md, Massing stage): paper, white panels, hairlines, accent blue */
+  --ground: #f6f5f2;   /* paper */
+  --sheet: #ffffff;    /* panel */
+  --ink: #1f2328;
+  --muted: #62666d;
+  --line: #e3e1dc;
+  --harbour: #1f5f8b;  /* accent: selection, primary actions, focus */
+  --harbour-soft: #e4ecf2;
+  --signal: #9a5d00;   /* amber from the icon's sky-room band, darkened for text: people decide */
+  --signal-soft: #f8ecd4;
+  --good: #1f6b42;
+  --sky: #eda100;      /* the sky-room band itself: glows and dots only, never text */
+  --display: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --body: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --radius: 12px; --ease: cubic-bezier(.2, 0, 0, 1);
+  --shadow-sm: 0 1px 2px rgba(31, 35, 40, .06), 0 1px 1px rgba(31, 35, 40, .04);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
-  --ground: #0f171b; --sheet: #162228; --ink: #e3eaec; --muted: #9aabb2; --line: #2a3a42;
-  --harbour: #7fbdd1; --harbour-soft: #1b3540; --signal: #f0975a; --signal-soft: #3a261a; --good: #6cc492; color-scheme: dark } }
+  --ground: #17191c; --sheet: #212428; --ink: #e8eaed; --muted: #a3a9b0; --line: #33373d;
+  --harbour: #7fb2db; --harbour-soft: #1a2b39; --signal: #e0a33a; --signal-soft: #33270f; --good: #6cc492; color-scheme: dark } }
 :root[data-theme="dark"] {
-  --ground: #0f171b; --sheet: #162228; --ink: #e3eaec; --muted: #9aabb2; --line: #2a3a42;
-  --harbour: #7fbdd1; --harbour-soft: #1b3540; --signal: #f0975a; --signal-soft: #3a261a; --good: #6cc492; color-scheme: dark }
+  --ground: #17191c; --sheet: #212428; --ink: #e8eaed; --muted: #a3a9b0; --line: #33373d;
+  --harbour: #7fb2db; --harbour-soft: #1a2b39; --signal: #e0a33a; --signal-soft: #33270f; --good: #6cc492; color-scheme: dark }
 
 [hidden] { display: none !important; }
 body { background: var(--ground); color: var(--ink); font: 16px/1.55 var(--body); }
@@ -132,9 +137,9 @@ textarea { min-height: 70px; resize: vertical; }
 footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size: 13.5px; color: var(--muted); display: flex; flex-direction: column; gap: 6px; }
 
 /* research tab: graphics first, detail on demand */
-:root { --violet: #6a46a8; --violet-soft: #ebe4f6; --stop: #7a1f1f; --onstop: #fbfcfb; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #e0736b; --onstop: #0f171b; } }
-:root[data-theme="dark"] { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #e0736b; --onstop: #0f171b; }
+:root { --violet: #6a46a8; --violet-soft: #ebe4f6; --stop: #991b1b; --onstop: #ffffff; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #f08a84; --onstop: #17191c; } }
+:root[data-theme="dark"] { --violet: #b9a2e6; --violet-soft: #2a2340; --stop: #f08a84; --onstop: #17191c; }
 .rs { gap: 40px; }
 .rs-hero { display: flex; flex-direction: column; gap: 14px; }
 .rs-big { font-size: clamp(26px, 4.2vw, 40px); line-height: 1.1; font-weight: 700; max-width: 22ch; }
@@ -990,6 +995,43 @@ body.touring .landing .iso-stage { width: min(100%, calc((100vh - 330px) * 1.404
   .tourbar button { min-height: 40px; }
 }
 @media (max-width: 560px) { .tourbar { padding: 12px 12px 10px; gap: 8px; } .tb-body b { font-size: 17px; } .tb-body span { font-size: 14px; } .tb-end { font-size: 14px; } }
+
+/* ---- Tower Design Toolkit alignment: same type, shapes and accent use as the toolkit app ---- */
+body { -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+h1, h2, h3, .brand { font-weight: 600; letter-spacing: -0.02em; }
+.land-title h1 { font-weight: 600; letter-spacing: -0.04em; }
+.rs-big, .ch-head h2 { letter-spacing: -0.025em; }
+:focus-visible { outline-color: var(--harbour); }
+button, .btn { border-radius: 8px; transition: background-color 100ms var(--ease), border-color 100ms var(--ease), color 100ms var(--ease), box-shadow 100ms var(--ease); }
+/* section labels: small, semibold, uppercase, as the toolkit's panel headers */
+.eyebrow, .timeline th, .steps-t th, .tb-head { font-family: var(--body); font-weight: 600; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.tb-keys { text-transform: none; letter-spacing: 0; font-weight: 500; }
+/* selection and primary actions use the accent, as in the app */
+nav.tabs button { font-family: var(--body); font-weight: 600; letter-spacing: -0.01em; }
+nav.tabs button[aria-selected="true"] { border-bottom-color: var(--harbour); }
+nav.tabs button.hot[aria-selected="true"] { color: var(--harbour); background: var(--harbour-soft); }
+.tool .btn.primary, .try-banner, .ch-n { background: var(--harbour); border-color: var(--harbour); }
+.tourbar .tb-next { background: var(--harbour); border-color: var(--harbour); color: var(--sheet); }
+.tb-track button::after { background: var(--harbour); }
+.tourring { box-shadow: 0 0 0 2px var(--harbour), 0 0 0 200vmax rgba(8, 14, 17, .38); }
+/* cards and panels: 12 px corners, hairline, a quiet shadow */
+.tool, .q, .thanks, .person, .lessons > div, .rules3 div, .cards3 details, .v2info, .v2scroll, .gallery figure, .dg .scroll, .attempt-shot, .entry, .join-card { border-radius: var(--radius); box-shadow: var(--shadow-sm); }
+.tool:hover { border-color: color-mix(in srgb, var(--harbour) 40%, var(--line)); box-shadow: 0 8px 22px -12px rgba(31, 35, 40, .28); }
+.more { border-radius: 10px; }
+.join-btn { border-radius: 10px; border-color: color-mix(in srgb, var(--harbour) 45%, var(--line)); box-shadow: var(--shadow-sm); }
+.tag { border-radius: 6px; font-weight: 600; }
+/* landing: the toolkit's faint drafting grid behind the model */
+.landing { background-color: var(--ground);
+  background-image: linear-gradient(color-mix(in srgb, var(--line) 60%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--line) 60%, transparent) 1px, transparent 1px);
+  background-size: 48px 48px; background-position: center top; }
+.land-mark { width: 44px; height: 44px; display: block; margin-bottom: 6px; border-radius: 10px; box-shadow: var(--shadow-sm); }
+.landing .iso-plate-corner[data-corner="readout"], .tb-head { font-family: var(--body); }
+.landing .iso-plate-corner[data-corner="readout"] { font-weight: 500; box-shadow: var(--shadow-sm); }
+.land-spot { background: radial-gradient(closest-side, color-mix(in srgb, var(--sky) 42%, transparent), color-mix(in srgb, var(--sky) 15%, transparent) 55%, transparent); }
+.hint-dot { background: var(--sky); }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand svg { flex: none; }
+.v2-lab, .v2-hubt, .v2-toolname, .pv-t, .pn-t, .ls-num, .rules3 b, .cards3 summary b, .gallery figcaption b, .tb-body b { letter-spacing: -0.01em; }
 </style>
 
 <section class="landing" id="landing" aria-label="Interactive model of downtown Vancouver. Click our building to enter the site.">
@@ -1918,6 +1960,7 @@ say();
   <span class="land-spot" id="landSpot" aria-hidden="true"></span>
   <button type="button" class="land-go" id="landGo" aria-label="Our building. Hold it until it reaches the top, then press Enter to go in."><span class="go-t">Hold</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   <div class="land-title">
+    <svg class="land-mark in" style="--d:0" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1f5f8b"/><rect x="27" y="72" width="46" height="10" fill="#c9d8e4"/><rect x="40" y="14" width="20" height="58" fill="#f6f5f2"/><rect x="40" y="41" width="20" height="4" fill="#eda100"/></svg>
     <h1 class="in" style="--d:1">Tower Design Toolkits</h1>
     <p class="in" style="--d:2">Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, fall 2026</p>
   </div>
@@ -1934,7 +1977,7 @@ say();
 <header class="top wrap" id="site">
   <div class="hero-row">
     <div class="hero-text">
-      <p class="brand">Tower Design Toolkits</p>
+      <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkits</p>
       <p class="lede">Small tools for designing a high-rise in Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
       <p class="credit">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
     </div>
@@ -2241,8 +2284,8 @@ const el = (tag, attrs = {}, ...kids) => { const n = document.createElement(tag)
 const store = { get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
 
 /* ---------- opening, join panel ---------- */
-/* IS_PUBLIC is set to true only in the public copy (built by make_public.py). This claude.ai copy saves feedback to the shared database. */
-const IS_PUBLIC = true;
+/* IS_PUBLIC is set to true only in the public copy (built by make_public.py). */
+const IS_PUBLIC = false;
 const TEAM_URL = 'https://claude.ai/artifact/EamwZUs743tVwVofJhnE2d';
 const PUBLIC_URL = 'https://ruijieliu6.github.io/vancouver-tower-toolbench/'; // the public website on GitHub Pages; every QR code points here
 /* Google Form pre-filled link: one Paragraph question whose pre-filled value is the word ANSWERS. */
@@ -3775,4 +3818,3 @@ if (START_HASH === 'tour') tourStart(0);
   } catch (e) { db = null; }
 })();
 </script>
-</body></html>

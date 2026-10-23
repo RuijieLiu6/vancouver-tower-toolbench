@@ -1,0 +1,43 @@
+# Builds the website from its source on every push to main and publishes it to GitHub Pages.
+# The steps are the same ones a person runs locally (see README.md).
+name: Build and publish the website
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Build the site from tower-tools-hub.html
+        run: |
+          python3 make_figure.py
+          python3 inject_v2.py
+          python3 inject_tdt.py
+          python3 make_public.py
+          python3 make_site.py https://ruijieliu6.github.io/vancouver-tower-toolbench/
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
