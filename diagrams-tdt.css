@@ -109,14 +109,10 @@ path.tdt-canvas {
   stroke-width: 2.5;
 }
 
-/* Inline symbols use the same plain line weight as the raster pictograms. */
-.tdt-ic {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
+/* The drawn isometric pictograms (ISO_ICONS): ink lines, white faces, like the raster pictograms. */
+.iso-f { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; }
+.iso-l { fill: none; stroke: var(--ink); stroke-width: .9; stroke-linejoin: round; stroke-linecap: round; }
+.iso-d { stroke-dasharray: 2 1.5; }
 
 /* ---------- node and role treatments ---------- */
 .tdt-node,
