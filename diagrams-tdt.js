@@ -118,7 +118,7 @@
     const id = 'tdtLoop', W = 1240, H = 820, cx = 520, cy = 385;
     const stages = [
       { ...STAGES[0], x: 235, y: 215, lx: 155, ly: 104, anchor: 'start' },
-      { ...STAGES[1], x: 520, y: 105, lx: 598, ly: 62, anchor: 'start' },   // label beside the circle: there is no room above it
+      { ...STAGES[1], x: 520, y: 105, lx: 598, ly: 40, anchor: 'start' },   // label beside the circle, above Program's label
       { ...STAGES[2], x: 805, y: 215, lx: 885, ly: 104, anchor: 'end' },
       { ...STAGES[3], x: 775, y: 595, lx: 842, ly: 667, anchor: 'end' },
       { ...STAGES[4], x: 265, y: 595, lx: 198, ly: 667, anchor: 'start' },
@@ -152,7 +152,7 @@
 
     s += `<circle class="v2-hub" cx="${cx}" cy="${cy}" r="86"/>${pic('icon-engine', cx, cy - 30, 68)}`;
     s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
-    s += `<g class="tdt-switch" transform="translate(${cx - 71} ${cy + 52})"><rect width="142" height="28" rx="14"/><g class="tdt-switch-on"><rect x="2" y="2" width="66" height="24" rx="12"/><text x="35" y="19" text-anchor="middle">basic</text></g><text x="103" y="19" text-anchor="middle">advanced</text></g>`;
+    s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><g class="tdt-switch-on"><rect x="2" y="2" width="66" height="24" rx="12"/><text x="35" y="19" text-anchor="middle">basic</text></g><text x="113" y="19" text-anchor="middle">advanced</text></g>`;
     s += `<text class="v2-cap" x="${cx}" y="${cy + 106}" text-anchor="middle">reads and writes the model</text>`;
 
     stages.forEach(st => {
@@ -161,17 +161,17 @@
       s += `<text class="v2-num" x="${st.lx}" y="${st.ly}" text-anchor="${st.anchor}">${st.n}</text><text class="v2-lab you" x="${st.lx}" y="${st.ly + 22}" text-anchor="${st.anchor}">${esc(st.name)}</text><text class="v2-cap" x="${st.lx}" y="${st.ly + 43}" text-anchor="${st.anchor}">${esc(st.sub)}</text></g>`;
     });
 
-    s += `<g class="tdt-entry"><circle cx="182" cy="177" r="5"/><path d="M186 174Q203 157 222 158"/><text x="128" y="173">start here</text><circle cx="420" cy="64" r="5"/><path d="M425 64H466"/><text x="410" y="69" text-anchor="end">or here</text><circle cx="213" cy="653" r="5"/><path d="M218 651Q236 641 248 628"/><text x="151" y="658">or here</text></g>`;
+    s += `<g class="tdt-entry"><circle cx="182" cy="177" r="5"/><path d="M186 174Q203 157 222 158"/><text x="174" y="172" text-anchor="end">start here</text><circle cx="420" cy="64" r="5"/><path d="M425 64H466"/><text x="410" y="69" text-anchor="end">or here</text><circle cx="213" cy="653" r="5"/><path d="M218 651Q236 641 248 628"/><text x="151" y="658">or here</text></g>`;
 
     analysis.forEach(a => {
-      const nudge = { your: [0, -18], structure: [0, -16], code: [-8, 0] }[a.k] || [0, 0];   // keep these labels off the spokes
+      const nudge = { your: [-6, 44], structure: [0, -16], code: [-8, 0], view: [6, 46] }[a.k] || [0, 0];   // keep these labels off the spokes
       const tx = a.x + a.ux * 42 + nudge[0], ty = a.y + a.uy * 42 + 5 + nudge[1];
       const anchor = a.ux > 0.28 ? 'start' : a.ux < -0.28 ? 'end' : 'middle';
       s += `<g class="tdt-analysis${a.k === 'your' ? ' tdt-dashed' : ''}" data-key="${a.k}" tabindex="0" role="button" aria-label="Analysis node: ${esc(a.name)}.">`;
       s += `<circle class="v2-hit" cx="${a.x}" cy="${a.y}" r="35"/><circle class="v2-cbg tool" cx="${a.x}" cy="${a.y}" r="28"/>${itemIcon(id, a, a.x, a.y, 38)}<text class="v2-cap" x="${tx}" y="${ty}" text-anchor="${anchor}">${esc(a.name)}</text></g>`;
     });
 
-    s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="855" y="326" text-anchor="middle">exit at any point</text>`;
+    s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="892" y="326" text-anchor="middle">exit at any point</text>`;
     s += `<g class="tdt-output" data-key="output" tabindex="0" role="button" aria-label="Output: drawing set with plans, sections, diagrams and renders."><circle class="v2-hit" cx="${output.x}" cy="${output.y}" r="74"/><circle class="v2-cbg tool" cx="${output.x}" cy="${output.y}" r="${output.r}"/>${pic('step-submit', output.x, output.y, 90)}<text class="v2-num" x="${output.x}" y="${output.y + 88}" text-anchor="middle">OUTPUT</text><text class="v2-lab" x="${output.x}" y="${output.y + 110}" text-anchor="middle">Drawing set</text><text class="v2-cap" x="${output.x}" y="${output.y + 131}" text-anchor="middle">Plans, sections, diagrams, renders</text></g>`;
     s += roleLegend(24, 800) + '</svg>';
     host.innerHTML = s;
@@ -203,7 +203,7 @@
     const id = 'tdtWhy', W = 1240, H = 450;
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
     s += `<g class="tdt-row" data-row="today" tabindex="0" role="button" aria-label="Today: five separate steps can end by starting over."><rect class="tdt-hit" x="12" y="18" width="1216" height="188" rx="10"/>`;
-    s += `<text class="v2-num" x="28" y="40">TODAY</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
+    s += `<text class="v2-lab" x="28" y="42">Today</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
     const top = [
       [135, 'Research', 'step-brief', null, 'you'], [330, 'Model in CAD', 'step-options', null, 'tool'],
       [525, 'Export to analysis', 'icon-documents', null, 'code'], [720, 'Wait for results', 'icon-tools', null, 'tool'],
@@ -211,13 +211,13 @@
     ];
     for (let i = 0; i < top.length - 1; i++) s += `<path class="tdt-link" d="M177 105H${top[i + 1][0] - 43}" marker-end="url(#${id}-arrow-ink)"/>`.replace('M177', `M${top[i][0] + 43}`);
     top.forEach((n, i) => { s += flowNode(id, n[0], 105, n[4], n[1], n[2], n[3], i === 4 ? 'tdt-stop' : ''); });
-    s += `<path class="v2-loop" d="M915 58C760 5 280 5 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="20" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;
+    s += `<path class="v2-loop" d="M915 58C760 16 280 16 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="18" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;   // the caption sits above the arc, as in diagram 1
 
-    s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-num" x="28" y="246">IN THE LOOP</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
+    s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-lab" x="28" y="248">In the loop</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
     const low = [[220, 'Mass', 'step-options', 'you'], [435, 'Analyse', 'icon-tools', 'tool'], [650, 'Learn', 'icon-check', 'code']];
     low.forEach(n => { s += flowNode(id, n[0], 310, n[3], n[1], n[2], null, ''); });
     s += `<path class="tdt-link" d="M263 310H390" marker-end="url(#${id}-arrow-ink)"/><path class="tdt-link" d="M478 310H605" marker-end="url(#${id}-arrow-ink)"/>`;
-    s += `<path class="v2-loop" d="M650 263C560 224 310 224 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="239" text-anchor="middle">Minutes, same model</text>`;
+    s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="232" text-anchor="middle">Minutes, same model</text>`;
     s += `<path class="tdt-link" d="M695 310H895" marker-end="url(#${id}-arrow-ink)"/>${flowNode(id, 945, 310, 'you', 'Proceed, knowing it works', 'step-submit', null, '')}<text class="v2-cap" x="1120" y="306" text-anchor="middle">one platform, one model,</text><text class="v2-cap" x="1120" y="326" text-anchor="middle">all the nodes</text></g>`;
     s += roleLegend(24, 432) + '</svg>';
     host.innerHTML = s;
@@ -240,10 +240,11 @@
     { k: 'contribute', name: 'Contribute it back', detail: 'Reviewed, versioned, listed in the node library', sym: 'library', x: 290, y: 315, tx: 226, ty: 285, anchor: 'end' },
   ];
 
-  function twoLineDetail(text, x, y, anchor) {
-    const split = text.length > 47 ? text.lastIndexOf(' ', 47) : -1;
-    if (split < 0) return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}">${esc(text)}</text>`;
-    return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}"><tspan x="${x}" dy="0">${esc(text.slice(0, split))}</tspan><tspan x="${x}" dy="19">${esc(text.slice(split + 1))}</tspan></text>`;
+  function twoLineDetail(text, x, y, anchor) {           // wraps at about 30 characters so the outer labels stay inside the canvas
+    const lines = []; let cur = '';
+    for (const w of text.split(' ')) { if (cur && (cur + ' ' + w).length > 30) { lines.push(cur); cur = w; } else cur = cur ? cur + ' ' + w : w; }
+    if (cur) lines.push(cur);
+    return `<text class="v2-cap" x="${x}" y="${y}" text-anchor="${anchor}">${lines.map((l, i) => `<tspan x="${x}" dy="${i ? 18 : 0}">${esc(l)}</tspan>`).join('')}</text>`;
   }
 
   function buildOpen(host, info) {
@@ -330,8 +331,8 @@
     s += `<path class="tdt-path-a" d="${pathD(visitsA)}" marker-end="url(#${id}-arrow-signal)"/>`;
     Object.entries(A_POINTS).forEach(([k, p]) => { s += pointNode(id, k, p); });
     s += `<g class="tdt-path-badges tdt-path-a-badges">${visitBadges(visitsA)}</g>`;
-    s += `<g class="tdt-legend-button tdt-designer-a" data-path="a" tabindex="0" role="button" aria-label="Show only Designer A's form-first path."><rect class="tdt-hit" x="734" y="24" width="218" height="42" rx="10"/><rect class="tdt-panel-bg" x="740" y="30" width="206" height="30" rx="8"/><path class="tdt-path-a" d="M754 45H792"/><text x="804" y="50">Designer A · form-first</text></g>`;
-    s += `<g class="tdt-legend-button tdt-designer-b" data-path="b" tabindex="0" role="button" aria-label="Show only Designer B's brief-first path."><rect class="tdt-hit" x="958" y="24" width="250" height="42" rx="10"/><rect class="tdt-panel-bg" x="964" y="30" width="238" height="30" rx="8"/><path class="tdt-path-b" d="M978 45H1016"/><text x="1028" y="50">Designer B · brief-first</text></g>`;
+    s += `<g class="tdt-legend-button tdt-designer-a" data-path="a" tabindex="0" role="button" aria-label="Show only Designer A's form-first path."><rect class="tdt-hit" x="700" y="24" width="248" height="42" rx="10"/><rect class="tdt-panel-bg" x="706" y="30" width="236" height="30" rx="8"/><path class="tdt-path-a" d="M720 45H758"/><text x="770" y="50">Designer A · form-first</text></g>`;
+    s += `<g class="tdt-legend-button tdt-designer-b" data-path="b" tabindex="0" role="button" aria-label="Show only Designer B's brief-first path."><rect class="tdt-hit" x="954" y="24" width="256" height="42" rx="10"/><rect class="tdt-panel-bg" x="960" y="30" width="244" height="30" rx="8"/><path class="tdt-path-b" d="M974 45H1012"/><text x="1024" y="50">Designer B · brief-first</text></g>`;
     s += `<text class="v2-cap" x="620" y="772" text-anchor="middle">Nothing in this drawing is upstream of anything else. The numbers belong to the visits, not the stages.</text>`;
     s += roleLegend(24, 794) + '</svg>';
     host.innerHTML = s;
@@ -349,7 +350,13 @@
   }
 
   function card(id, x, y, w, h, label, icon, mode) {
-    return `<g class="tdt-stage-card-group"><rect class="tdt-stage-card" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>${pic(icon, x + 34, y + h / 2, 48)}<text class="tdt-card-title" x="${x + 64}" y="${y + h / 2 + (mode ? -4 : 5)}">${esc(label)}</text>${mode ? `<text class="v2-cap acc" x="${x + 64}" y="${y + h / 2 + 17}">${esc(mode)}</text>` : ''}</g>`;
+    // a long title wraps onto two lines so it stays inside its card
+    const cut = label.length > 13 ? label.lastIndexOf(' ', 12) : -1;
+    const lines = cut > 0 ? [label.slice(0, cut), label.slice(cut + 1)] : [label];
+    const cy = y + h / 2, step = 18, top = cy + (mode ? -4 : 5) - (lines.length - 1) * step / 2;
+    const title = `<text class="tdt-card-title" x="${x + 64}" y="${top}">${lines.map((l, i) => `<tspan x="${x + 64}" dy="${i ? step : 0}">${esc(l)}</tspan>`).join('')}</text>`;
+    const modeY = top + (lines.length - 1) * step + 21;
+    return `<g class="tdt-stage-card-group"><rect class="tdt-stage-card" x="${x}" y="${y}" width="${w}" height="${h}" rx="10"/>${pic(icon, x + 34, cy, 48)}${title}${mode ? `<text class="v2-cap acc" x="${x + 64}" y="${modeY}">${esc(mode)}</text>` : ''}</g>`;
   }
 
   function pill(id, key, label, x, y, w, source) {
@@ -358,7 +365,7 @@
   }
 
   function canvasTitle(x, y, w, key, title, subtitle) {
-    return `<g class="tdt-canvas-title" data-title="${key}" tabindex="0" role="button" aria-label="Highlight ${esc(title)}."><rect class="tdt-hit" x="${x - 6}" y="${y - 24}" width="${w}" height="50" rx="8"/><text x="${x}" y="${y}">${esc(title)}</text><text class="v2-cap" x="${x}" y="${y + 20}">${esc(subtitle)}</text></g>`;
+    return `<g class="tdt-canvas-title" data-title="${key}" tabindex="0" role="button" aria-label="Highlight ${esc(title)}."><rect class="tdt-hit" x="${x - 6}" y="${y - 24}" width="${w}" height="50" rx="8"/><text class="tdt-canvas-h" x="${x}" y="${y}">${esc(title)}</text><text class="v2-cap" x="${x}" y="${y + 20}">${esc(subtitle)}</text></g>`;
   }
 
   function buildC(host, info) {
@@ -383,7 +390,7 @@
 
     s += `<rect class="tdt-library" x="25" y="675" width="1190" height="150" rx="10"/><text class="v2-hubt" x="50" y="705">Node library</text><text class="v2-cap" x="50" y="726">The ten analysis nodes</text>`;
     ANALYSES.forEach((a, i) => {
-      const x = 235 + i * 96, y = 744;
+      const x = 265 + i * 96, y = 744;   // starts clear of the library caption
       s += `<g class="tdt-analysis${a.k === 'your' ? ' tdt-dashed' : ''}"><circle class="v2-cbg tool" cx="${x}" cy="${y}" r="24"/>${itemIcon(id, a, x, y, 31)}<text class="v2-cap" x="${x}" y="${y + 42}" text-anchor="middle">${esc(a.name)}</text></g>`;
     });
     s += roleLegend(24, 856) + '</svg>';

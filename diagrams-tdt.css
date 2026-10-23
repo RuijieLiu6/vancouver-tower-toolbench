@@ -220,8 +220,7 @@ text.tdt-card-title {
   font: 600 15px var(--display);
 }
 
-.tdt-canvas-title text,
-text.tdt-canvas-title {
+.tdt-canvas-h {
   fill: var(--ink);
   font: 700 19px var(--display);
 }
@@ -371,33 +370,21 @@ text.tdt-badge.tdt-designer-b {
   stroke-width: 1.8;
 }
 
-/* ---------- figure-specific type scale ---------- */
-#tdtLoop .v2-cap { font-size: 14px; }
-#tdtLoop .v2-num { font-size: 15px; }
-#tdtLoop .v2-lab { font-size: 16px; }
-#tdtLoop .v2-hubt { font-size: 20px; }
-
-#tdtWhy .v2-cap { font-size: 14px; }
-#tdtWhy .v2-num { font-size: 14px; }
-#tdtWhy .v2-lab { font-size: 16px; }
-#tdtWhy .v2-hubt { font-size: 19px; }
-
-#tdtOpen .v2-cap { font-size: 14px; }
-#tdtOpen .v2-num { font-size: 14px; }
-#tdtOpen .v2-lab { font-size: 16px; }
-#tdtOpen .v2-hubt { font-size: 19px; }
-
-#tdtA .v2-cap { font-size: 13px; }
-#tdtA .v2-num { font-size: 13px; }
-#tdtA .v2-lab { font-size: 14px; }
-#tdtA .v2-hubt { font-size: 19px; }
-
-#tdtC .v2-cap { font-size: 13px; }
-#tdtC .v2-num { font-size: 13px; }
-#tdtC .v2-lab { font-size: 14px; }
-#tdtC .v2-hubt { font-size: 18px; }
-#tdtC .tdt-card-title { font-size: 15px; }
-#tdtC .tdt-note { font-size: 13px; }
+/* ---------- one type scale for every chapter 4 figure ----------
+   Diagrams 1 and 2 draw on a 2040-wide canvas shown at about two thirds, so their labels land at about 13 px,
+   captions at 12 px. These figures draw on a 1240-wide canvas shown at about three quarters (the two short
+   ones are capped to the same width below), so the same rendered sizes need these canvas sizes. */
+#tdtWhy svg, #tdtOpen svg { max-width: 1000px; margin: 0 auto; }
+.v2fig.tdt .v2-cap { font-size: 15.5px; }
+.v2fig.tdt .v2-num { font-size: 16.5px; }
+.v2fig.tdt .v2-lab { font-size: 17px; }
+.v2fig.tdt .v2-hubt { font-size: 20px; }
+.v2fig.tdt .tdt-card-title { font-size: 17px; }
+.v2fig.tdt .tdt-note, .v2fig.tdt .tdt-small, .v2fig.tdt .tdt-mono,
+.v2fig.tdt .tdt-role-legend text, .v2fig.tdt .tdt-entry text, .v2fig.tdt .tdt-legend-button text { font-size: 15.5px; }
+.v2fig.tdt .tdt-stop text { font-size: 17px; }
+.v2fig.tdt .tdt-canvas-h { font-size: 20px; }
+.v2fig.tdt .tdt-switch text, .v2fig.tdt .tdt-switch-on text, .v2fig.tdt .tdt-badge text { font-size: 14.5px; }
 
 @media (hover: hover) {
   .v2host [role="button"]:hover .v2-cbg,
