@@ -161,8 +161,6 @@
       s += `<text class="v2-num" x="${st.lx}" y="${st.ly}" text-anchor="${st.anchor}">${st.n}</text><text class="v2-lab you" x="${st.lx}" y="${st.ly + 22}" text-anchor="${st.anchor}">${esc(st.name)}</text><text class="v2-cap" x="${st.lx}" y="${st.ly + 43}" text-anchor="${st.anchor}">${esc(st.sub)}</text></g>`;
     });
 
-    s += `<g class="tdt-entry"><circle cx="182" cy="177" r="5"/><path d="M186 174Q203 157 222 158"/><text x="174" y="172" text-anchor="end">start here</text><circle cx="420" cy="64" r="5"/><path d="M425 64H466"/><text x="410" y="69" text-anchor="end">or here</text><circle cx="213" cy="653" r="5"/><path d="M218 651Q236 641 248 628"/><text x="151" y="658">or here</text></g>`;
-
     analysis.forEach(a => {
       const nudge = { your: [-6, 44], structure: [0, -16], code: [-8, 0], view: [6, 46] }[a.k] || [0, 0];   // keep these labels off the spokes
       const tx = a.x + a.ux * 42 + nudge[0], ty = a.y + a.uy * 42 + 5 + nudge[1];
