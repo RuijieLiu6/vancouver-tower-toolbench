@@ -241,7 +241,7 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 .pshots.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .pshots figure { margin: 0; display: flex; flex-direction: column; gap: 4px; }
 .pshots img { width: 100%; aspect-ratio: 4/5; object-fit: cover; object-position: top; border-radius: 10px; border: 1px solid var(--line); display: block; max-width: 100%; }
-.pshots.two img { aspect-ratio: 4/3; object-position: center; }
+.pshots.two img, .pshots.wide img { aspect-ratio: 4/3; object-position: center; }
 .pshots figcaption { font-size: 12.5px; color: var(--muted); } .pshots figcaption b { display: block; color: var(--ink); font-size: 14px; }
 .lessons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .lessons > div { background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -2217,38 +2217,44 @@ say();
 <script>
 /* ---------- data ---------- */
 const TOOLS = [
-  { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'Vancouver view protection', by: 'Ruijie Liu', ours: true,
+  { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'View cones · 3D city', by: 'Ruijie Liu', ours: true,
     url: 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
     does: ['Places a proposed tower in a 3D Vancouver built from OpenStreetMap, terrain and shoreline', "Checks it against the City's mapped public view corridors", 'Lets you stand at a viewpoint and look, then export a study report'],
     limit: 'The geometry is approximate, so use it to study views. It can\'t tell you whether a tower complies.',
     worked: ['View cones were clear', '3D city context', 'Standing at a viewpoint', 'The exported report', 'Fast to place a tower'],
     blocked: ['Geometry too approximate', 'Hard to place my tower', 'Unclear what passes or fails', 'Slow to load', 'Missing a viewpoint I need'] },
-  { id: 'dtmass', img: 'images/tool-dtmass-report.jpg', name: 'Downtown Massing Tool', sub: 'Tower massing against downtown documents', by: 'Sinnie Choi', ours: true,
+  { id: 'dtmass', img: 'images/tool-dtmass-report.jpg', name: 'Downtown Massing Tool', sub: 'Massing · FSR · height', by: 'Sinnie Choi', ours: true,
     url: 'https://xubynii.github.io/dtmass/',
     does: ['Loads what City data says about a real downtown parcel', 'Push and pull blocks by use: residential, office, retail, parking', 'Checks live against FSR, height and your floor-area target; compare options and export'],
     limit: 'Planning limits come from City documents. Check the current by-law before you rely on a number.',
     worked: ['Real parcel data', 'Live FSR and height check', 'Blocks by use', 'Comparing options', 'The report'],
     blocked: ['Blocks hard to edit', 'My parcel or rule was missing', 'Numbers I could not trace', 'Too simple for a supertall', 'Unclear interface'] },
-  { id: 'pvv', img: 'images/tool-pvv.jpg', name: 'Program Value Visualizer', sub: 'Which floors pay for which', by: 'Ruijie Liu', ours: true,
+  { id: 'pvv', img: 'images/tool-pvv.jpg', name: 'Program Value Visualizer', sub: 'Value · cost · City charges', by: 'Ruijie Liu', ours: true,
     url: 'https://ruijieliu6.github.io/program-value-visualizer/',
     does: ['Set the programme floor by floor from 112 activity-based programmes', 'See value minus cost and profit on every floor, beside the section', "Verdict on land value, City charges, and the competition's 9.0 FSR non-residential rule"],
     limit: 'It gives early-design estimates, and every default shows its source, date and grade. It is no substitute for a feasibility study.',
     worked: ['Floor-by-floor value', 'Sources on every number', 'The verdict', 'The 9.0 FSR check', 'Asking the AI in plain words'],
     blocked: ['Too many inputs', 'A number I did not trust', 'Finance jargon', 'Missing a programme I need', 'Unclear how to start'] },
-  { id: 'form', img: 'images/tool-form.jpg', name: 'Form Studio', sub: 'Shape a tower and export it to Rhino', by: 'Ruijie Liu', ours: true,
+  { id: 'form', img: 'images/tool-form.jpg', name: 'Form Studio', sub: 'Form · structure · Rhino', by: 'Ruijie Liu', ours: true,
     url: 'https://ruijieliu6.github.io/form-studio/',
     does: ['Starts from a plan shape (ellipse, rectangle, clover, or one you draw) and lets you drag its taper and twist', 'Choose core and columns, a diagrid or perimeter bracing, then add terraces, a podium or sky bridges', 'Place it on a real downtown parcel and export it to Rhino as a .3dm file'],
     limit: 'Areas and structure are concept-stage geometry, not a code or structural check. The public copy leaves out the competition base model.',
     worked: ['Shaping by dragging', 'Plan and profile controls', 'Structural expression', 'Terraces and sky bridges', 'Rhino export'],
     blocked: ['Hard to get the form I wanted', 'Too many controls', 'Rhino export did not work', 'Missing my site context', 'Unclear what the checks mean'] },
-  { id: 'streetflow', img: 'images/tool-streetflow.jpg', name: 'Street Flow Lab', sub: 'Pedestrian and vehicle traffic around a massing', by: 'Sinnie Choi and Ruijie Liu', ours: true,
+  { id: 'streetflow', img: 'images/tool-streetflow.jpg', name: 'Street Flow Lab', sub: 'Pedestrians · traffic · streets', by: 'Sinnie Choi and Ruijie Liu', ours: true,
     url: 'https://github.com/xubynii/street-flow-lab',
     does: ['Builds the streets, sidewalks, crossings and signals around a real downtown lot from OpenStreetMap and City data', 'Takes a massing with its programme, entrances, parking ramp and loading, or an imported Downtown Massing Tool project', 'Simulates a peak window, today against the project: sidewalk and junction grades, flow heat, who is on the street, and a printable report'],
     limit: 'A design-stage estimate, not a traffic impact assessment. Trip rates and shares are team assumptions you can edit.',
     access: 'Runs on your computer: download it from GitHub and open src/index.html in Chrome or Edge.',
     worked: ['Today against the project', 'Flow heat and grades', 'Entrances and the kerb', 'Who is on the street', 'The report'],
     blocked: ['Slow to run', 'Numbers I could not trace', 'Hard to set up the building', 'Missing my street or lot', 'Unclear what the grades mean'] },
-  { id: 'tdt', img: 'images/tool-tdt.jpg', name: 'Tower Design Toolkit', sub: 'Shape a tower, switch on evaluation nodes, read the evidence', by: 'Ruijie Liu and Sinnie Choi', ours: true,
+  { id: 'sunwind', img: 'images/tool-sunwind.jpg', name: 'Sun & Wind Studio', sub: 'Sun · wind · daylight · energy', by: 'Sinnie Choi', ours: true,
+    url: 'https://xubynii.github.io/sun-wind-studio/',
+    does: ['Upload a Rhino massing or shape one, and place it on the competition parcel with its future neighbours', 'Massing phase: new shadow on neighbours and plazas, sun hours per face, pedestrian wind comfort with and without the tower', 'Design development: facade zones and devices, daylight against LEED, natural ventilation, and a monthly energy model against Vancouver targets'],
+    limit: 'Indicative studies with simplified rules in the manner of the standards they cite. Not a Radiance, CFD or EnergyPlus model for a permit or a LEED submission.',
+    worked: ['Shadow on neighbours', 'Wind comfort map', 'Facade zones and devices', 'Daylight and ventilation checks', 'The energy scorecard'],
+    blocked: ['Slow to run', 'My model did not import', 'Numbers I could not trace', 'Too many settings', 'Unclear what the bands mean'] },
+  { id: 'tdt', img: 'images/tool-tdt.jpg', name: 'Tower Design Toolkit', sub: 'Massing · nodes · evidence', by: 'Ruijie Liu and Sinnie Choi', ours: true,
     url: 'https://ruijieliu6.github.io/tower-design-toolkit/',
     does: ['Shape a parametric tower on the competition block or in real downtown Vancouver, or import your own massing (.3dm, OBJ, glTF, IFC)', 'Switch on evaluation nodes: program and FSR, view-cone heights, sun and shadow, program value, structure and wind screening, and more', 'Every result shows its source and an evidence flag, from verified to unresolved'],
     limit: 'A study tool for early design: it does not determine compliance, and view-cone heights are estimates. The web version leaves out the competition base model.',
@@ -2583,8 +2589,8 @@ const VISUALS = {
     return frag(s + '<p class="pcap">Each rule set sits in its own document, and usually in its own tool.</p>');
   },
   built() {
-    return frag(`<div class="pshots">
-      <figure><img src="images/about-vista-intro.jpg" alt="Vista start screen" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
+    return frag(`<div class="pshots wide">
+      <figure><img src="images/tool-vista.jpg" alt="Vista: a proposed tower among the downtown towers" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
       <figure><img src="images/tool-dtmass-report.jpg" alt="Downtown Massing Tool report for 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · building code</figcaption></figure>
       <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer section view" loading="lazy"><figcaption><b>Program Value Visualizer</b> Ruijie · value and land</figcaption></figure></div>`);
   },
@@ -2747,6 +2753,7 @@ const IMG_LINKS = {
   'images/tool-vista.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
   'images/tool-dtmass-report.jpg': 'https://xubynii.github.io/dtmass/',
   'images/tool-form.jpg': 'https://ruijieliu6.github.io/form-studio/',
+  'images/tool-sunwind.jpg': 'https://xubynii.github.io/sun-wind-studio/',
   'images/tool-streetflow.jpg': 'https://github.com/xubynii/street-flow-lab',
   'images/tool-dtmass.jpg': 'https://xubynii.github.io/dtmass/',
   'images/tool-pvv.jpg': 'https://ruijieliu6.github.io/program-value-visualizer/',
