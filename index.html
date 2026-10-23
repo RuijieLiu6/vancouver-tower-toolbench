@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA)."><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Vancouver Tower Toolbench</title>
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA)."><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body><title>Tower Design Toolkits</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
@@ -440,7 +440,7 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
 <header class="top wrap">
   <div class="hero-row">
     <div class="hero-text">
-      <h1 class="in" style="--d:1">Vancouver Tower Toolbench</h1>
+      <h1 class="in" style="--d:1">Tower Design Toolkits</h1>
       <p class="lede in" style="--d:2">Small tools for designing a high-rise in Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
       <p class="credit in" style="--d:3">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
     </div>
@@ -1589,7 +1589,7 @@ say();
 </main>
 
 <footer class="wrap">
-  <div>Vancouver Tower Toolbench · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
+  <div>Tower Design Toolkits · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
   <div>Solar Shading Explorer by Willem Girard, linked with credit from the ARCH 540 Assignment 1 toolkit.</div>
 </footer>
 
@@ -1821,7 +1821,7 @@ function render() {
   }
   if (step === 3) {
     f.append(Q('What should AI never decide in tower design?', 'Pick any.', chips(AI_NEVER, A.never)));
-    f.append(Q('What should this toolbench add next?', 'Pick up to three.', chips(WISHLIST, A.wish), text(A, 'wishOther', 'Something else')));
+    f.append(Q('What should we add to these toolkits next?', 'Pick up to three.', chips(WISHLIST, A.wish), text(A, 'wishOther', 'Something else')));
     f.append(Q('A general reflection on AI in your design process', 'What surprised you, worried you or helped you? Optional.', text(A, 'reflect', 'Write as much or as little as you like', true)));
     f.append(Q('May we quote you (anonymously) in our project?', null, chips(['Yes, anonymously', 'Yes, with my name', 'No'], A.quote, { single: true })));
     f.append(Q('Want to test the next version?', 'Optional. Your name or email. Leave blank to stay anonymous.', text(A, 'contact', 'Name or email')));
@@ -1869,9 +1869,9 @@ $('#fb').addEventListener('submit', async e => {
     } catch (err) { canWrite = false; }
   }
   if (btn) btn.disabled = false;
-  const box = $('#copyBox'); box.value = 'Vancouver Tower Toolbench feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
+  const box = $('#copyBox'); box.value = 'Tower Design Toolkits feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
   $('#copyWrap').hidden = false;
-  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Vancouver Tower Toolbench feedback';
+  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Tower Design Toolkits feedback';
   $('#gmailLink').href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(MAIL_TO) + '&su=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 6000));
   $('#mailtoLink').href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 1800));
   if (FORM_PREFILL) { $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000))); $('#formSend').hidden = false; }
