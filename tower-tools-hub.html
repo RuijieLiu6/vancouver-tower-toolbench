@@ -52,7 +52,7 @@ header.top { padding-block: 40px 26px; display: flex; flex-direction: column; ga
 .credit b { font-weight: 600; color: var(--ink); }
 
 /* tabs */
-nav.tabs { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line); }
+nav.tabs { position: sticky; /* also the frame for .present-btn */ top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--ground); border-bottom: 1px solid var(--line); }
 nav.tabs .wrap { display: flex; gap: 4px; overflow-x: auto; }
 nav.tabs button { font: 600 15px var(--display); background: none; border: 0; border-bottom: 3px solid transparent; color: var(--muted); padding: 14px 12px 11px; cursor: pointer; white-space: nowrap; }
 nav.tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--signal); }
@@ -1996,6 +1996,7 @@ say();
     <button role="tab" id="tab-tools" aria-controls="tools" aria-selected="false" class="hot"><i>3</i>Try the tools<span class="pulse" aria-hidden="true"></span></button>
     <button role="tab" id="tab-feedback" aria-controls="feedback" aria-selected="false"><i>4</i>Give feedback</button>
   </div>
+  <button type="button" class="present-btn" id="talkBtn" aria-haspopup="dialog" title="The talk as slides: the sections and figures of this site, in the order of the script"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M12 16v4M8 20h8"/></svg>Present</button>
 </nav>
 
 <main class="wrap">
@@ -3841,99 +3842,167 @@ if (START_HASH === 'tour') tourStart(0);
 })();
 </script>
 
-<!-- Editor mode: only in the claude.ai copy (where window.claude exists and the artifact declares the db capability).
-     Turn it on and every text block becomes editable. Each change is saved to the artifact's database as {before, after}
-     pairs keyed by the block's original text, and re-applied when the page loads. Claude reads the same pairs
-     (ArtifactData: collection "edits", document "current") and writes them into this file with apply_edits.py,
-     so the GitHub site gets them on the next push. The GitHub site itself never shows the editor. -->
+<!-- Presentation mode: the talk as slides. Each slide lifts the real section or figure off the page into a full-screen
+     stage (and puts it back on exit), so what is presented is exactly what is on the site. The order follows the
+     presentation script (PRESENT below). Arrow keys or a clicker move between slides, N shows the speaker notes,
+     F asks for full screen, Esc leaves. -->
 <style>
-.ed-pill { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 45; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-html.gated .ed-pill { bottom: 96px; }   /* clears the landing's readout */
-body.touring .ed-pill { display: none; }   /* the tour bar sits there */
-.ed-pill button { min-height: 40px; font-size: 14px; border-radius: 999px; box-shadow: var(--shadow-sm); }
-.ed-pill .ed-status { font-size: 12.5px; color: var(--muted); background: var(--sheet); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; box-shadow: var(--shadow-sm); }
-html.editing [data-ed] { outline: 1px dashed color-mix(in srgb, var(--harbour) 60%, transparent); outline-offset: 3px; border-radius: 3px; cursor: text; }
-html.editing [data-ed]:hover { outline-style: solid; }
-html.editing [data-ed]:focus { outline: 2px solid var(--harbour); background: var(--sheet); }
-html.editing [data-ed].ed-changed { outline-color: var(--signal); }
-html.editing .land-title { pointer-events: auto; }
-@media print { .ed-pill { display: none; } }
+.present-btn { position: absolute; right: max(16px, env(safe-area-inset-right, 0px)); top: 50%; transform: translateY(-50%); min-height: 36px; padding: 0 12px; font-size: 13px; gap: 6px; border-radius: 8px; }
+.present-btn svg { width: 15px; height: 15px; }
+@media (max-width: 720px) { .present-btn { display: none; } }
+.pres { position: fixed; inset: 0; z-index: 70; background: var(--ground); color: var(--ink); display: grid; grid-template-rows: auto minmax(0, 1fr) auto; padding-top: env(safe-area-inset-top, 0px); }
+.pres-top, .pres-foot { display: flex; align-items: center; gap: 16px; padding: 10px max(20px, env(safe-area-inset-right, 0px)) 10px max(20px, env(safe-area-inset-left, 0px)); }
+.pres-top { border-bottom: 1px solid var(--line); background: var(--sheet); }
+.pres-foot { border-top: 1px solid var(--line); background: var(--sheet); padding-bottom: max(10px, env(safe-area-inset-bottom, 0px)); }
+.pres-n { font: 600 12px var(--mono); color: var(--muted); min-width: 52px; font-variant-numeric: tabular-nums; }
+.pres-title { font: 600 18px var(--display); letter-spacing: -0.01em; flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pres-who { font: 500 13px var(--body); color: var(--muted); white-space: nowrap; }
+.pres-who b { color: var(--signal); font-weight: 600; }
+.pres-clock { font: 600 14px var(--mono); font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
+.pres-clock.over { color: var(--stop); }
+.pres-stage { overflow: auto; display: grid; place-items: center; padding: 18px max(20px, env(safe-area-inset-right, 0px)) 18px max(20px, env(safe-area-inset-left, 0px)); }
+.pres-stage > .pres-lift { width: min(1500px, 100%); display: flex; flex-direction: column; gap: 14px; }
+.pres-stage .v2fig { margin: 0; }
+.pres-stage .v2host svg { min-width: 0; }
+.pres-stage #v2D svg, .pres-stage #tdtLoop svg, .pres-stage #tdtA svg, .pres-stage #tdtC svg { max-width: min(1180px, calc((100vh - 230px) * 1.5)); }
+.pres-stage .gallery { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.pres-stage .tool { max-width: 560px; margin: 0 auto; }
+.pres-stage .tool .shot { height: 260px; }
+.pres-stage #aboutHead h2 { font-size: clamp(28px, 4vw, 44px); }
+.pres-foot .grow { flex: 1; }
+.pres-foot button { min-height: 38px; font-size: 14px; }
+.pres-foot .pres-dots { display: flex; gap: 5px; }
+.pres-foot .pres-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--line); display: block; }
+.pres-foot .pres-dots i.on { background: var(--harbour); }
+.pres-notes { position: absolute; right: max(20px, env(safe-area-inset-right, 0px)); bottom: 70px; width: min(440px, calc(100% - 40px)); max-height: calc(100% - 150px); overflow: auto; background: var(--sheet); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-sm); padding: 14px 16px; font-size: 14.5px; line-height: 1.5; display: flex; flex-direction: column; gap: 10px; }
+.pres-notes .sect-h { margin-bottom: -4px; }
+.pres-notes p { max-width: none; }
+.pres-notes .cue { color: var(--signal); font-weight: 600; }
+body.presenting { overflow: hidden; }
+body.presenting .ed-pill, body.presenting .tourbar, body.presenting .tourring { display: none; }
+@media (prefers-reduced-motion: no-preference) { .pres-stage > .pres-lift { animation: fadeUp var(--t-stage-in) var(--ease) both; } }
 </style>
+<div class="pres" id="pres" hidden role="dialog" aria-modal="true" aria-label="Presentation">
+  <div class="pres-top">
+    <span class="pres-n" id="presN"></span>
+    <span class="pres-title" id="presTitle"></span>
+    <span class="pres-who" id="presWho"></span>
+    <span class="pres-clock" id="presClock">0:00</span>
+  </div>
+  <div class="pres-stage" id="presStage"></div>
+  <div class="pres-foot">
+    <button type="button" id="presPrev">← Back</button>
+    <button type="button" class="primary" id="presNext">Next →</button>
+    <span class="grow"></span>
+    <span class="pres-dots" id="presDots" aria-hidden="true"></span>
+    <span class="grow"></span>
+    <button type="button" id="presNotesBtn" aria-pressed="false">Notes <kbd>N</kbd></button>
+    <button type="button" id="presFull">Full screen <kbd>F</kbd></button>
+    <button type="button" id="presExit">Exit <kbd>Esc</kbd></button>
+  </div>
+  <div class="pres-notes" id="presNotes" hidden></div>
+</div>
 <script>
 (() => {
-  if (!window.claude || typeof window.claude.use !== 'function') return;
-  const ROOTS = '#landing .land-title, #landing .land-foot, #site, main.wrap, footer.wrap';
-  const BLOCKS = 'h1, h2, h3, h4, p, li, figcaption, summary, dt, dd, td, th';
-  const SKIP = 'svg, .iso-stage, .dtfig-wrap, .v2host, .dg, #tourBar, #join, [data-ed-skip]';
-  const hash = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36); };
-  const orig = new WeakMap();                       // element -> its text as written in the source
-  let db = null, doc = null, stored = {}, on = false, timer = 0, saving = false, dirty = false, armed = false;
-  const pill = document.createElement('div'); pill.className = 'ed-pill'; pill.hidden = true;
-  pill.innerHTML = '<span class="ed-status" hidden></span><button type="button" class="ed-undo" hidden>Undo all edits</button><button type="button" class="primary ed-toggle">Edit site</button>';
-  document.body.append(pill);
-  const status = pill.querySelector('.ed-status'), toggle = pill.querySelector('.ed-toggle'), undo = pill.querySelector('.ed-undo');
-  function candidates() {
-    const out = [];
-    for (const root of document.querySelectorAll(ROOTS)) for (const el of root.querySelectorAll(BLOCKS)) {
-      if (el.closest(SKIP) || (el.parentElement && el.parentElement.closest('[data-ed]'))) continue;   // outermost block only
-      if (!el.textContent.trim()) continue;
-      if (!orig.has(el)) orig.set(el, el.innerHTML.trim());
-      el.dataset.ed = '1'; out.push(el);
+  const toolCard = name => [...document.querySelectorAll('#toolGrid .tool')].find(t => t.querySelector('h3') && t.querySelector('h3').textContent.trim() === name);
+  const PRESENT = [
+    { n: '1', title: 'Introduction', who: 'Sinnie', secs: 40, targets: ['#aboutHead', '#project .gallery'],
+      notes: ["For Assignment 2, Ruijie and I decided to continue exploring high-rise design in downtown Vancouver, building on the individual tools we developed in Assignment 1. In our first assignment, we each focused on a specific part of tower design. Ruijie developed Vista, which looks at protected views, while I developed a massing tool that explores programming and zoning constraints.",
+        "But moving into Assignment 2, we wanted to take this further. Rather than developing another standalone tool, we started thinking about how these tools could work together to support the overall design process. So our main question became: How can we create a more flexible and connected design workflow that allows architects to quickly test ideas, understand constraints, and make decisions without constantly switching between different software?"] },
+    { n: '2', title: 'Research: understanding the existing workflow', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'],
+      notes: ["We started by researching how high-rise buildings are typically designed, from the initial brief all the way to City review. Especially in the early design stages, architects often want to quickly explore different massing options and understand how they perform in terms of sunlight, views, energy, structure, and building regulations.",
+        "But currently, a lot of these analyses happen separately. You might have to move between multiple software platforms, look through different regulations, and sometimes rebuild the same model just to test another aspect of the design.",
+        "Point to the workflow diagram and the pain points.",
+        "Through mapping this process, we identified several pain points, particularly the lack of connection between tools, the time spent transferring information, and the uncertainty around automated compliance checks. So we started asking ourselves whether the workflow itself could be redesigned, rather than simply making each individual task faster."] },
+    { n: '3', title: "Existing tools and their limitations", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'],
+      notes: ["We also looked at existing tools like Forma, Grasshopper, and TestFit, and mapped where they fit within the architectural design process. They're all powerful in different ways, but what we're interested in is the transition between them.",
+        "For example, you might generate a massing in one tool, analyze sunlight in another, and then move to a completely different workflow for code or structural analysis. So the opportunity we identified isn't necessarily to invent every analysis tool from scratch, but to create a system where different tools can communicate and become part of one design workflow."] },
+    { n: '4', title: 'Our proposal: a node-based design toolkit', who: 'Sinnie', secs: 80, targets: ['#rs-next-loop'],
+      notes: ["This brings us to our proposal, which we're calling the Tower Design Toolkit. We're looking at the design process through five broad stages: concept and research, form, program, schematic design, and design development. Our idea is to develop a collection of smaller tools, or nodes, that support different parts of this process.",
+        "For example, you could start by creating a basic building mass, then connect it to tools that analyze sunlight, views, circulation, energy, structure, or building codes. We're also proposing basic and advanced modelling modes, so users could quickly generate simple massing studies at the beginning, and gradually introduce more complex geometry and detailed analysis as the project develops.",
+        "But what's important is that we don't want this workflow to be linear or predetermined. Instead, designers could choose which nodes they want to use, arrange them in different sequences, and go back and forth between analyses as their design develops."] },
+    { n: '4', title: 'Our proposal: open source and expandable', who: 'Sinnie', secs: 0, targets: ['#rs-next-open'],
+      notes: ["Another part of our proposal is to make the system open-source and expandable. Ideally, other designers and experts could create their own tool nodes, share them, or use AI agents to help develop new ones that could be contributed to a shared library. So rather than being a single fixed software, we're imagining this as an adaptable system that can grow with its users.",
+        "And eventually, we'd like the same workflow to support the production of basic architectural drawings, diagrams, and renders."] },
+    { n: '5', title: 'How AI fits into the workflow', who: 'Ruijie', secs: 45, targets: ['#rs-roles-fig'],
+      notes: ["Another question we've been exploring is what AI should actually be responsible for in this process. We're not necessarily interested in having AI design a tower automatically. Instead, we're exploring how AI could help users communicate with different tools, interpret requests, or eventually help generate new tool functions.",
+        "Point to the AI / code / people diagram.",
+        "So in our proposed system, AI helps interpret requests, code performs calculations and checks, and designers remain responsible for making decisions. We're also trying to make the results transparent, so that instead of simply giving a pass-or-fail answer, the system can explain what information was used and where it came from. That becomes especially important when we're dealing with building regulations, where automated results still require professional verification."] },
+    { n: '5', title: 'How the toolkit runs', who: 'Ruijie', secs: 0, targets: ['#rs-next-why'],
+      notes: ["The research still happens. The difference is where: inside the massing loop while the form is cheap to change, instead of after a hand-off, when a bad answer means starting over."] },
+    { n: '6', title: "What we've developed for Assignment 2 so far", who: 'Ruijie', secs: 65, targets: [() => toolCard('Tower Design Toolkit')],
+      notes: ["For Assignment 2, our first attempt has been to explore how information from different tools could be brought together and compared. We've developed an initial prototype that can read actual exports from our existing tools, compare tower options using a consistent set of area calculations, and keep a record of the results and decisions.",
+        "Show the comparison interface. So rather than looking at each analysis separately, the idea is that a designer could begin comparing different options within a shared system.",
+        "We've also been testing the logic behind it, particularly how the inputs are validated and how calculations can remain consistent between tools. So far, the prototype has passed 89 hand-written checks. Of course, it's still an early attempt. We haven't connected a live AI model yet, the current workflow is fixed rather than fully node-based, and we haven't tested it with external users.",
+        "But it has helped us understand one of the bigger technical challenges of this project: how to transfer design information between tools without losing its meaning or having to recreate the model each time."] },
+    { n: '7', title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'],
+      notes: ["So moving forward, our main focus for Assignment 2 is figuring out how to develop this initial prototype into a more connected and customizable workflow. We want to explore how different tool nodes could exchange information, how users could arrange their own design processes, and where AI could meaningfully support those interactions.",
+        "We're also planning to test the workflow with potential users, particularly architects and designers who work on high-rise projects, to understand which functions are genuinely useful. Ultimately, we're interested in not just designing individual tools, but redesigning how these tools work together and how architects interact with them.",
+        "That's where we are right now, and we'd be interested in hearing your feedback on the direction and what we should prioritize next."] },
+  ];
+  const $ = s => document.querySelector(s);
+  const pres = $('#pres'), stage = $('#presStage'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
+  if (!pres) return;
+  let on = false, i = -1, lifted = [], startAt = 0, timer = 0;
+  const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
+  function restore() {                                   // put every lifted element back where it came from
+    for (const { el, mark } of lifted) { mark.replaceWith(el); }
+    lifted = []; stage.replaceChildren();
+  }
+  function show(k) {
+    k = Math.max(0, Math.min(PRESENT.length - 1, k));
+    restore(); i = k;
+    const s = PRESENT[k], lift = document.createElement('div'); lift.className = 'pres-lift';
+    for (const t of s.targets) {
+      const el = resolve(t); if (!el) continue;
+      const mark = document.createComment('present'); el.before(mark); lifted.push({ el, mark }); lift.append(el);
     }
-    return out;
+    stage.append(lift); stage.scrollTop = 0;
+    $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
+    $('#presTitle').textContent = `${s.n} · ${s.title}`;
+    $('#presWho').innerHTML = `<b>${s.who}</b>${s.secs ? ' · ' + (s.secs >= 60 ? Math.floor(s.secs / 60) + ' min ' + (s.secs % 60 ? s.secs % 60 + ' s' : '') : s.secs + ' s') : ''}`;
+    notes.innerHTML = `<span class="sect-h">Notes · ${s.who}</span>` + s.notes.map(p => /^(Point to|Show )/.test(p) ? `<p class="cue">${p}</p>` : `<p>${p}</p>`).join('');
+    dots.innerHTML = PRESENT.map((_, j) => `<i class="${j === k ? 'on' : ''}"></i>`).join('');
+    $('#presPrev').disabled = k === 0; $('#presNext').textContent = k === PRESENT.length - 1 ? 'Finish' : 'Next →';
+    startAt = Date.now(); tick();
   }
-  function keyed(els) {                               // key = hash of the original text + its ordinal among identical blocks
-    const seen = {}; return els.map(el => { const b = orig.get(el); const n = seen[b] = (seen[b] || 0) + 1; return [hash(b) + '.' + (n - 1), el, b]; });
+  function tick() {
+    const s = PRESENT[i] || {}, el = Math.round((Date.now() - startAt) / 1000);
+    clock.textContent = Math.floor(el / 60) + ':' + String(el % 60).padStart(2, '0');
+    clock.classList.toggle('over', !!s.secs && el > s.secs);
   }
-  function applyStored() {
-    for (const [k, el] of keyed(candidates())) { const it = stored[k]; if (it && el.innerHTML.trim() !== it.after) el.innerHTML = it.after; }
+  function start() {
+    if (on) return; on = true;
+    if (typeof tourEnd === 'function' && window.tour && tour.on) tourEnd();
+    if (typeof openGate === 'function') openGate();
+    pres.hidden = false; document.body.classList.add('presenting');
+    timer = setInterval(tick, 1000); show(0); $('#presNext').focus({ preventScroll: true });
   }
-  function collect() {
-    const items = Object.assign({}, stored);
-    for (const [k, el, b] of keyed(candidates())) {
-      const a = el.innerHTML.trim();
-      if (a !== b) items[k] = { before: b, after: a }; else delete items[k];
-      el.classList.toggle('ed-changed', a !== b);
-    }
-    return items;
+  function end() {
+    if (!on) return; on = false; clearInterval(timer);
+    restore(); pres.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
+    if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    const b = $('#talkBtn'); if (b) b.focus({ preventScroll: true });
   }
-  const count = items => { const n = Object.keys(items).length; return n ? n + (n === 1 ? ' change saved' : ' changes saved') : 'No changes'; };
-  async function save() {
-    if (!doc) return;
-    const items = collect();
-    if (JSON.stringify(items) === JSON.stringify(stored)) { status.textContent = count(items); return; }
-    saving = true; status.textContent = 'Saving…';
-    try { await doc.set({ items, updated: new Date().toISOString() }); stored = items; status.textContent = count(items); }
-    catch (e) { status.textContent = 'Not saved' + (e && e.code ? ' (' + e.code + ')' : ''); }
-    saving = false;
-    if (dirty) { dirty = false; save(); }
-  }
-  function queue() { if (saving) { dirty = true; return; } clearTimeout(timer); timer = setTimeout(save, 900); }
-  function setOn(v) {
-    on = v; document.documentElement.classList.toggle('editing', on);
-    toggle.textContent = on ? 'Done' : 'Edit site'; status.hidden = !on; undo.hidden = !on;
-    if (on) applyStored();
-    for (const el of candidates()) { if (on) { el.setAttribute('contenteditable', 'true'); el.spellcheck = true; } else el.removeAttribute('contenteditable'); }
-    if (on) status.textContent = count(collect()); else { clearTimeout(timer); save(); }
-    armed = false; undo.textContent = 'Undo all edits';
-  }
-  document.addEventListener('input', e => { if (on && e.target && e.target.closest && e.target.closest('[data-ed]')) queue(); });
-  document.addEventListener('paste', e => {
-    const t = on && e.target && e.target.closest && e.target.closest('[data-ed]'); if (!t) return;
-    e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
-  });
-  document.addEventListener('keydown', e => { if (on && e.key === 'Escape' && e.target && e.target.closest && e.target.closest('[data-ed]')) { e.stopPropagation(); e.target.blur(); } }, true);
-  toggle.addEventListener('click', () => setOn(!on));
-  undo.addEventListener('click', async () => {
-    if (!armed) { armed = true; undo.textContent = 'Click again to remove every saved edit'; setTimeout(() => { armed = false; undo.textContent = 'Undo all edits'; }, 4000); return; }
-    try { await doc.delete(); location.reload(); } catch (e) { status.textContent = 'Could not undo' + (e && e.code ? ' (' + e.code + ')' : ''); }
-  });
-  (async () => {
-    db = await window.claude.use('db'); if (!db) return;
-    doc = db.doc('edits/current');
-    try { const s = await doc.get(); stored = s.exists ? ((s.data() || {}).items || {}) : {}; } catch (e) { return; }
-    pill.hidden = false;
-    applyStored(); setTimeout(applyStored, 1200);   // once now and once after the late-rendered sections
-  })();
+  const toggleNotes = () => { notes.hidden = !notes.hidden; $('#presNotesBtn').setAttribute('aria-pressed', String(!notes.hidden)); };
+  const full = () => { const el = document.documentElement; if (!document.fullscreenElement && el.requestFullscreen) el.requestFullscreen().catch(() => {}); else if (document.exitFullscreen) document.exitFullscreen().catch(() => {}); };
+  $('#talkBtn') && $('#talkBtn').addEventListener('click', start);
+  $('#presPrev').addEventListener('click', () => show(i - 1));
+  $('#presNext').addEventListener('click', () => (i === PRESENT.length - 1 ? end() : show(i + 1)));
+  $('#presExit').addEventListener('click', end);
+  $('#presNotesBtn').addEventListener('click', toggleNotes);
+  $('#presFull').addEventListener('click', full);
+  document.addEventListener('keydown', e => {
+    if (!on || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (e.target.closest && e.target.closest('input, textarea, select, [contenteditable]')) return;
+    const k = e.key;
+    if (k === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); end(); return; }
+    if (k === 'ArrowRight' || k === 'PageDown' || k === ' ') { e.preventDefault(); e.stopImmediatePropagation(); if (i === PRESENT.length - 1) end(); else show(i + 1); return; }
+    if (k === 'ArrowLeft' || k === 'PageUp') { e.preventDefault(); e.stopImmediatePropagation(); show(i - 1); return; }
+    if (k === 'n' || k === 'N') { e.preventDefault(); toggleNotes(); return; }
+    if (k === 'f' || k === 'F') { e.preventDefault(); full(); return; }
+    if (k === 'Home') { e.preventDefault(); show(0); } else if (k === 'End') { e.preventDefault(); show(PRESENT.length - 1); }
+  }, true);
+  if ((location.hash || '') === '#present') start();
 })();
 </script>
