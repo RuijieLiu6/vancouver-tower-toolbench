@@ -121,7 +121,7 @@ Each tower is one blue. A blue is a pair `[light, dark]` in `BLUES`; `tokens()` 
 | What | Value |
 |---|---|
 | Tower lift | spring per piece, stiffness 64, damping 14.2, four sub-steps per frame; target 1 apart, 0 home; `LIFT = 26` units straight up |
-| Ghost extrusion | one spring on height, stiffness 10, damping 6.4 (near critical, about a second); height runs `STUB_H = 6` to `TOWER_H = 89` above the podium (`POD_H = 6`); the solid is rebuilt every frame with the kit's `slabOf` |
+| Ghost stacking | no spring: `grow.x` runs to its target at a steady rate, `RISE_S = 1.7` s up and `SINK_S = 0.8` s down; the drawn height is quantised to `BLOCKS = 16` blocks of `BLOCK_U = (TOWER_H - STUB_H) / 16` units (about four floors), so the tower stacks up block by block from `STUB_H = 6` to `TOWER_H = 89` above the podium (`POD_H = 6`); the solid is rebuilt with the kit's `slabOf` at each step, with a crease line on the visible faces where each block meets the next |
 | Hover | `pointermove` on the stage; the tower is `event.target.closest("[data-tower]")`; `pointerleave` deselects |
 | Keys | ← → ↑ ↓ step through `ORDER` (butterfly order: shangri, paradox, butterfly, burrard, proposal, stack, georgia, vhouse, onewall), Home/End to the ends, Escape deselects |
 | Idle tour | starts on load; selects the next item every 2.6 s, rests 1.6 s after the last; stops on any input and resumes 3.6 s after the last one |

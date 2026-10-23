@@ -240,14 +240,19 @@ const SPRING = ${JSON.stringify(SPRING)};
 const SITE_PLAN = ${JSON.stringify(SITE_PLAN())}, POD_H = ${POD_H}, STUB_H = ${STUB_H}, TOWER_H = ${TOWER_H}, FLOOR_M = 3.2;
 const stage = document.querySelector(".iso-stage"), svg = stage.querySelector("svg");
 const propEls = {}; for (const el of svg.querySelectorAll("[data-prop-tower] [data-pp]")) propEls[el.dataset.pp] = el;
+const BLOCKS = 16, BLOCK_U = (TOWER_H - STUB_H) / BLOCKS;   // the tower stacks up in sixteen blocks of about four floors (12 m) rather than extruding
+const RISE_S = 1.7, SINK_S = 0.8;                            // seconds to stack the whole tower, and to take it down
 const grow = { x: 0, v: 0, target: 0, drawn: -1 };
+const blocksUp = () => Math.min(BLOCKS, Math.floor(grow.x * BLOCKS + 1e-6));
 function drawTower() {
-  const h = STUB_H + (TOWER_H - STUB_H) * grow.x;
-  if (Math.abs(h - grow.drawn) < 0.02) return;
+  const n = blocksUp(), h = STUB_H + n * BLOCK_U;
+  if (h === grow.drawn) return;
   grow.drawn = h;
   const q = slabOf(SITE_PLAN, POD_H, h, P, 3, 0);
   propEls.fill.setAttribute("d", q.fill); propEls.top.setAttribute("d", q.top); propEls.outline.setAttribute("d", q.outline);
-  propEls.crease.setAttribute("d", q.crease || "");
+  const lines = [];                                          // a line where each block meets the next, on the faces you can see
+  for (let k = 0; k < n; k++) lines.push(slabOf(SITE_PLAN, POD_H + STUB_H + k * BLOCK_U, 0, P, 3, 0).crease || "");
+  propEls.crease.setAttribute("d", lines.join(""));
   q.shades.forEach((d, i) => propEls["s" + i].setAttribute("d", d || ""));
 }
 const readout = document.querySelector("[data-readout]");
@@ -262,8 +267,8 @@ function say() {
   const t = selected ? INFO[selected] : null;
   let text = "downtown · hover a tower";
   if (t && selected === "proposal") {
-    const metres = Math.round((POD_H + STUB_H + (TOWER_H - STUB_H) * grow.x) / ${M});
-    text = grow.x > 0.995 ? t.name + " · " + t.m + " m · topped out" : "Our building · " + metres + " m of " + t.m + " · rising";
+    const metres = Math.round((POD_H + STUB_H + blocksUp() * BLOCK_U) / ${M});
+    text = blocksUp() >= BLOCKS ? t.name + " · " + t.m + " m · topped out" : "Our building · " + metres + " m of " + t.m + " · rising";
   } else if (t) text = t.name + " · " + t.m + " m · " + t.year;
   if (readout.textContent !== text) readout.textContent = text;
   if (selected !== lastSaid) { lastSaid = selected; stage.setAttribute("aria-valuetext", t ? t.name + ", " + t.m + " metres, " + t.year + ". " + t.note : "Nothing selected"); }
@@ -300,10 +305,10 @@ function tick(now) {
     if (Math.abs(p.target - p.x) < 5e-4 && Math.abs(p.v) < 5e-4 && clock >= p.at) { p.x = p.target; p.v = 0; } else moving = true;
     place(p);
   }
-  // the site's tower: a slower, critically damped rise, so it reads as an extrusion
-  if (calm) { grow.x = grow.target; grow.v = 0; }
-  else for (let s = 0; s < 4; s++) { grow.v += ((grow.target - grow.x) * 10 - grow.v * 6.4) * dt / 4; grow.x += grow.v * dt / 4; }
-  if (Math.abs(grow.target - grow.x) < 5e-4 && Math.abs(grow.v) < 5e-4) { grow.x = grow.target; grow.v = 0; } else moving = true;
+  // the site's tower stacks up block by block at a steady pace, and comes down faster; no spring, so every block lands as a step
+  if (calm) grow.x = grow.target;
+  else { const d = grow.target - grow.x, rate = d > 0 ? 1 / RISE_S : 1 / SINK_S; grow.x += Math.sign(d) * Math.min(Math.abs(d), rate * dt); }
+  if (grow.x !== grow.target) moving = true;
   drawTower();
   if (selected === "proposal") say();
   frame = visible && moving ? requestAnimationFrame(tick) : 0;
