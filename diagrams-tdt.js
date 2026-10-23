@@ -129,7 +129,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       return { ...a, x, y, ux: Math.cos(angle), uy: Math.sin(angle) };
     });
     const output = { x: 1085, y: 390, r: 62 };
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five design stages move both ways around one shared model, ten analysis nodes read that model, and a drawing set can be produced at any point.">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Five design stages move both ways around one shared model, ten analysis nodes read that model, anyone can contribute a node of their own, and a drawing set can be produced at any point.">`;
     s += defs(id);
 
     for (let i = 0; i < stages.length; i++) {
@@ -171,12 +171,16 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
 
     s += `<path class="v2-loop" data-connect="output" d="M604 385C760 335 880 330 1017 377" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="892" y="326" text-anchor="middle">exit at any point</text>`;
     s += `<g class="tdt-output" data-key="output" tabindex="0" role="button" aria-label="Output: drawing set with plans, sections, diagrams and renders."><circle class="v2-hit" cx="${output.x}" cy="${output.y}" r="74"/><circle class="v2-cbg tool" cx="${output.x}" cy="${output.y}" r="${output.r}"/>${pic('step-submit', output.x, output.y, 90)}<text class="v2-num" x="${output.x}" y="${output.y + 88}" text-anchor="middle">OUTPUT</text><text class="v2-lab" x="${output.x}" y="${output.y + 110}" text-anchor="middle">Drawing set</text><text class="v2-cap" x="${output.x}" y="${output.y + 131}" text-anchor="middle">Plans, sections, diagrams, renders</text></g>`;
+    // input, on the left: nodes contributed by professionals, students, anyone with a tool; they join at the Your tool slot
+    const input = { x: 110, y: 390, r: 62 };
+    s += `<path class="v2-loop" data-connect="input your" d="M${input.x + input.r + 6} ${input.y - 18}C230 372 300 293 352 293" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="250" y="352" text-anchor="middle">add your own node</text>`;
+    s += `<g class="tdt-input" data-key="input" tabindex="0" role="button" aria-label="Input: nodes contributed by professionals, students, anyone with a tool. They join the loop at the Your tool slot."><circle class="v2-hit" cx="${input.x}" cy="${input.y}" r="74"/><circle class="v2-cbg you" cx="${input.x}" cy="${input.y}" r="${input.r}"/>${symbolIcon(id, 'teach-agent', input.x, input.y, 70)}<text class="v2-num" x="${input.x}" y="${input.y + 88}" text-anchor="middle">INPUT</text><text class="v2-lab" x="${input.x}" y="${input.y + 110}" text-anchor="middle">Contributed nodes</text><text class="v2-cap" x="${input.x}" y="${input.y + 131}" text-anchor="middle">Professionals, students,</text><text class="v2-cap" x="${input.x}" y="${input.y + 150}" text-anchor="middle">anyone with a tool</text></g>`;
     s += roleLegend(24, 800) + '</svg>';
     host.innerHTML = s;
 
     const svg = host.querySelector('svg');
     const clear = () => clearFocus(svg);
-    bindClicks(svg, '.tdt-stage, .tdt-analysis, .tdt-output', el => {
+    bindClicks(svg, '.tdt-stage, .tdt-analysis, .tdt-output, .tdt-input', el => {
       clear(); svg.classList.add('v2-focus'); el.classList.add('on');
       const key = el.dataset.key;
       svg.querySelectorAll(`[data-connect~="${key}"]`).forEach(n => n.classList.add('on'));
@@ -186,6 +190,8 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       } else if (el.classList.contains('tdt-stage')) {
         const st = STAGES.find(x => x.k === key);
         panel(info, `${st.n} · ${st.name}`, [['At this stage', st.sub], ['Shared model', 'Reads and writes the model']]);
+      } else if (el.classList.contains('tdt-input')) {
+        panel(info, 'Input · contributed nodes', [['Who', 'Professionals, students, anyone with a tool'], ['How', 'Copy a node as a skill, teach your agent a new one, or build your own, then contribute it back to the shared library'], ['Where it lands', 'The Your tool slot, available to every stage like any other node']]);
       } else {
         panel(info, 'Output · drawing set', [['Includes', 'Plans, sections, diagrams, renders'], ['When', 'Exit at any point']]);
       }

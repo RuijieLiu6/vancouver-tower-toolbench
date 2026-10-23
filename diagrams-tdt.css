@@ -125,6 +125,7 @@ path.tdt-canvas {
 .tdt-stage,
 .tdt-analysis,
 .tdt-output,
+.tdt-input,
 .tdt-row,
 .tdt-canvas,
 .tdt-pill-group,
@@ -148,6 +149,11 @@ path.tdt-canvas {
 .tdt-analysis .v2-cbg {
   fill: var(--harbour-soft);
   stroke: var(--harbour);
+}
+
+.tdt-input .v2-cbg {
+  fill: var(--signal-soft);
+  stroke: var(--signal);
 }
 
 .tdt-analysis.tdt-dashed .v2-cbg {
@@ -321,6 +327,7 @@ text.tdt-badge.tdt-designer-b {
 #tdtLoop svg.v2-focus .tdt-stage,
 #tdtLoop svg.v2-focus .tdt-analysis,
 #tdtLoop svg.v2-focus .tdt-output,
+#tdtLoop svg.v2-focus .tdt-input,
 #tdtWhy svg.v2-focus .tdt-row,
 #tdtOpen svg.v2-focus .tdt-node,
 #tdtA svg.v2-focus .tdt-node,
