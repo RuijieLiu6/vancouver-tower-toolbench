@@ -12,7 +12,7 @@ if url:  # point the QR code and the Copy link button at the standalone site
     body, n = re.subn(r"const PUBLIC_URL = '[^']*';", f"const PUBLIC_URL = '{url}';", body, count=1)
     assert n == 1
 body = body.replace("const IS_PUBLIC = false;", "const IS_PUBLIC = true;", 1)  # the GitHub site never uses claude.ai storage
-body = body.replace("<title>Tower Design Toolkit Presentation Board</title>", "<title>Tower Design Toolkits</title>", 1)
+body = body.replace("<title>Tower Design Toolkit Presentation Board</title>", "<title>Tower Design Toolkit</title>", 1)
 head = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
         '<meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA).">'

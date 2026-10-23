@@ -1,4 +1,4 @@
-# Tower Design Toolkits — website
+# Tower Design Toolkit — website
 
 Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA, fall 2026, studio instructor Xun Liu).
 

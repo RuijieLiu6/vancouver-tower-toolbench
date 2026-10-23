@@ -1952,7 +1952,7 @@ say();
   <button type="button" class="land-go" id="landGo" aria-label="Our building. Hold it until it reaches the top, then press Enter to go in."><span class="go-t">Hold</span><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
   <div class="land-title">
     <svg class="land-mark in" style="--d:0" viewBox="0 0 100 100" aria-hidden="true"><rect width="100" height="100" rx="22" fill="#1f5f8b"/><rect x="27" y="72" width="46" height="10" fill="#c9d8e4"/><rect x="40" y="14" width="20" height="58" fill="#f6f5f2"/><rect x="40" y="41" width="20" height="4" fill="#eda100"/></svg>
-    <h1 class="in" style="--d:1">Tower Design Toolkits</h1>
+    <h1 class="in" style="--d:1">Tower Design Toolkit</h1>
     <p class="in" style="--d:2">Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, fall 2026</p>
   </div>
   <div class="land-foot">
@@ -1968,7 +1968,7 @@ say();
 <header class="top wrap" id="site">
   <div class="hero-row">
     <div class="hero-text">
-      <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkits</p>
+      <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkit</p>
       <p class="lede">Toolkit for designing a high-rise in Downtown Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
       <p class="credit">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
     </div>
@@ -2179,7 +2179,7 @@ say();
 </main>
 
 <footer class="wrap">
-  <div>Tower Design Toolkits · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
+  <div>Tower Design Toolkit · Ruijie Liu and Sinnie Choi · ARCH 540, UBC SALA, Fall 2026. Built with help from Claude (Anthropic).</div>
 </footer>
 
 <div class="join" id="join" hidden role="dialog" aria-modal="true" aria-labelledby="joinTitle">
@@ -2237,6 +2237,13 @@ const TOOLS = [
     limit: 'Areas and structure are concept-stage geometry, not a code or structural check. The public copy leaves out the competition base model.',
     worked: ['Shaping by dragging', 'Plan and profile controls', 'Structural expression', 'Terraces and sky bridges', 'Rhino export'],
     blocked: ['Hard to get the form I wanted', 'Too many controls', 'Rhino export did not work', 'Missing my site context', 'Unclear what the checks mean'] },
+  { id: 'streetflow', img: 'images/tool-streetflow.jpg', name: 'Street Flow Lab', sub: 'Pedestrian and vehicle traffic around a massing', by: 'Sinnie Choi', ours: true,
+    url: 'https://github.com/xubynii/street-flow-lab',
+    does: ['Builds the streets, sidewalks, crossings and signals around a real downtown lot from OpenStreetMap and City data', 'Takes a massing with its programme, entrances, parking ramp and loading, or an imported Downtown Massing Tool project', 'Simulates a peak window, today against the project: sidewalk and junction grades, flow heat, who is on the street, and a printable report'],
+    limit: 'A design-stage estimate, not a traffic impact assessment. Trip rates and shares are team assumptions you can edit.',
+    access: 'Runs on your computer: download it from GitHub and open src/index.html in Chrome or Edge.',
+    worked: ['Today against the project', 'Flow heat and grades', 'Entrances and the kerb', 'Who is on the street', 'The report'],
+    blocked: ['Slow to run', 'Numbers I could not trace', 'Hard to set up the building', 'Missing my street or lot', 'Unclear what the grades mean'] },
   { id: 'tdt', img: 'images/tool-tdt.jpg', name: 'Tower Design Toolkit', sub: 'Shape a tower, switch on evaluation nodes, read the evidence', by: 'Ruijie Liu and Sinnie Choi', ours: true,
     url: 'https://ruijieliu6.github.io/tower-design-toolkit/',
     does: ['Shape a parametric tower on the competition block or in real downtown Vancouver, or import your own massing (.3dm, OBJ, glTF, IFC)', 'Switch on evaluation nodes: program and FSR, view-cone heights, sun and shadow, program value, structure and wind screening, and more', 'Every result shows its source and an evidence flag, from verified to unresolved'],
@@ -2476,9 +2483,9 @@ $('#fb').addEventListener('submit', async e => {
     } catch (err) { canWrite = false; }
   }
   if (btn) btn.disabled = false;
-  const box = $('#copyBox'); box.value = 'Tower Design Toolkits feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
+  const box = $('#copyBox'); box.value = 'Tower Design Toolkit feedback\n' + asLines(a).map(([k, v]) => `${k}: ${v}`).join('\n');
   $('#copyWrap').hidden = false;
-  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Tower Design Toolkits feedback';
+  const MAIL_TO = 'liuruij6@gmail.com,sinniechoi18@gmail.com', SUBJECT = 'Tower Design Toolkit feedback';
   $('#gmailLink').href = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(MAIL_TO) + '&su=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 6000));
   $('#mailtoLink').href = 'mailto:' + MAIL_TO + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(box.value.slice(0, 1800));
   if (FORM_PREFILL) { $('#formLink').href = FORM_PREFILL.replace('ANSWERS', encodeURIComponent(box.value.slice(0, 6000))); $('#formSend').hidden = false; }
@@ -2734,6 +2741,7 @@ const IMG_LINKS = {
   'images/about-vista-intro.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
   'images/about-rooftop-view.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
   'images/tool-vista.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  'images/tool-streetflow.jpg': 'https://github.com/xubynii/street-flow-lab',
   'images/tool-dtmass.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
   'images/tool-pvv.jpg': 'https://ruijieliu6.github.io/program-value-visualizer/',
   'images/about-form-studio.jpg': 'https://ruijieliu6.github.io/form-studio/',
@@ -3676,7 +3684,7 @@ if (['research', 'tools', 'feedback'].includes(START_HASH)) {      // a deep lin
 /* Each stop matches a [Tour n] cue in presentation/script_final.md. Keep the two in the same order. */
 const TOUR_PARTS = ['Welcome', 'About us', 'How it works', 'Try the tools', 'Give feedback'];
 const TOUR = [
-  { p: 0, land: true, t: 'Tower Design Toolkits', d: 'Small tools for designing a high-rise in Vancouver, made by Ruijie Liu and Sinnie Choi.' },
+  { p: 0, land: true, t: 'Tower Design Toolkit', d: 'Small tools for designing a high-rise in Vancouver, made by Ruijie Liu and Sinnie Choi.' },
   { p: 0, land: true, qr: true, t: 'Scan to follow along', d: 'The code opens this site on your phone. No sign-in needed.' },
   { p: 0, land: true, el: '#landing .iso-stage', t: 'Downtown Vancouver, eight towers', d: 'Hover a tower to lift it and read its height and year.' },
   { p: 0, land: true, el: '#landing .iso-stage', hold: true, t: 'Our building', d: 'Hold the ghost in the middle and it rises to 226 m. When it says Enter, press it to go in.' },
