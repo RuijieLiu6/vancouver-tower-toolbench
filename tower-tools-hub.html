@@ -3280,7 +3280,7 @@ function linkImages(root = document) {
 
     s += `<circle class="v2-hub" cx="${cx}" cy="${cy}" r="86"/>${pic('icon-engine', cx, cy - 30, 68)}`;
     s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
-    s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><g class="tdt-switch-on"><rect x="2" y="2" width="66" height="24" rx="12"/><text x="35" y="19" text-anchor="middle">basic</text></g><text x="113" y="19" text-anchor="middle">advanced</text></g>`;
+    s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><text x="40" y="19" text-anchor="middle">basic</text><text x="78" y="19" text-anchor="middle">·</text><text x="122" y="19" text-anchor="middle">advanced</text></g>`;   // neither mode is highlighted: both are available
     s += `<text class="v2-cap" x="${cx}" y="${cy + 106}" text-anchor="middle">reads and writes the model</text>`;
 
     stages.forEach(st => {
