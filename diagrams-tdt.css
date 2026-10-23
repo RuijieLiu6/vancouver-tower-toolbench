@@ -110,10 +110,15 @@ path.tdt-canvas {
 }
 
 /* The drawn isometric pictograms (ISO_ICONS): ink lines, white faces, like the raster pictograms. */
-/* hairline: one thin stroke that stays 0.75 px whatever size the symbol is drawn at */
-.iso-f { fill: var(--sheet); stroke: var(--ink); stroke-width: .75px; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
-.iso-l { fill: none; stroke: var(--ink); stroke-width: .75px; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
-.iso-d { stroke-dasharray: 2 1.5; }
+/* Matched to the raster pictograms in images/picto: their ink measures #17242c and their line is about 1.8 px on a 360 px
+   drawing, so the stroke here is 0.26 units of the 48-unit symbol and scales with it: near 0.5 px in a large node, a faint
+   hairline in a small one, exactly as the pictograms beside them render. Dark mode uses the colour the pictograms invert to. */
+:root { --picto-ink: #17242c; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --picto-ink: #d2dfe7; } }
+:root[data-theme="dark"] { --picto-ink: #d2dfe7; }
+.iso-f { fill: var(--sheet); stroke: var(--picto-ink); stroke-width: .26; stroke-linejoin: round; stroke-linecap: round; }
+.iso-l { fill: none; stroke: var(--picto-ink); stroke-width: .26; stroke-linejoin: round; stroke-linecap: round; }
+.iso-d { stroke-dasharray: 1.2 .9; }
 
 /* ---------- node and role treatments ---------- */
 .tdt-node,
