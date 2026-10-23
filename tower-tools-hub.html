@@ -349,12 +349,9 @@ a.img-link:hover img { filter: brightness(.96); }
 .gallery a.img-link { height: 100%; } .tool .shot a.img-link { height: 100%; }
 
 /* image bands */
-.gallery { display: grid; grid-template-columns: 1.4fr 1fr 1fr; grid-template-rows: auto auto; gap: 10px; }
+.gallery { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .gallery figure { margin: 0; position: relative; border-radius: 12px; overflow: hidden; background: var(--sheet); border: 1px solid var(--line); min-width: 0; }
-.gallery figure:first-child { grid-row: span 2; }
-.gallery figure:last-child { grid-column: span 2; }
 .gallery img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: 100%; aspect-ratio: 4/3; }
-.gallery figure:first-child img { aspect-ratio: auto; min-height: 100%; }
 .gallery figcaption { position: absolute; left: 0; right: 0; bottom: 0; padding: 22px 12px 10px; color: #fbfcfb; font-size: 13.5px; background: linear-gradient(transparent, rgba(10,18,22,.82)); }
 .gallery figcaption b { display: block; font: 600 16px var(--display); }
 .shelf { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 1fr); gap: 14px; overflow-x: auto; padding: 6px 2px 10px; }
@@ -378,7 +375,7 @@ a.img-link:hover img { filter: brightness(.96); }
 .attempt-shot { margin: 0; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); }
 .attempt-shot img { width: 100%; display: block; max-width: 100%; }
 .attempt-shot figcaption { font-size: 12.5px; color: var(--muted); padding: 6px 10px; background: var(--sheet); }
-@media (max-width: 720px) { .gallery { grid-template-columns: 1fr 1fr; } .gallery figure:first-child { grid-column: span 2; grid-row: auto; } }
+@media (max-width: 720px) { .gallery { grid-template-columns: 1fr 1fr; } }
 
 /* opening sequence, presentation path, join panel */
 .hero-row { display: flex; gap: 20px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
@@ -2159,10 +2156,12 @@ say();
       <p class="muted" id="editHint" hidden>You can edit this page. Use Edit beside a heading; your text is saved for everyone who opens it.</p>
     </div>
     <div class="gallery" aria-label="What we have built so far">
-      <figure><img src="images/about-vista-intro.jpg" alt="Vista opening screen: explore a building in Vancouver's protected views" loading="lazy"><figcaption><b>Vista</b>Ruijie's view-protection tool, Assignment 1</figcaption></figure>
-      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool showing a tower on 1189 Howe Street with FSR over the limit" loading="lazy"><figcaption><b>Downtown Massing Tool</b>Sinnie's massing tool, Assignment 1</figcaption></figure>
-      <figure><img src="images/about-form-studio.jpg" alt="Form Studio: a tower with mega floors and outriggers" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
-      <figure><img src="images/about-rooftop-view.jpg" alt="Vista checking a proposed tower from a rooftop viewpoint" loading="lazy"><figcaption><b>Standing at a viewpoint</b>Vista's rooftop view check</figcaption></figure>
+      <figure><img src="images/tool-vista.jpg" alt="Vista: a proposed 209 m tower among the downtown towers with the mountains behind" loading="lazy"><figcaption><b>Vista</b>Ruijie's view-protection tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/tool-dtmass-report.jpg" alt="Downtown Massing Tool report: the Howe and Davie tower study with its findings" loading="lazy"><figcaption><b>Downtown Massing Tool</b>Sinnie's massing tool, Assignment 1</figcaption></figure>
+      <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer: a tower section beside the verdict and where the money goes" loading="lazy"><figcaption><b>Program Value Visualizer</b>Ruijie's floor-by-floor value tool</figcaption></figure>
+      <figure><img src="images/tool-form.jpg" alt="Form Studio: a tapered diagrid tower with height, width, depth and twist handles" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
+      <figure><img src="images/tool-streetflow.jpg" alt="Street Flow Lab: pedestrian flow heat on the sidewalks around a downtown site" loading="lazy"><figcaption><b>Street Flow Lab</b>Sinnie's street traffic simulation</figcaption></figure>
+      <figure><img src="images/tool-tdt.jpg" alt="Tower Design Toolkit: the node graph of checks beside the massing panel" loading="lazy"><figcaption><b>Tower Design Toolkit</b>Our shared toolkit, Assignment 2</figcaption></figure>
     </div>
     <div class="band-h"><h3>Reference Documents</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
     <div class="shelf" aria-label="Documents and readings">
@@ -2586,7 +2585,7 @@ const VISUALS = {
   built() {
     return frag(`<div class="pshots">
       <figure><img src="images/about-vista-intro.jpg" alt="Vista start screen" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
-      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool on 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · building code</figcaption></figure>
+      <figure><img src="images/tool-dtmass-report.jpg" alt="Downtown Massing Tool report for 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · building code</figcaption></figure>
       <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer section view" loading="lazy"><figcaption><b>Program Value Visualizer</b> Ruijie · value and land</figcaption></figure></div>`);
   },
   learned() {
