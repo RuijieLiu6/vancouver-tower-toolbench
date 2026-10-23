@@ -1,4 +1,6 @@
 <title>Original Website</title>
+<script>/* gate: a plain visit (or #tour, #join, #project) shows only the landing until you enter; a deep link to another tab skips it */
+if (!/^#(research|tools|feedback)$/.test(location.hash)) document.documentElement.classList.add('gated');</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Crect%20width%3D%22100%22%20height%3D%22100%22%20rx%3D%2222%22%20fill%3D%22%231f5f8b%22/%3E%3Crect%20x%3D%2227%22%20y%3D%2272%22%20width%3D%2246%22%20height%3D%2210%22%20fill%3D%22%23c9d8e4%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2214%22%20width%3D%2220%22%20height%3D%2258%22%20fill%3D%22%23f6f5f2%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2241%22%20width%3D%2220%22%20height%3D%224%22%20fill%3D%22%23eda100%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
@@ -503,6 +505,8 @@ a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
 /* entering: the camera dives into our building, the page fades through to the site */
 .landing.diving .land-model { transform: scale(13); transition: transform 1.05s cubic-bezier(.65, 0, .25, 1); will-change: transform; }
 .landing.diving .land-title, .landing.diving .land-foot, .landing.diving .land-spot, .landing.diving .land-go, .landing.diving .iso-plate-corners { opacity: 0; transition: opacity .25s; }
+/* gate: while html.gated, the header, tabs, content and footer are not on the page, so the landing is all there is to see or scroll. openGate() lifts it. */
+html.gated :is(#site, nav.tabs, main.wrap, footer.wrap) { display: none !important; }
 /* the dive ends in black, holds a beat, then the site fades up out of it */
 .enter-veil { position: fixed; inset: 0; z-index: 80; pointer-events: none; opacity: 0; background: #05080a; transition: opacity .7s cubic-bezier(.4, 0, .2, 1); }
 .enter-veil.on { opacity: 1; transition: opacity .45s cubic-bezier(.4, 0, .2, 1) .5s; }
@@ -3649,9 +3653,10 @@ const landing = (() => {
   api.reset = reset;
   return api;
 })();
+function openGate() { document.documentElement.classList.remove('gated'); }
 function diveIn(done) {
   if (diving) return;
-  const toSite = () => window.scrollTo({ top: $('#site').offsetTop, behavior: 'instant' });
+  const toSite = () => { openGate(); window.scrollTo({ top: $('#site').offsetTop, behavior: 'instant' }); };
   if (REDUCE || !landing.ghost) { toSite(); landing.reset(); if (done) done(); return; }
   diving = true;
   const L = $('#landing'), M = L.querySelector('.land-model'), veil = $('#enterVeil');
@@ -3729,6 +3734,7 @@ function tourGo(i, dived) {
   const cur = TOUR[tour.i];
   if (!dived && cur && cur.land && !TOUR[i].land && i > tour.i && !REDUCE) { diveIn(() => tourGo(i, true)); return; }   // leaving the landing: dive into the tower
   const s = TOUR[i]; tourLeave(TOUR[tour.i]); tour.i = i;
+  if (!s.land) openGate();
   if (s.tab) showTab(s.tab);
   const el = s.el ? document.querySelector(s.el) : null;
   tour.el = s.qr ? null : el;
