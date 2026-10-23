@@ -367,7 +367,7 @@ a.img-link:hover img { filter: brightness(.96); }
 .band-h { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
 .band-h h3 { font-size: 20px; }
 .tool .shot { margin: -18px -18px 4px; height: 170px; overflow: hidden; border-bottom: 1px solid var(--line); background: var(--ground); }
-.tool .shot img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; transition: transform .4s; max-width: 100%; }
+.tool .shot img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform .4s; max-width: 100%; }
 .tool:hover .shot img { transform: scale(1.04); }
 .fb-banner { position: relative; border-radius: 14px; overflow: hidden; min-height: 180px; display: flex; align-items: flex-end; }
 .fb-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
@@ -2219,13 +2219,13 @@ say();
 /* ---------- data ---------- */
 const TOOLS = [
   { id: 'vista', img: 'images/tool-vista.jpg', name: 'Vista', sub: 'Vancouver view protection', by: 'Ruijie Liu', ours: true,
-    url: 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+    url: 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
     does: ['Places a proposed tower in a 3D Vancouver built from OpenStreetMap, terrain and shoreline', "Checks it against the City's mapped public view corridors", 'Lets you stand at a viewpoint and look, then export a study report'],
     limit: 'The geometry is approximate, so use it to study views. It can\'t tell you whether a tower complies.',
     worked: ['View cones were clear', '3D city context', 'Standing at a viewpoint', 'The exported report', 'Fast to place a tower'],
     blocked: ['Geometry too approximate', 'Hard to place my tower', 'Unclear what passes or fails', 'Slow to load', 'Missing a viewpoint I need'] },
-  { id: 'dtmass', img: 'images/tool-dtmass.jpg', name: 'Downtown Massing Tool', sub: 'Tower massing against downtown documents', by: 'Sinnie Choi', ours: true,
-    url: 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+  { id: 'dtmass', img: 'images/tool-dtmass-report.jpg', name: 'Downtown Massing Tool', sub: 'Tower massing against downtown documents', by: 'Sinnie Choi', ours: true,
+    url: 'https://xubynii.github.io/dtmass/',
     does: ['Loads what City data says about a real downtown parcel', 'Push and pull blocks by use: residential, office, retail, parking', 'Checks live against FSR, height and your floor-area target; compare options and export'],
     limit: 'Planning limits come from City documents. Check the current by-law before you rely on a number.',
     worked: ['Real parcel data', 'Live FSR and height check', 'Blocks by use', 'Comparing options', 'The report'],
@@ -2236,7 +2236,7 @@ const TOOLS = [
     limit: 'It gives early-design estimates, and every default shows its source, date and grade. It is no substitute for a feasibility study.',
     worked: ['Floor-by-floor value', 'Sources on every number', 'The verdict', 'The 9.0 FSR check', 'Asking the AI in plain words'],
     blocked: ['Too many inputs', 'A number I did not trust', 'Finance jargon', 'Missing a programme I need', 'Unclear how to start'] },
-  { id: 'form', img: 'images/about-form-studio.jpg', name: 'Form Studio', sub: 'Shape a tower and export it to Rhino', by: 'Ruijie Liu', ours: true,
+  { id: 'form', img: 'images/tool-form.jpg', name: 'Form Studio', sub: 'Shape a tower and export it to Rhino', by: 'Ruijie Liu', ours: true,
     url: 'https://ruijieliu6.github.io/form-studio/',
     does: ['Starts from a plan shape (ellipse, rectangle, clover, or one you draw) and lets you drag its taper and twist', 'Choose core and columns, a diagrid or perimeter bracing, then add terraces, a podium or sky bridges', 'Place it on a real downtown parcel and export it to Rhino as a .3dm file'],
     limit: 'Areas and structure are concept-stage geometry, not a code or structural check. The public copy leaves out the competition base model.',
@@ -2743,11 +2743,13 @@ const GATES = [
 
 /* clickable pictures: tools open the tool, documents open their source or PDF */
 const IMG_LINKS = {
-  'images/about-vista-intro.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
-  'images/about-rooftop-view.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
-  'images/tool-vista.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#vista',
+  'images/about-vista-intro.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/about-rooftop-view.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/tool-vista.jpg': 'https://ruijieliu6.github.io/vancouver-tall-view-tool/',
+  'images/tool-dtmass-report.jpg': 'https://xubynii.github.io/dtmass/',
+  'images/tool-form.jpg': 'https://ruijieliu6.github.io/form-studio/',
   'images/tool-streetflow.jpg': 'https://github.com/xubynii/street-flow-lab',
-  'images/tool-dtmass.jpg': 'https://genenv.github.io/arch540-a1-toolkit/#downtown-massing-tool',
+  'images/tool-dtmass.jpg': 'https://xubynii.github.io/dtmass/',
   'images/tool-pvv.jpg': 'https://ruijieliu6.github.io/program-value-visualizer/',
   'images/about-form-studio.jpg': 'https://ruijieliu6.github.io/form-studio/',
   'images/tool-tdt.jpg': 'https://ruijieliu6.github.io/tower-design-toolkit/',
