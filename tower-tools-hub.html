@@ -3824,3 +3824,100 @@ if (START_HASH === 'tour') tourStart(0);
   } catch (e) { db = null; }
 })();
 </script>
+
+<!-- Editor mode: only in the claude.ai copy (where window.claude exists and the artifact declares the db capability).
+     Turn it on and every text block becomes editable. Each change is saved to the artifact's database as {before, after}
+     pairs keyed by the block's original text, and re-applied when the page loads. Claude reads the same pairs
+     (ArtifactData: collection "edits", document "current") and writes them into this file with apply_edits.py,
+     so the GitHub site gets them on the next push. The GitHub site itself never shows the editor. -->
+<style>
+.ed-pill { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: max(16px, env(safe-area-inset-bottom, 0px)); z-index: 45; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+html.gated .ed-pill { bottom: 96px; }   /* clears the landing's readout */
+body.touring .ed-pill { display: none; }   /* the tour bar sits there */
+.ed-pill button { min-height: 40px; font-size: 14px; border-radius: 999px; box-shadow: var(--shadow-sm); }
+.ed-pill .ed-status { font-size: 12.5px; color: var(--muted); background: var(--sheet); border: 1px solid var(--line); border-radius: 999px; padding: 8px 12px; box-shadow: var(--shadow-sm); }
+html.editing [data-ed] { outline: 1px dashed color-mix(in srgb, var(--harbour) 60%, transparent); outline-offset: 3px; border-radius: 3px; cursor: text; }
+html.editing [data-ed]:hover { outline-style: solid; }
+html.editing [data-ed]:focus { outline: 2px solid var(--harbour); background: var(--sheet); }
+html.editing [data-ed].ed-changed { outline-color: var(--signal); }
+html.editing .land-title { pointer-events: auto; }
+@media print { .ed-pill { display: none; } }
+</style>
+<script>
+(() => {
+  if (!window.claude || typeof window.claude.use !== 'function') return;
+  const ROOTS = '#landing .land-title, #landing .land-foot, #site, main.wrap, footer.wrap';
+  const BLOCKS = 'h1, h2, h3, h4, p, li, figcaption, summary, dt, dd, td, th';
+  const SKIP = 'svg, .iso-stage, .dtfig-wrap, .v2host, .dg, #tourBar, #join, [data-ed-skip]';
+  const hash = s => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h * 33) ^ s.charCodeAt(i)) >>> 0; return h.toString(36); };
+  const orig = new WeakMap();                       // element -> its text as written in the source
+  let db = null, doc = null, stored = {}, on = false, timer = 0, saving = false, dirty = false, armed = false;
+  const pill = document.createElement('div'); pill.className = 'ed-pill'; pill.hidden = true;
+  pill.innerHTML = '<span class="ed-status" hidden></span><button type="button" class="ed-undo" hidden>Undo all edits</button><button type="button" class="primary ed-toggle">Edit site</button>';
+  document.body.append(pill);
+  const status = pill.querySelector('.ed-status'), toggle = pill.querySelector('.ed-toggle'), undo = pill.querySelector('.ed-undo');
+  function candidates() {
+    const out = [];
+    for (const root of document.querySelectorAll(ROOTS)) for (const el of root.querySelectorAll(BLOCKS)) {
+      if (el.closest(SKIP) || (el.parentElement && el.parentElement.closest('[data-ed]'))) continue;   // outermost block only
+      if (!el.textContent.trim()) continue;
+      if (!orig.has(el)) orig.set(el, el.innerHTML.trim());
+      el.dataset.ed = '1'; out.push(el);
+    }
+    return out;
+  }
+  function keyed(els) {                               // key = hash of the original text + its ordinal among identical blocks
+    const seen = {}; return els.map(el => { const b = orig.get(el); const n = seen[b] = (seen[b] || 0) + 1; return [hash(b) + '.' + (n - 1), el, b]; });
+  }
+  function applyStored() {
+    for (const [k, el] of keyed(candidates())) { const it = stored[k]; if (it && el.innerHTML.trim() !== it.after) el.innerHTML = it.after; }
+  }
+  function collect() {
+    const items = Object.assign({}, stored);
+    for (const [k, el, b] of keyed(candidates())) {
+      const a = el.innerHTML.trim();
+      if (a !== b) items[k] = { before: b, after: a }; else delete items[k];
+      el.classList.toggle('ed-changed', a !== b);
+    }
+    return items;
+  }
+  const count = items => { const n = Object.keys(items).length; return n ? n + (n === 1 ? ' change saved' : ' changes saved') : 'No changes'; };
+  async function save() {
+    if (!doc) return;
+    const items = collect();
+    if (JSON.stringify(items) === JSON.stringify(stored)) { status.textContent = count(items); return; }
+    saving = true; status.textContent = 'Saving…';
+    try { await doc.set({ items, updated: new Date().toISOString() }); stored = items; status.textContent = count(items); }
+    catch (e) { status.textContent = 'Not saved' + (e && e.code ? ' (' + e.code + ')' : ''); }
+    saving = false;
+    if (dirty) { dirty = false; save(); }
+  }
+  function queue() { if (saving) { dirty = true; return; } clearTimeout(timer); timer = setTimeout(save, 900); }
+  function setOn(v) {
+    on = v; document.documentElement.classList.toggle('editing', on);
+    toggle.textContent = on ? 'Done' : 'Edit site'; status.hidden = !on; undo.hidden = !on;
+    if (on) applyStored();
+    for (const el of candidates()) { if (on) { el.setAttribute('contenteditable', 'true'); el.spellcheck = true; } else el.removeAttribute('contenteditable'); }
+    if (on) status.textContent = count(collect()); else { clearTimeout(timer); save(); }
+    armed = false; undo.textContent = 'Undo all edits';
+  }
+  document.addEventListener('input', e => { if (on && e.target && e.target.closest && e.target.closest('[data-ed]')) queue(); });
+  document.addEventListener('paste', e => {
+    const t = on && e.target && e.target.closest && e.target.closest('[data-ed]'); if (!t) return;
+    e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text/plain'));
+  });
+  document.addEventListener('keydown', e => { if (on && e.key === 'Escape' && e.target && e.target.closest && e.target.closest('[data-ed]')) { e.stopPropagation(); e.target.blur(); } }, true);
+  toggle.addEventListener('click', () => setOn(!on));
+  undo.addEventListener('click', async () => {
+    if (!armed) { armed = true; undo.textContent = 'Click again to remove every saved edit'; setTimeout(() => { armed = false; undo.textContent = 'Undo all edits'; }, 4000); return; }
+    try { await doc.delete(); location.reload(); } catch (e) { status.textContent = 'Could not undo' + (e && e.code ? ' (' + e.code + ')' : ''); }
+  });
+  (async () => {
+    db = await window.claude.use('db'); if (!db) return;
+    doc = db.doc('edits/current');
+    try { const s = await doc.get(); stored = s.exists ? ((s.data() || {}).items || {}) : {}; } catch (e) { return; }
+    pill.hidden = false;
+    applyStored(); setTimeout(applyStored, 1200);   // once now and once after the late-rendered sections
+  })();
+})();
+</script>
