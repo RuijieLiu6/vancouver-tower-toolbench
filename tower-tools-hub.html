@@ -2156,6 +2156,7 @@ say();
 
   <!-- PROJECT -->
   <section class="panel" id="project" role="tabpanel" aria-labelledby="tab-project" hidden>
+    <div id="aboutIntro" style="display:flex;flex-direction:column;gap:22px">
     <div id="aboutHead" style="display:flex;flex-direction:column;gap:8px">
       <h2 class="rs-big">What would help you design a tower in Downtown Vancouver?</h2>
       <p class="muted" id="editHint" hidden>You can edit this page. Use Edit beside a heading; your text is saved for everyone who opens it.</p>
@@ -2167,6 +2168,7 @@ say();
       <figure><img src="images/tool-form.jpg" alt="Form Studio: a tapered diagrid tower with height, width, depth and twist handles" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
       <figure><img src="images/tool-streetflow.jpg" alt="Street Flow Lab: pedestrian flow heat on the sidewalks around a downtown site" loading="lazy"><figcaption><b>Street Flow Lab</b>Sinnie and Ruijie's street traffic simulation</figcaption></figure>
       <figure><img src="images/tool-tdt.jpg" alt="Tower Design Toolkit: the node graph of checks beside the massing panel" loading="lazy"><figcaption><b>Tower Design Toolkit</b>Our shared toolkit, Assignment 2</figcaption></figure>
+    </div>
     </div>
     <div class="band-h"><h3>Reference Documents</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
     <div class="shelf" aria-label="Documents and readings">
@@ -3886,6 +3888,9 @@ body.presenting [data-pres="path"] > :not([data-pres]):not(.pres-top):not(.pres-
 body.presenting [data-pres] { transition: opacity var(--t-chrome) var(--ease); }
 body.presenting [data-pres="on"] { outline: 2px solid var(--harbour); outline-offset: 12px; border-radius: 12px; }
 body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
+/* the rest-of-the-tools slide: the three cards already shown step aside and the other four share one row */
+body.presenting #toolGrid.pres-rest { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+body.presenting #toolGrid.pres-rest .tool:nth-child(-n+3) { display: none; }
 </style>
 <div class="pres-top" id="presTop" hidden>
   <span class="pres-n" id="presN"></span>
@@ -3932,12 +3937,11 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
   };
   // tab: which tab the slide lives on · targets: what stays bright · notes: the script, or notesFrom: the section whose own text is read out
   const PRESENT = [
-    { tab: 1, title: 'Introduction', who: 'Sinnie', secs: 30, targets: ['#aboutHead', '#project .gallery'], notes: ["For Assignment 2, Ruijie and I decided to keep working on high-rise design in Downtown Vancouver, building on the tools we each made in Assignment 1. Ruijie built Vista, which looks at protected views. I built a massing tool that explores program and zoning constraints. The question on the screen is the one we kept coming back to: what would actually help someone design a tower here?"] },
+    { tab: 1, title: 'Introduction', who: 'Sinnie', secs: 30, targets: ['#aboutIntro'], notes: ["For Assignment 2, Ruijie and I decided to keep working on high-rise design in Downtown Vancouver, building on the tools we each made in Assignment 1. Ruijie built Vista, which looks at protected views. I built a massing tool that explores program and zoning constraints. The question on the screen is the one we kept coming back to: what would actually help someone design a tower here?"] },
     { tab: 1, title: 'The problem: too many rule books', who: 'Sinnie', secs: 25, targets: ['#p-problem'], notesFrom: '#p-problem .text' },
     { tab: 1, title: 'What we built first', who: 'Sinnie', secs: 25, targets: ['#p-built'], notesFrom: '#p-built .text' },
     { tab: 1, title: 'What building them taught us', who: 'Ruijie', secs: 20, targets: ['#p-learned'], notesFrom: '#p-learned .text' },
     { tab: 1, title: 'Assignment 2: one toolkit', who: 'Sinnie', secs: 25, targets: ['#p-plan'], notes: ["So rather than build another standalone tool, we're building a toolkit that links the tools a designer already uses through one project file. That file keeps the units, coordinates, sources and decisions together, so nothing gets re-typed.", S.intro2, "The toolkit won't make the call for you. Every result says which rule it comes from and how sure it is, and when it can't know, it says so."] },
-    { tab: 1, title: 'Timeline', who: 'Sinnie', secs: 10, targets: ['#p-timeline'], notes: ['Where we are: Phase 2 started on 6 October, we showed the tools to the SuperTall studio on the 20th, and today is the mid review. Next is a confirmed user by 6 November, three user sessions through November and early December, two peer reviews, and the final review on 10 December, where every tool runs live.'] },
     { tab: 2, title: 'We link the tools you already use', who: 'Ruijie', secs: 15, targets: ['#research .rs-hero'], notes: ['We link the tools you already use and leave the decisions to you. We mapped how a Downtown Vancouver high-rise gets designed today and where that process tends to break: ten steps from brief to City decision, seven places where it breaks, eleven tools mapped against the steps. The toolkit is built around those spots.'] },
     { tab: 2, title: '1 · How a tower is designed today', who: 'Ruijie', secs: 50, targets: ['#rs-today > figure.v2fig'], notes: [S.research1, S.research2, 'Point to the workflow diagram and the pain points.', S.research3] },
     { tab: 2, title: "2 · Where today's tools stop", who: 'Sinnie', secs: 35, targets: ['#rs-tools > figure.v2fig'], notes: [S.tools1, S.tools2] },
@@ -3947,11 +3951,13 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
     { tab: 2, title: '4 · Open source and expandable', who: 'Sinnie', secs: 25, targets: ['#rs-next-open'], notes: ["Another part of the proposal is that the system is open source and expandable. Tools travel as skills: copy a node, run it on your own machine, teach your agent a new one, and contribute it back to the shared library. A structural engineer, a facade consultant or a planner can add a node in their own field, and every designer can wire it into the loop. So rather than one fixed piece of software, it's a system that grows with its users.", S.open2] },
     { tab: 2, title: '4 · Fig 4: how it could look', who: 'Sinnie', secs: 15, targets: ['#rs-next-c'], notes: ["And how it could look in use: two designers' node graphs for two briefs. Cards are stages, pills are analysis nodes, the wires carry the model, and the dashed loops go back to re-mass or re-stack. Both draw from the same library of ten nodes along the bottom."] },
     { tab: 2, title: '5 · How this research was made', who: 'Ruijie', secs: 15, targets: ['#rs-method'], notes: ['One note on method. The research behind these diagrams was drafted with a GPT model from the Assignment 2 brief and 53 sources, peer-reviewed by Claude on method and sources, and revised with 26 findings applied. Every number on the site keeps its source and date, which is the same rule we want the toolkit to follow.'] },
-    { tab: 3, title: 'Previous tools: Vista and the Downtown Massing Tool', who: 'Sinnie', secs: 25, targets: [() => toolCard('Vista'), () => toolCard('Downtown Massing Tool')],
-      notes: ['These are the two Assignment 1 tools we started from. Vista, by Ruijie, puts a proposed tower into a 3D model of Downtown Vancouver and checks it against the protected view cones, sky exposure and the pedestrian experience. The Downtown Massing Tool, mine, loads what the City data says about a real lot, and as you push and pull blocks it checks massing against the building code for compliance.'] },
+    { tab: 3, title: 'Previous tools: Vista', who: 'Sinnie', secs: 15, targets: [() => toolCard('Vista')],
+      notes: ['The first of the two Assignment 1 tools we started from. Vista, by Ruijie, puts a proposed tower into a 3D model of Downtown Vancouver and checks it against the protected view cones, sky exposure and the pedestrian experience.'] },
+    { tab: 3, title: 'Previous tools: the Downtown Massing Tool', who: 'Sinnie', secs: 15, targets: [() => toolCard('Downtown Massing Tool')],
+      notes: ['The Downtown Massing Tool, mine, loads what the City data says about a real lot, and as you push and pull blocks it checks the massing against the building code for compliance.'] },
     { tab: 3, title: 'Our current model: the Tower Design Toolkit', who: 'Ruijie', secs: 50, targets: [() => toolCard('Tower Design Toolkit')],
       notes: ['Our first attempt for Assignment 2 is the Tower Design Toolkit itself: a place where information from the different tools comes together and can be compared. It reads actual exports from our existing tools, compares tower options with one consistent set of area calculations, and keeps a record of the results and the decisions.', 'Point to the node graph in the picture.', S.dev2, S.dev3] },
-    { tab: 3, title: 'The rest of the tools', who: 'Ruijie', secs: 20, targets: [() => toolCard('Program Value Visualizer'), () => toolCard('Form Studio'), () => toolCard('Street Flow Lab'), () => toolCard('Sun & Wind Studio')],
+    { tab: 3, title: 'The rest of the tools', who: 'Ruijie', secs: 20, targets: ['#toolGrid'], cls: 'pres-rest',
       notes: ['Four more tools feed the same workflow: the Program Value Visualizer for value, cost and City charges; Form Studio for form and structure; Street Flow Lab for pedestrians and traffic on the streets around a site; and Sun & Wind Studio for sun, wind, daylight and energy. Each card says what the tool does and where it stops, and each opens on your own scheme.'] },
     { tab: 2, title: 'Next steps and questions', who: 'Ruijie', secs: 35, targets: ['#rs-next-loop'], notes: [S.next1, S.next2, S.next3] },
   ];
@@ -3959,7 +3965,7 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
   const $ = s => document.querySelector(s);
   const top = $('#presTop'), foot = $('#presFoot'), notes = $('#presNotes'), clock = $('#presClock'), dots = $('#presDots');
   if (!top || !foot) return;
-  let on = false, i = -1, startAt = 0, timer = 0;
+  let on = false, i = -1, startAt = 0, timer = 0, scaled = [];
   const resolve = t => typeof t === 'function' ? t() : document.querySelector(t);
   const reduce = () => !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
   const clearMarks = () => document.querySelectorAll('[data-pres]').forEach(n => n.removeAttribute('data-pres'));
@@ -3978,9 +3984,15 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
     const panel = els[0] && els[0].closest('section.panel[role=tabpanel]');
     if (panel && typeof showTab === 'function') showTab(panel.id);
     spotlight(els);
+    for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
+    scaled = [];
+    document.querySelectorAll('.pres-rest').forEach(n => n.classList.remove('pres-rest'));
+    if (s.cls && els[0]) els[0].classList.add(s.cls);          // a slide's own arrangement, taken off on the next slide and on exit
     if (els[0]) {
-      const r = els[0].getBoundingClientRect(), head = top.offsetHeight + 16, room = innerHeight - head - foot.offsetHeight - 16;
-      const y = scrollY + r.top - head - (r.height < room ? (room - r.height) / 2 : 0);
+      const el = els[0], head = top.offsetHeight + 16, room = innerHeight - head - foot.offsetHeight - 16, wide = innerWidth - 40;
+      const r = el.getBoundingClientRect(), k = Math.min(1, room / r.height, wide / r.width);
+      if (k < 1) { el.style.transformOrigin = 'top center'; el.style.transform = `scale(${k.toFixed(3)})`; scaled.push(el); }
+      const y = scrollY + r.top - head - (room - r.height * k) / 2;
       window.scrollTo({ top: Math.max(0, y), behavior: reduce() ? 'auto' : 'smooth' });
     }
     $('#presN').textContent = `${k + 1} / ${PRESENT.length}`;
@@ -4006,6 +4018,9 @@ body.presenting .v2host svg.v2-focus .on { opacity: 1 !important; }
   }
   function end() {
     if (!on) return; on = false; clearInterval(timer); clearMarks();
+    for (const el of scaled) { el.style.transform = ''; el.style.transformOrigin = ''; }
+    scaled = [];
+    document.querySelectorAll('.pres-rest').forEach(n => n.classList.remove('pres-rest'));
     top.hidden = true; foot.hidden = true; notes.hidden = true; $('#presNotesBtn').setAttribute('aria-pressed', 'false'); document.body.classList.remove('presenting');
     if (document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(() => {});
     const b = $('#talkBtn'); if (b) b.focus({ preventScroll: true });
