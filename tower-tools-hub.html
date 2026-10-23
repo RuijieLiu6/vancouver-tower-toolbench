@@ -1982,7 +1982,7 @@ say();
   <div class="hero-row">
     <div class="hero-text">
       <p class="brand"><svg width="22" height="22" viewBox="0 0 20 20" aria-hidden="true"><rect x="7" y="2" width="6" height="16" rx="1" fill="currentColor"/><rect x="3" y="11" width="14" height="7" rx="1" fill="currentColor" opacity=".35"/></svg>Tower Design Toolkits</p>
-      <p class="lede">Small tools for designing a high-rise in Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
+      <p class="lede">Toolkit for designing a high-rise in Downtown Vancouver. Each one takes a set of City rules and shows you where your tower stands against them.</p>
       <p class="credit">Made by <b>Ruijie Liu</b> and <b>Sinnie Choi</b> in Xun Liu's ARCH 540 studio, UBC SALA, fall 2026</p>
     </div>
     <div class="hero-actions">
@@ -2172,7 +2172,7 @@ say();
       <figure><img src="images/about-form-studio.jpg" alt="Form Studio: a tower with mega floors and outriggers" loading="lazy"><figcaption><b>Form Studio</b>Ruijie's tower form tool</figcaption></figure>
       <figure><img src="images/about-rooftop-view.jpg" alt="Vista checking a proposed tower from a rooftop viewpoint" loading="lazy"><figcaption><b>Standing at a viewpoint</b>Vista's rooftop view check</figcaption></figure>
     </div>
-    <div class="band-h"><h3>What we read</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
+    <div class="band-h"><h3>Reference Documents</h3><span class="small muted">Briefs, City rules and research behind the tools</span></div>
     <div class="shelf" aria-label="Documents and readings">
       <figure><img src="images/doc-vtc-brief.jpg" alt="Cover of the Vancouver Tall Challenge competition conditions" loading="lazy" style="object-fit:cover;object-position:center"><figcaption><b>Vancouver Tall Challenge</b><span>Competition conditions, 2026</span></figcaption></figure>
       <figure><img src="images/doc-a2-brief.jpg" alt="First page of the ARCH 540 Assignment 2 brief" loading="lazy"><figcaption><b>From a Real Workflow to a Working Tool</b><span>ARCH 540 Assignment 2 brief, UBC SALA</span></figcaption></figure>
@@ -2548,7 +2548,7 @@ $('#copyCsv').addEventListener('click', async () => {
 
 /* ---------- project tab ---------- */
 const SECTIONS = [
-  { id: 'who', title: 'Who we are', text: "We're Ruijie Liu and Sinnie Choi, and we're in Xun Liu's ARCH 540 studio at UBC SALA, “Designing the Design”. In this studio we build our own design tools, with AI helping us write the code.\n\nThis term we're working on one question: what would actually help someone design a high-rise in Vancouver?" },
+  { id: 'who', title: 'Who we are', text: "We're Ruijie Liu and Sinnie Choi, and we're in Xun Liu's ARCH 540 studio at UBC SALA, “Designing the Design”. In this studio we build our own design tools, with AI helping us write the code.\n\nThis term we're working on one question: what type of tools would actually help someone design a high-rise in Vancouver?" },
   { id: 'problem', vis: 'problem', title: 'The problem: too many rule books', text: "A Vancouver tower gets checked against a lot of rules at once: density, height and protected views, floor plate size, shadows on parks, the building code and, in the end, money. Each of these lives in a different document, and most of our time went into flipping between them.\n\nThe tools don't share a file either. We kept re-entering the same tower in a view checker, a massing model and a spreadsheet, and converting coordinates by hand each time." },
   { id: 'built', vis: 'built', title: 'What we built first', text: "In Assignment 1 we each built one tool. Sinnie's Downtown Massing Tool loads what the City's data says about a real downtown lot, and as you push and pull blocks it checks them against FSR, height and your floor-area target. Ruijie's Vista puts a proposed tower into a 3D model of Vancouver and checks it against the City's protected view corridors.\n\nThen came the Program Value Visualizer. It asks the question every tower runs into sooner or later: after construction, City charges and a normal profit, is there enough money left to pay for the land?" },
   { id: 'learned', vis: 'learned', title: 'What building them taught us', text: "Every number needs a source. If a tool shows a height limit or a price, you should be able to see where it came from and how old it is.\n\nAI is great at writing code fast, but the rules and numbers have to come from real documents, reports and existing towers.\n\nAnd one tool per rule isn't enough. A tower is one design, so the checks need to talk to each other." },
@@ -2587,7 +2587,7 @@ const VISUALS = {
   built() {
     return frag(`<div class="pshots">
       <figure><img src="images/about-vista-intro.jpg" alt="Vista start screen" loading="lazy"><figcaption><b>Vista</b> Ruijie · protected views</figcaption></figure>
-      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool on 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · FSR and height</figcaption></figure>
+      <figure><img src="images/tool-dtmass.jpg" alt="Downtown Massing Tool on 1189 Howe Street" loading="lazy"><figcaption><b>Downtown Massing Tool</b> Sinnie · building code</figcaption></figure>
       <figure><img src="images/tool-pvv.jpg" alt="Program Value Visualizer section view" loading="lazy"><figcaption><b>Program Value Visualizer</b> Ruijie · value and land</figcaption></figure></div>`);
   },
   learned() {
@@ -2616,8 +2616,8 @@ const VISUALS = {
   },
   users() {
     return frag(`<div class="pshots two">
-      <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy"><figcaption><b>Vancouver Tall Challenge entrants</b> mostly our classmates</figcaption></figure>
-      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers" loading="lazy"><figcaption><b>Vancouver high-rise designers</b> at firms in the city · photo Northwest, CC BY 4.0</figcaption></figure></div>`);
+      <figure><img src="images/doc-vtc-brief.jpg" alt="Vancouver Tall Challenge brief cover" loading="lazy"><figcaption><b>Vancouver Tall Challenge Participants</b></figcaption></figure>
+      <figure><img src="images/03-false-creek-2025.jpg" alt="False Creek towers" loading="lazy"><figcaption><b>Vancouver High-Rise Designers and Stakeholders</b> · photo Northwest, CC BY 4.0</figcaption></figure></div>`);
   },
 };
 function timelineVisual(next) {
