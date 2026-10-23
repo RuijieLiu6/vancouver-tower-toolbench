@@ -151,7 +151,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     });
 
     s += `<circle class="v2-hub" cx="${cx}" cy="${cy}" r="86"/>${pic('icon-engine', cx, cy - 30, 68)}`;
-    s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
+    s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap tdt-inhub" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
     s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><text x="40" y="19" text-anchor="middle">basic</text><text x="78" y="19" text-anchor="middle">·</text><text x="122" y="19" text-anchor="middle">advanced</text></g>`;   // neither mode is highlighted: both are available
     s += `<text class="v2-cap" x="${cx}" y="${cy + 106}" text-anchor="middle">reads and writes the model</text>`;
 
@@ -199,7 +199,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
 
   function buildWhy(host, info) {
     const id = 'tdtWhy', W = 1240, H = 450;
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
+    let s = `<svg viewBox="0 -30 ${W} ${H + 30}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
     s += `<g class="tdt-row" data-row="today" tabindex="0" role="button" aria-label="Today: five separate steps can end by starting over."><rect class="tdt-hit" x="12" y="18" width="1216" height="188" rx="10"/>`;
     s += `<text class="v2-lab" x="28" y="42">Today</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
     const top = [
@@ -209,13 +209,13 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     ];
     for (let i = 0; i < top.length - 1; i++) s += `<path class="tdt-link" d="M177 105H${top[i + 1][0] - 43}" marker-end="url(#${id}-arrow-ink)"/>`.replace('M177', `M${top[i][0] + 43}`);
     top.forEach((n, i) => { s += flowNode(id, n[0], 105, n[4], n[1], n[2], n[3], i === 4 ? 'tdt-stop' : ''); });
-    s += `<path class="v2-loop" d="M915 58C760 16 280 16 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="18" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;   // the caption sits above the arc, as in diagram 1
+    s += `<path class="v2-loop" d="M915 58C760 5 280 5 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="0" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;
 
     s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-lab" x="28" y="248">In the loop</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
     const low = [[220, 'Mass', 'step-options', 'you', null], [435, 'Analyse', 'icon-tools', 'tool', null], [650, 'Learn', null, 'code', 'check']];
     low.forEach(n => { s += flowNode(id, n[0], 310, n[3], n[1], n[2], n[4], ''); });
     s += `<path class="tdt-link" d="M263 310H390" marker-end="url(#${id}-arrow-ink)"/><path class="tdt-link" d="M478 310H605" marker-end="url(#${id}-arrow-ink)"/>`;
-    s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="232" text-anchor="middle">Minutes, same model</text>`;
+    s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="226" text-anchor="middle">Minutes, same model</text>`;
     s += `<path class="tdt-link" d="M695 310H895" marker-end="url(#${id}-arrow-ink)"/>${flowNode(id, 945, 310, 'you', 'Proceed, knowing it works', 'step-submit', null, '')}<text class="v2-cap" x="1120" y="306" text-anchor="middle">one platform, one model,</text><text class="v2-cap" x="1120" y="326" text-anchor="middle">all the nodes</text></g>`;
     s += roleLegend(24, 432) + '</svg>';
     host.innerHTML = s;
@@ -259,7 +259,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       const qx = (x1 + x2) / 2 + (i % 2 ? side : 0), qy = (y1 + y2) / 2 + (i % 2 ? 0 : side);
       s += `<path class="tdt-link" data-connect="${a.k} ${b.k}" d="M${x1} ${y1}Q${qx} ${qy} ${x2} ${y2}" marker-end="url(#${id}-arrow-ink)"/>`;
     }
-    s += `<circle class="v2-hub" cx="620" cy="210" r="70"/>${symbolIcon(id, 'library', 620, 188, 54)}<text class="v2-hubt" x="620" y="232" text-anchor="middle">Shared tool database</text><text class="v2-cap" x="620" y="254" text-anchor="middle">node library</text>`;
+    s += `<circle class="v2-hub" cx="620" cy="210" r="70"/>${symbolIcon(id, 'library', 620, 188, 54)}<text class="v2-hubt" x="620" y="232" text-anchor="middle">Shared tool database</text><text class="v2-cap tdt-inhub" x="620" y="254" text-anchor="middle">node library</text>`;
     OPEN_NODES.forEach(n => {
       s += `<g class="tdt-node tdt-stage" data-key="${n.k}" tabindex="0" role="button" aria-label="${esc(n.name)}. ${esc(n.detail)}."><circle class="v2-hit" cx="${n.x}" cy="${n.y}" r="55"/><circle class="v2-cbg you" cx="${n.x}" cy="${n.y}" r="44"/>${symbolIcon(id, n.sym, n.x, n.y, 48)}<text class="v2-lab you" x="${n.tx}" y="${n.ty}" text-anchor="${n.anchor}">${esc(n.name)}</text>${twoLineDetail(n.detail, n.tx, n.ty + 23, n.anchor)}</g>`;
     });
@@ -371,7 +371,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Two site-style canvases show a form-first graph and a brief-first graph wired from the same ten-node library in different orders.">` + defs(id);
     s += `<g class="tdt-canvas" data-canvas="a"><rect class="tdt-card" x="25" y="30" width="580" height="615" rx="10"/>${canvasTitle(50, 67, 320, 'a', 'Designer A · form-first', 'Massing engine · advanced')}`;
     s += `<path class="tdt-wire" data-wire="sun" d="M220 147H260V197"/><path class="tdt-wire" data-wire="view" d="M220 207H245V211H260"/><path class="tdt-wire" data-wire="code" d="M220 267H250V227H260"/>`;
-    s += `<path class="tdt-wire" d="M350 255V298Q350 320 390 345"/><path class="v2-loop" d="M390 365C328 352 302 309 322 258" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="305" y="340" text-anchor="middle">re-mass</text>`;
+    s += `<path class="tdt-wire" d="M350 255V298Q350 320 390 345"/><path class="v2-loop" d="M390 365C328 352 302 309 322 258" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="300" y="304" text-anchor="end">re-mass</text>`;
     s += `<path class="tdt-wire" d="M320 255V430"/><path class="tdt-wire" d="M475 380V477Q475 500 488 515"/><path class="tdt-wire" d="M370 465H410Q435 465 450 515"/>`;
     s += pill(id, 'sun', 'Sun', 70, 130, 150, 'a') + pill(id, 'view', 'View cone', 70, 190, 150, 'a') + pill(id, 'code', 'Building code', 70, 250, 150, 'a');
     s += card(id, 260, 175, 180, 80, 'Massing engine', 'icon-engine', 'advanced') + card(id, 390, 320, 165, 70, 'Program', 'step-fsr', '') + card(id, 195, 430, 175, 70, 'Schematic', 'step-floorplate', '') + card(id, 410, 515, 170, 70, 'Drawing set', 'step-submit', '');
@@ -380,10 +380,10 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     s += `<g class="tdt-canvas" data-canvas="b"><rect class="tdt-card" x="635" y="30" width="580" height="615" rx="10"/>${canvasTitle(660, 67, 320, 'b', 'Designer B · brief-first', 'Massing engine · basic')}`;
     s += `<path class="tdt-wire" data-wire="economics" d="M805 147H830V193"/><path class="tdt-wire" data-wire="code" d="M805 207H818V207H830"/>`;
     s += `<path class="tdt-wire" data-wire="traffic" d="M805 327H830V382"/><path class="tdt-wire" data-wire="energy" d="M805 387H830"/><path class="tdt-wire" data-wire="structure" d="M805 447H818V417H830"/>`;
-    s += `<path class="tdt-wire" d="M1000 202H1020"/><path class="tdt-wire" d="M915 240V365"/><path class="v2-loop" d="M855 365C790 325 800 275 855 240" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="790" y="305" text-anchor="middle">re-stack</text>`;
-    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1100 425V500"/>`;
+    s += `<path class="tdt-wire" d="M1000 202H1020"/><path class="tdt-wire" d="M915 240V365"/><path class="v2-loop" d="M855 365C790 325 800 275 855 240" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="796" y="290" text-anchor="end">re-stack</text>`;
+    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1111 425V500"/>`;
     s += pill(id, 'economics', 'Economics', 655, 130, 150, 'b') + pill(id, 'code', 'Building code', 655, 190, 150, 'b') + pill(id, 'traffic', 'Traffic', 655, 310, 150, 'b') + pill(id, 'energy', 'Energy', 655, 370, 150, 'b') + pill(id, 'structure', 'Structure', 655, 430, 150, 'b');
-    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 165, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 165, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 165, 75, 'Drawing set', 'step-submit', '');
+    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 182, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 182, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 182, 75, 'Drawing set', 'step-submit', '');
     s += `<text class="tdt-note" x="660" y="620">No schematic node yet: added when the numbers close</text></g>`;
 
     s += `<rect class="tdt-library" x="25" y="675" width="1190" height="150" rx="10"/><text class="v2-hubt" x="50" y="705">Node library</text><text class="v2-cap" x="50" y="726">The ten analysis nodes</text>`;

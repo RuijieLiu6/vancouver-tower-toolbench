@@ -51,7 +51,7 @@
     s += `<defs><marker id="v2arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-ink-f"/></marker>
       <marker id="v2arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-acc-f"/></marker></defs>`;
     // rework loops (dashed arcs above, like the weather cycle)
-    const loops = [['6', '1', 'reframe the brief', 132], ['6', '4', 'try other options', 44], ['7', '4', 'revise after City advice', 88], ['10', '8', 'revise and resubmit', 52]];
+    const loops = [['6', '1', 'reframe the brief', 132], ['6', '4', 'try other options', 30], ['7', '4', 'revise after City advice', 88], ['10', '8', 'revise and resubmit', 52]];
     loops.forEach(([a, b, t, hgt], j) => {
       const ia = STEPS.findIndex(x => x.k === a), ib = STEPS.findIndex(x => x.k === b);
       const xa = X(ia), xb = X(ib), lift = 26 + j * 0; const y = top - 8;
@@ -242,14 +242,15 @@
     tool: { name: 'Tools compute', role: 'tool', icon: 'icon-tools', x: 1060, y: 470, r: 50, ic: 84, list: ['Vista, the Downtown Massing Tool, the Program Value Visualizer and others run on the same project file'] },
   };
   // bend: how far the curve's middle sits to the left of its direction of travel (negative = right)
+  // at: each label's position, measured in the browser so it clears every line, node, gate and other label (23 Oct 2026)
   const EDGES_D = [
-    { k: 'rules', a: 'you', b: 'code', bend: 38, at: [420, 312, 'start'], t: 'Brief, rules and thresholds', carries: 'What matters, and which rules and thresholds the code enforces. The architect changes the rules; the AI never does.' },
-    { k: 'ask', a: 'you', b: 'ai', bend: 70, t: 'What to test, in plain words', carries: 'For example, "check option B against the views and the 9.0 FSR rule".' },
-    { k: 'request', a: 'ai', b: 'code', bend: -46, at: [734, 238, 'end'], t: 'Request, revision or draft', carries: 'A fixed form: which option, which checks, which basis. Later, a permitted revision or a drafted explanation. The AI never touches geometry.' },
-    { k: 'back', a: 'code', b: 'ai', bend: -46, t: 'Fails a check: revise', t2: 'at most 3 rounds, then stop', loop: true, carries: 'A failed result or an uncited number goes back to the AI for a permitted revision, at most three times. Then the run stops.' },
-    { k: 'run', a: 'code', b: 'tool', bend: 30, t: 'Router runs the tools', carries: 'A script, not the model, decides which tool runs next.' },
-    { k: 'results', a: 'tool', b: 'code', bend: 30, t: 'Results, recomputed', carries: 'Areas, heights and FSR are recomputed from the geometry with one written area rule.' },
-    { k: 'report', a: 'code', b: 'you', bend: 92, off: 40, t: 'Checked and cited, no verdict', t2: 'or CANNOT DETERMINE', carries: 'Only results that passed the checks reach you, each number with its source and basis. If an input is missing, it says CANNOT DETERMINE instead of guessing.' },
+    { k: 'rules', a: 'you', b: 'code', bend: 38, at: [424, 300, 'start'], t: 'Brief, rules and thresholds', carries: 'What matters, and which rules and thresholds the code enforces. The architect changes the rules; the AI never does.' },
+    { k: 'ask', a: 'you', b: 'ai', bend: 70, at: [471, 118, 'end'], t: 'What to test, in plain words', carries: 'For example, "check option B against the views and the 9.0 FSR rule".' },
+    { k: 'request', a: 'ai', b: 'code', bend: -46, at: [698, 222, 'end'], t: 'Request, revision or draft', carries: 'A fixed form: which option, which checks, which basis. Later, a permitted revision or a drafted explanation. The AI never touches geometry.' },
+    { k: 'back', a: 'code', b: 'ai', bend: -46, at: [834, 305, 'start'], t: 'Fails a check: revise', t2: 'at most 3 rounds, then stop', loop: true, carries: 'A failed result or an uncited number goes back to the AI for a permitted revision, at most three times. Then the run stops.' },
+    { k: 'run', a: 'code', b: 'tool', bend: 30, at: [910, 412, 'middle'], t: 'Router runs the tools', carries: 'A script, not the model, decides which tool runs next.' },
+    { k: 'results', a: 'tool', b: 'code', bend: 30, at: [910, 538, 'middle'], t: 'Results, recomputed', carries: 'Areas, heights and FSR are recomputed from the geometry with one written area rule.' },
+    { k: 'report', a: 'code', b: 'you', bend: 92, at: [475, 524, 'end'], off: 40, t: 'Checked and cited, no verdict', t2: 'or CANNOT DETERMINE', carries: 'Only results that passed the checks reach you, each number with its source and basis. If an input is missing, it says CANNOT DETERMINE instead of guessing.' },
   ];
   const NEVER_D = ['confer compliance', 'refresh City policy', 'supply a survey', 'repair a lost file', 'settle values', 'replace City discretion'];
   const STEPS_D = [
@@ -288,11 +289,13 @@
       s += '</g>';
     });
     // what the AI never does: a fence beside the AI
-    const fx = 866, fy = 44;
+    const fx = 890, fy = 44;
     s += `<g class="v2-nogo-g" data-k="nogo" tabindex="0" role="button" aria-label="The AI cannot: ${esc(NEVER_D.join(', '))}">`;
     s += `<path class="v2-never" d="M${R.ai.x + R.ai.r + 10} ${R.ai.y} H ${fx - 6}"/><text class="v2-elab2 nope" x="${(R.ai.x + R.ai.r + fx) / 2 + 2}" y="${R.ai.y - 8}" text-anchor="middle">never</text>`;
-    s += `<rect class="v2-fence" x="${fx}" y="${fy}" width="352" height="168" rx="14"/><text class="v2-lab nope" x="${fx + 18}" y="${fy + 30}">AI cannot</text>`;
-    NEVER_D.forEach((n, i) => { const x = fx + 16 + (i % 2) * 160, y = fy + 46 + Math.floor(i / 2) * 38, w = i % 2 ? 160 : 150; s += `<rect class="v2-nope" x="${x}" y="${y}" width="${w}" height="28" rx="14"/><text class="v2-cap nope" x="${x + w / 2}" y="${y + 19}" text-anchor="middle">${esc(n)}</text>`; });
+    s += `<rect class="v2-fence" x="${fx}" y="${fy}" width="340" height="168" rx="14"/><text class="v2-lab nope" x="${fx + 18}" y="${fy + 30}">AI cannot</text>`;
+    // chip widths per row, sized to the words so every row fills the box evenly
+    const CW = [[151, 149], [151, 149], [117, 183]];
+    NEVER_D.forEach((n, i) => { const r = Math.floor(i / 2), c = i % 2, w = CW[r][c], x = fx + 16 + (c ? CW[r][0] + 8 : 0), y = fy + 46 + r * 38; s += `<rect class="v2-nope" x="${x}" y="${y}" width="${w}" height="28" rx="14"/><text class="v2-cap nope" x="${x + w / 2}" y="${y + 19}" text-anchor="middle">${esc(n)}</text>`; });
     s += '</g>';
     // the roles
     for (const [k, n] of Object.entries(R)) {

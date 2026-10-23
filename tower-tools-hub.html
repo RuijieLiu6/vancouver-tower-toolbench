@@ -319,6 +319,11 @@ footer { border-top: 1px solid var(--line); padding-block: 20px 40px; font-size:
 @keyframes v2draw { from { stroke-dashoffset: 1600; } to { stroke-dashoffset: 0; } }
 
 
+/* label halos: a line that passes behind a label stops just short of its letters (a cartographer's knock-out) */
+.v2host :is(.v2-cap, .v2-lab, .v2-num, .v2-elab, .v2-elab2, .v2-toolname, .v2-stoptx, .v2-lanek, .v2-lanet, .tdt-note) { paint-order: stroke fill; stroke: var(--halo, var(--sheet)); stroke-width: 4px; stroke-linejoin: round; }
+.v2host :is(.v2-hubt, .tdt-inhub, .tdt-switch text, .v2-gate text, .tdt-pill-group text, .tdt-stage-card-group text) { stroke: none; }
+#tdtA { --halo: color-mix(in srgb, var(--signal-soft) 42%, var(--sheet)); }
+#tdtC .tdt-library ~ text, #tdtC .tdt-library ~ g text { --halo: var(--ground); }
 /* D: who does what */
 #v2D svg { min-width: 980px; max-width: min(1180px, calc((100vh - 300px) * 1.65)); max-width: min(1180px, calc((100svh - 300px) * 1.65)); margin: 0 auto; }
 #v2D .v2-lab { font-size: 15px; } #v2D .v2-cap { font-size: 14px; } #v2D .v2-num { font-size: 15px; } #v2D .v2-elab { font-size: 14px; } #v2D .v2-elab2 { font-size: 12.5px; }
@@ -978,6 +983,9 @@ body.touring .land-foot { opacity: 0; pointer-events: none; }   /* the bar cover
 body.touring .landing .iso-plate-corners { bottom: 150px; }
 body.touring .land-model { padding-bottom: 170px; }
 body.touring .landing .iso-stage { width: min(100%, calc((100vh - 330px) * 1.404)); width: min(100%, calc((100svh - 330px) * 1.404)); }
+/* on the tour, the two tallest diagrams shrink a little so the text box under them clears the tour bar */
+body.touring #v2D svg { min-width: 760px; max-width: min(1180px, calc((100vh - 395px) * 1.65)); max-width: min(1180px, calc((100svh - 395px) * 1.65)); }
+body.touring #tdtLoop svg { max-width: min(1180px, calc((100vh - 330px) * 1.5)); max-width: min(1180px, calc((100svh - 330px) * 1.5)); }
 @media (min-width: 900px) {
   .tourbar { width: min(1100px, 100% - 32px); display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "head head" "body ctrl" "track track"; gap: 4px 20px; padding: 10px 18px 8px; }
   .tb-head { grid-area: head; } .tb-body { grid-area: body; min-height: 0; } .tb-ctrl { grid-area: ctrl; align-self: center; } .tb-ctrl .grow { display: none; } .tb-track { grid-area: track; }
@@ -2824,7 +2832,7 @@ function linkImages(root = document) {
     s += `<defs><marker id="v2arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-ink-f"/></marker>
       <marker id="v2arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-acc-f"/></marker></defs>`;
     // rework loops (dashed arcs above, like the weather cycle)
-    const loops = [['6', '1', 'reframe the brief', 132], ['6', '4', 'try other options', 44], ['7', '4', 'revise after City advice', 88], ['10', '8', 'revise and resubmit', 52]];
+    const loops = [['6', '1', 'reframe the brief', 132], ['6', '4', 'try other options', 30], ['7', '4', 'revise after City advice', 88], ['10', '8', 'revise and resubmit', 52]];
     loops.forEach(([a, b, t, hgt], j) => {
       const ia = STEPS.findIndex(x => x.k === a), ib = STEPS.findIndex(x => x.k === b);
       const xa = X(ia), xb = X(ib), lift = 26 + j * 0; const y = top - 8;
@@ -3015,14 +3023,15 @@ function linkImages(root = document) {
     tool: { name: 'Tools compute', role: 'tool', icon: 'icon-tools', x: 1060, y: 470, r: 50, ic: 84, list: ['Vista, the Downtown Massing Tool, the Program Value Visualizer and others run on the same project file'] },
   };
   // bend: how far the curve's middle sits to the left of its direction of travel (negative = right)
+  // at: each label's position, measured in the browser so it clears every line, node, gate and other label (23 Oct 2026)
   const EDGES_D = [
-    { k: 'rules', a: 'you', b: 'code', bend: 38, at: [420, 312, 'start'], t: 'Brief, rules and thresholds', carries: 'What matters, and which rules and thresholds the code enforces. The architect changes the rules; the AI never does.' },
-    { k: 'ask', a: 'you', b: 'ai', bend: 70, t: 'What to test, in plain words', carries: 'For example, "check option B against the views and the 9.0 FSR rule".' },
-    { k: 'request', a: 'ai', b: 'code', bend: -46, at: [734, 238, 'end'], t: 'Request, revision or draft', carries: 'A fixed form: which option, which checks, which basis. Later, a permitted revision or a drafted explanation. The AI never touches geometry.' },
-    { k: 'back', a: 'code', b: 'ai', bend: -46, t: 'Fails a check: revise', t2: 'at most 3 rounds, then stop', loop: true, carries: 'A failed result or an uncited number goes back to the AI for a permitted revision, at most three times. Then the run stops.' },
-    { k: 'run', a: 'code', b: 'tool', bend: 30, t: 'Router runs the tools', carries: 'A script, not the model, decides which tool runs next.' },
-    { k: 'results', a: 'tool', b: 'code', bend: 30, t: 'Results, recomputed', carries: 'Areas, heights and FSR are recomputed from the geometry with one written area rule.' },
-    { k: 'report', a: 'code', b: 'you', bend: 92, off: 40, t: 'Checked and cited, no verdict', t2: 'or CANNOT DETERMINE', carries: 'Only results that passed the checks reach you, each number with its source and basis. If an input is missing, it says CANNOT DETERMINE instead of guessing.' },
+    { k: 'rules', a: 'you', b: 'code', bend: 38, at: [424, 300, 'start'], t: 'Brief, rules and thresholds', carries: 'What matters, and which rules and thresholds the code enforces. The architect changes the rules; the AI never does.' },
+    { k: 'ask', a: 'you', b: 'ai', bend: 70, at: [471, 118, 'end'], t: 'What to test, in plain words', carries: 'For example, "check option B against the views and the 9.0 FSR rule".' },
+    { k: 'request', a: 'ai', b: 'code', bend: -46, at: [698, 222, 'end'], t: 'Request, revision or draft', carries: 'A fixed form: which option, which checks, which basis. Later, a permitted revision or a drafted explanation. The AI never touches geometry.' },
+    { k: 'back', a: 'code', b: 'ai', bend: -46, at: [834, 305, 'start'], t: 'Fails a check: revise', t2: 'at most 3 rounds, then stop', loop: true, carries: 'A failed result or an uncited number goes back to the AI for a permitted revision, at most three times. Then the run stops.' },
+    { k: 'run', a: 'code', b: 'tool', bend: 30, at: [910, 412, 'middle'], t: 'Router runs the tools', carries: 'A script, not the model, decides which tool runs next.' },
+    { k: 'results', a: 'tool', b: 'code', bend: 30, at: [910, 538, 'middle'], t: 'Results, recomputed', carries: 'Areas, heights and FSR are recomputed from the geometry with one written area rule.' },
+    { k: 'report', a: 'code', b: 'you', bend: 92, at: [475, 524, 'end'], off: 40, t: 'Checked and cited, no verdict', t2: 'or CANNOT DETERMINE', carries: 'Only results that passed the checks reach you, each number with its source and basis. If an input is missing, it says CANNOT DETERMINE instead of guessing.' },
   ];
   const NEVER_D = ['confer compliance', 'refresh City policy', 'supply a survey', 'repair a lost file', 'settle values', 'replace City discretion'];
   const STEPS_D = [
@@ -3061,11 +3070,13 @@ function linkImages(root = document) {
       s += '</g>';
     });
     // what the AI never does: a fence beside the AI
-    const fx = 866, fy = 44;
+    const fx = 890, fy = 44;
     s += `<g class="v2-nogo-g" data-k="nogo" tabindex="0" role="button" aria-label="The AI cannot: ${esc(NEVER_D.join(', '))}">`;
     s += `<path class="v2-never" d="M${R.ai.x + R.ai.r + 10} ${R.ai.y} H ${fx - 6}"/><text class="v2-elab2 nope" x="${(R.ai.x + R.ai.r + fx) / 2 + 2}" y="${R.ai.y - 8}" text-anchor="middle">never</text>`;
-    s += `<rect class="v2-fence" x="${fx}" y="${fy}" width="352" height="168" rx="14"/><text class="v2-lab nope" x="${fx + 18}" y="${fy + 30}">AI cannot</text>`;
-    NEVER_D.forEach((n, i) => { const x = fx + 16 + (i % 2) * 160, y = fy + 46 + Math.floor(i / 2) * 38, w = i % 2 ? 160 : 150; s += `<rect class="v2-nope" x="${x}" y="${y}" width="${w}" height="28" rx="14"/><text class="v2-cap nope" x="${x + w / 2}" y="${y + 19}" text-anchor="middle">${esc(n)}</text>`; });
+    s += `<rect class="v2-fence" x="${fx}" y="${fy}" width="340" height="168" rx="14"/><text class="v2-lab nope" x="${fx + 18}" y="${fy + 30}">AI cannot</text>`;
+    // chip widths per row, sized to the words so every row fills the box evenly
+    const CW = [[151, 149], [151, 149], [117, 183]];
+    NEVER_D.forEach((n, i) => { const r = Math.floor(i / 2), c = i % 2, w = CW[r][c], x = fx + 16 + (c ? CW[r][0] + 8 : 0), y = fy + 46 + r * 38; s += `<rect class="v2-nope" x="${x}" y="${y}" width="${w}" height="28" rx="14"/><text class="v2-cap nope" x="${x + w / 2}" y="${y + 19}" text-anchor="middle">${esc(n)}</text>`; });
     s += '</g>';
     // the roles
     for (const [k, n] of Object.entries(R)) {
@@ -3298,7 +3309,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     });
 
     s += `<circle class="v2-hub" cx="${cx}" cy="${cy}" r="86"/>${pic('icon-engine', cx, cy - 30, 68)}`;
-    s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
+    s += `<text class="v2-hubt" x="${cx}" y="${cy + 17}" text-anchor="middle">One model</text><text class="v2-cap tdt-inhub" x="${cx}" y="${cy + 38}" text-anchor="middle">massing engine</text>`;
     s += `<g class="tdt-switch" transform="translate(${cx - 80} ${cy + 52})"><rect width="160" height="28" rx="14"/><text x="40" y="19" text-anchor="middle">basic</text><text x="78" y="19" text-anchor="middle">·</text><text x="122" y="19" text-anchor="middle">advanced</text></g>`;   // neither mode is highlighted: both are available
     s += `<text class="v2-cap" x="${cx}" y="${cy + 106}" text-anchor="middle">reads and writes the model</text>`;
 
@@ -3346,7 +3357,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
 
   function buildWhy(host, info) {
     const id = 'tdtWhy', W = 1240, H = 450;
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
+    let s = `<svg viewBox="0 -30 ${W} ${H + 30}" role="img" aria-label="Today's separated sequence loses weeks when analysis fails, while one platform keeps massing, analysis and learning in a short loop on the same model.">` + defs(id);
     s += `<g class="tdt-row" data-row="today" tabindex="0" role="button" aria-label="Today: five separate steps can end by starting over."><rect class="tdt-hit" x="12" y="18" width="1216" height="188" rx="10"/>`;
     s += `<text class="v2-lab" x="28" y="42">Today</text><text class="v2-cap" x="1110" y="42" text-anchor="middle">separate tool at each step</text>`;
     const top = [
@@ -3356,13 +3367,13 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     ];
     for (let i = 0; i < top.length - 1; i++) s += `<path class="tdt-link" d="M177 105H${top[i + 1][0] - 43}" marker-end="url(#${id}-arrow-ink)"/>`.replace('M177', `M${top[i][0] + 43}`);
     top.forEach((n, i) => { s += flowNode(id, n[0], 105, n[4], n[1], n[2], n[3], i === 4 ? 'tdt-stop' : ''); });
-    s += `<path class="v2-loop" d="M915 58C760 16 280 16 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="18" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;   // the caption sits above the arc, as in diagram 1
+    s += `<path class="v2-loop" d="M915 58C760 5 280 5 135 58" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="525" y="0" text-anchor="middle">Start over · weeks lost · five tools, five files</text></g>`;
 
     s += `<g class="tdt-row" data-row="loop" tabindex="0" role="button" aria-label="In the loop: mass, analyse and learn on one model, then proceed knowing it works."><rect class="tdt-hit" x="12" y="218" width="1216" height="186" rx="10"/><text class="v2-lab" x="28" y="248">In the loop</text><rect class="tdt-rowbox" x="90" y="250" width="760" height="126" rx="30"/>`;
     const low = [[220, 'Mass', 'step-options', 'you', null], [435, 'Analyse', 'icon-tools', 'tool', null], [650, 'Learn', null, 'code', 'check']];
     low.forEach(n => { s += flowNode(id, n[0], 310, n[3], n[1], n[2], n[4], ''); });
     s += `<path class="tdt-link" d="M263 310H390" marker-end="url(#${id}-arrow-ink)"/><path class="tdt-link" d="M478 310H605" marker-end="url(#${id}-arrow-ink)"/>`;
-    s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="232" text-anchor="middle">Minutes, same model</text>`;
+    s += `<path class="v2-loop" d="M650 263C560 234 310 234 220 263" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="435" y="226" text-anchor="middle">Minutes, same model</text>`;
     s += `<path class="tdt-link" d="M695 310H895" marker-end="url(#${id}-arrow-ink)"/>${flowNode(id, 945, 310, 'you', 'Proceed, knowing it works', 'step-submit', null, '')}<text class="v2-cap" x="1120" y="306" text-anchor="middle">one platform, one model,</text><text class="v2-cap" x="1120" y="326" text-anchor="middle">all the nodes</text></g>`;
     s += roleLegend(24, 432) + '</svg>';
     host.innerHTML = s;
@@ -3406,7 +3417,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
       const qx = (x1 + x2) / 2 + (i % 2 ? side : 0), qy = (y1 + y2) / 2 + (i % 2 ? 0 : side);
       s += `<path class="tdt-link" data-connect="${a.k} ${b.k}" d="M${x1} ${y1}Q${qx} ${qy} ${x2} ${y2}" marker-end="url(#${id}-arrow-ink)"/>`;
     }
-    s += `<circle class="v2-hub" cx="620" cy="210" r="70"/>${symbolIcon(id, 'library', 620, 188, 54)}<text class="v2-hubt" x="620" y="232" text-anchor="middle">Shared tool database</text><text class="v2-cap" x="620" y="254" text-anchor="middle">node library</text>`;
+    s += `<circle class="v2-hub" cx="620" cy="210" r="70"/>${symbolIcon(id, 'library', 620, 188, 54)}<text class="v2-hubt" x="620" y="232" text-anchor="middle">Shared tool database</text><text class="v2-cap tdt-inhub" x="620" y="254" text-anchor="middle">node library</text>`;
     OPEN_NODES.forEach(n => {
       s += `<g class="tdt-node tdt-stage" data-key="${n.k}" tabindex="0" role="button" aria-label="${esc(n.name)}. ${esc(n.detail)}."><circle class="v2-hit" cx="${n.x}" cy="${n.y}" r="55"/><circle class="v2-cbg you" cx="${n.x}" cy="${n.y}" r="44"/>${symbolIcon(id, n.sym, n.x, n.y, 48)}<text class="v2-lab you" x="${n.tx}" y="${n.ty}" text-anchor="${n.anchor}">${esc(n.name)}</text>${twoLineDetail(n.detail, n.tx, n.ty + 23, n.anchor)}</g>`;
     });
@@ -3518,7 +3529,7 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Two site-style canvases show a form-first graph and a brief-first graph wired from the same ten-node library in different orders.">` + defs(id);
     s += `<g class="tdt-canvas" data-canvas="a"><rect class="tdt-card" x="25" y="30" width="580" height="615" rx="10"/>${canvasTitle(50, 67, 320, 'a', 'Designer A · form-first', 'Massing engine · advanced')}`;
     s += `<path class="tdt-wire" data-wire="sun" d="M220 147H260V197"/><path class="tdt-wire" data-wire="view" d="M220 207H245V211H260"/><path class="tdt-wire" data-wire="code" d="M220 267H250V227H260"/>`;
-    s += `<path class="tdt-wire" d="M350 255V298Q350 320 390 345"/><path class="v2-loop" d="M390 365C328 352 302 309 322 258" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="305" y="340" text-anchor="middle">re-mass</text>`;
+    s += `<path class="tdt-wire" d="M350 255V298Q350 320 390 345"/><path class="v2-loop" d="M390 365C328 352 302 309 322 258" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="300" y="304" text-anchor="end">re-mass</text>`;
     s += `<path class="tdt-wire" d="M320 255V430"/><path class="tdt-wire" d="M475 380V477Q475 500 488 515"/><path class="tdt-wire" d="M370 465H410Q435 465 450 515"/>`;
     s += pill(id, 'sun', 'Sun', 70, 130, 150, 'a') + pill(id, 'view', 'View cone', 70, 190, 150, 'a') + pill(id, 'code', 'Building code', 70, 250, 150, 'a');
     s += card(id, 260, 175, 180, 80, 'Massing engine', 'icon-engine', 'advanced') + card(id, 390, 320, 165, 70, 'Program', 'step-fsr', '') + card(id, 195, 430, 175, 70, 'Schematic', 'step-floorplate', '') + card(id, 410, 515, 170, 70, 'Drawing set', 'step-submit', '');
@@ -3527,10 +3538,10 @@ window.ISO_ICONS = {"rain":"<polygon class=\"iso-f\" points=\"0,-9 15.59,0 0,9 -
     s += `<g class="tdt-canvas" data-canvas="b"><rect class="tdt-card" x="635" y="30" width="580" height="615" rx="10"/>${canvasTitle(660, 67, 320, 'b', 'Designer B · brief-first', 'Massing engine · basic')}`;
     s += `<path class="tdt-wire" data-wire="economics" d="M805 147H830V193"/><path class="tdt-wire" data-wire="code" d="M805 207H818V207H830"/>`;
     s += `<path class="tdt-wire" data-wire="traffic" d="M805 327H830V382"/><path class="tdt-wire" data-wire="energy" d="M805 387H830"/><path class="tdt-wire" data-wire="structure" d="M805 447H818V417H830"/>`;
-    s += `<path class="tdt-wire" d="M1000 202H1020"/><path class="tdt-wire" d="M915 240V365"/><path class="v2-loop" d="M855 365C790 325 800 275 855 240" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="790" y="305" text-anchor="middle">re-stack</text>`;
-    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1100 425V500"/>`;
+    s += `<path class="tdt-wire" d="M1000 202H1020"/><path class="tdt-wire" d="M915 240V365"/><path class="v2-loop" d="M855 365C790 325 800 275 855 240" marker-end="url(#${id}-arrow-signal)"/><text class="v2-cap acc" x="796" y="290" text-anchor="end">re-stack</text>`;
+    s += `<path class="tdt-wire" d="M1000 402H1020"/><path class="tdt-wire" d="M1111 425V500"/>`;
     s += pill(id, 'economics', 'Economics', 655, 130, 150, 'b') + pill(id, 'code', 'Building code', 655, 190, 150, 'b') + pill(id, 'traffic', 'Traffic', 655, 310, 150, 'b') + pill(id, 'energy', 'Energy', 655, 370, 150, 'b') + pill(id, 'structure', 'Structure', 655, 430, 150, 'b');
-    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 165, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 165, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 165, 75, 'Drawing set', 'step-submit', '');
+    s += card(id, 830, 165, 170, 75, 'Program', 'step-fsr', '') + card(id, 1020, 145, 182, 75, 'Concept / research', 'step-brief', '') + card(id, 830, 365, 170, 75, 'Massing engine', 'icon-engine', 'basic') + card(id, 1020, 350, 182, 75, 'Design development', 'step-studies', '') + card(id, 1020, 500, 182, 75, 'Drawing set', 'step-submit', '');
     s += `<text class="tdt-note" x="660" y="620">No schematic node yet: added when the numbers close</text></g>`;
 
     s += `<rect class="tdt-library" x="25" y="675" width="1190" height="150" rx="10"/><text class="v2-hubt" x="50" y="705">Node library</text><text class="v2-cap" x="50" y="726">The ten analysis nodes</text>`;
@@ -3683,7 +3694,6 @@ function diveIn(done) {
   }, 1100);
 }
 function enterSite() {
-  if (tour.on && TOUR[tour.i] && TOUR[tour.i].land) { tourGo(TOUR.findIndex(s => !s.land)); return; }
   diveIn();
 }
 if (['research', 'tools', 'feedback'].includes(START_HASH)) {      // a deep link skips the landing
@@ -3692,14 +3702,12 @@ if (['research', 'tools', 'feedback'].includes(START_HASH)) {      // a deep lin
 }
 
 /* ---------- guided tour: the presentation script, stop by stop ---------- */
-/* Each stop matches a [Tour n] cue in presentation/script_final.md. Keep the two in the same order. */
+/* Each stop matches a [Tour n] cue in presentation/script_final.md. Keep the two in the same order.
+   The tour starts inside the site: the landing (the model, hold-to-enter) is done live before it, never as a tour stop. */
 const TOUR_PARTS = ['Welcome', 'About us', 'How it works', 'Try the tools', 'Give feedback'];
 const TOUR = [
-  { p: 0, land: true, t: 'Tower Design Toolkit', d: 'Small tools for designing a high-rise in Downtown Vancouver, made by Ruijie Liu and Sinnie Choi.' },
-  { p: 0, land: true, qr: true, t: 'Scan to follow along', d: 'The code opens this site on your phone. No sign-in needed.' },
-  { p: 0, land: true, el: '#landing .iso-stage', t: 'Downtown Vancouver, eight towers', d: 'Hover a tower to lift it and read its height and year.' },
-  { p: 0, land: true, el: '#landing .iso-stage', hold: true, t: 'Our building', d: 'Hold the ghost in the middle and it rises to 226 m. When it says Enter, press it to go in.' },
-  { p: 1, tab: 'project', top: '#site', el: 'nav.tabs', t: 'Four tabs, one talk', d: 'About us, How it works, Try the tools and Give feedback, in the order we present them.' },
+  { p: 0, tab: 'project', top: '#site', qr: true, t: 'Scan to follow along', d: 'The code opens this site on your phone. No sign-in needed.' },
+  { p: 0, tab: 'project', top: '#site', el: 'nav.tabs', t: 'Four tabs, one talk', d: 'About us, How it works, Try the tools and Give feedback, in the order we present them.' },
   { p: 1, tab: 'project', el: '#aboutHead', t: 'What would help you design a tower in Downtown Vancouver?', d: 'The question behind the whole project.' },
   { p: 1, tab: 'project', el: '#project .gallery', t: "What we've made", d: 'Vista, the Downtown Massing Tool and Form Studio.' },
   { p: 1, tab: 'project', el: '#project .shelf', t: 'What we read', d: 'Every rule in our tools comes from documents like these, not from the AI.' },
@@ -3716,7 +3724,7 @@ const TOUR = [
   { p: 2, tab: 'research', el: '#rs-next-open', t: 'An open library', d: 'Copy a tool as a skill, run it yourself, teach your agent, and contribute it back.' },
   { p: 2, tab: 'research', el: '#rs-method', t: 'How this research was made', d: 'Drafted by a GPT model, reviewed by Claude in two rounds. 59 of 60 sources checked.' },
   { p: 3, tab: 'tools', el: '#toolGrid', t: 'Five tools to try', d: 'Vista, Downtown Massing Tool, Program Value Visualizer, Form Studio and the Tower Design Toolkit.' },
-  { p: 3, tab: 'tools', el: '#toolGrid .tool', t: 'Vista checks protected views', d: 'Place a tower and see whether it cuts into a protected view. A study tool, not a compliance test.' },
+  { p: 3, tab: 'tools', el: '#toolGrid .tool', end: true, t: 'Vista checks protected views', d: 'Place a tower and see whether it cuts into a protected view. A study tool, not a compliance test.' },
   { p: 3, tab: 'tools', el: '#toolGrid', t: 'Pick one for five minutes', d: 'Every tool shows where its numbers come from, so you can check them yourself.' },
   { p: 4, tab: 'feedback', el: '#fbHead', t: 'Tell us what you think', d: 'About five minutes, mostly taps. The questions change with how much you trust AI.' },
   { p: 4, tab: 'feedback', el: '#steps', t: 'Four short steps', d: 'You, AI and you, The tools, Reflect and send. You can stay anonymous.' },
@@ -3727,25 +3735,23 @@ const tourBar = $('#tourBar'), tourRing = $('#tourRing');
 function tourPress(sel, on) { const n = document.querySelector(sel); if (n && n.classList.contains('on') !== on) n.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
 function tourScroll(s, el) {
   const behavior = REDUCE ? 'auto' : 'smooth';
-  if (s.land) return window.scrollTo({ top: 0, behavior });
   if (s.top) return window.scrollTo({ top: document.querySelector(s.top).offsetTop, behavior });
   if (!el) return;
   const r = el.getBoundingClientRect(), top = $('nav.tabs').offsetHeight + 10, room = innerHeight - tourBar.offsetHeight - 22 - top;
+  // end: a target taller than the screen shows its bottom (the Open button) just above the bar
+  if (s.end && r.height > room) return window.scrollTo({ top: Math.max(0, scrollY + r.bottom - (innerHeight - tourBar.offsetHeight - 22)), behavior });
   window.scrollTo({ top: Math.max(0, scrollY + r.top - top - (r.height < room ? (room - r.height) / 2 : 0)), behavior });
 }
 function tourLeave(s) {
   if (!s) return;
-  if (s.hold) landing.hold(false);
   if (s.press) tourPress(s.press, false);
   if (s.qr && !$('#join').hidden) { closeJoin(); $('#tbNext').focus({ preventScroll: true }); }
 }
-function tourGo(i, dived) {
+function tourGo(i) {
   i = Math.max(0, Math.min(TOUR.length - 1, i));
   if (diving) return;
-  const cur = TOUR[tour.i];
-  if (!dived && cur && cur.land && !TOUR[i].land && i > tour.i && !REDUCE) { diveIn(() => tourGo(i, true)); return; }   // leaving the landing: dive into the tower
   const s = TOUR[i]; tourLeave(TOUR[tour.i]); tour.i = i;
-  if (!s.land) openGate();
+  openGate();                                       // every stop is inside the site
   if (s.tab) showTab(s.tab);
   const el = s.el ? document.querySelector(s.el) : null;
   tour.el = s.qr ? null : el;
@@ -3758,7 +3764,6 @@ function tourGo(i, dived) {
     tourPress(s.press, true);
     requestAnimationFrame(() => { if (tour.i === i) tourScroll(s, el); });   // the tap opens a panel: keep the whole figure in view
   }, REDUCE ? 0 : 320);
-  if (s.hold) landing.hold(true);                    // keep our building up while we talk about it
   setTimeout(() => { if (tour.i === i && tour.el) tourRing.style.opacity = '1'; }, REDUCE ? 0 : 260);
 }
 function tourRender() {
@@ -3803,7 +3808,9 @@ TOUR_PARTS.forEach((name, p) => {
   b.addEventListener('click', () => tourGo(TOUR.findIndex(x => x.p === p)));
   $('#tbTrack').append(b);
 });
-document.querySelectorAll('[data-tour-start]').forEach(b => b.addEventListener('click', () => tourStart(0)));
+// the tour runs inside the site: pressed on the landing, it dives in first
+const onLanding = () => document.documentElement.classList.contains('gated') || scrollY < $('#site').offsetTop - 4;
+document.querySelectorAll('[data-tour-start]').forEach(b => b.addEventListener('click', () => (onLanding() ? diveIn(() => tourStart(0)) : tourStart(0))));
 $('#tbNext').addEventListener('click', () => (tour.i === TOUR.length - 1 ? tourEnd() : tourGo(tour.i + 1)));
 $('#tbBack').addEventListener('click', () => tourGo(tour.i - 1));
 $('#tbEnd').addEventListener('click', tourEnd);
@@ -3817,7 +3824,12 @@ document.addEventListener('keydown', e => {                       // arrows, Pag
   if (k > 0 && tour.i === TOUR.length - 1) tourEnd(); else tourGo(tour.i + k);
 }, true);
 addEventListener('resize', () => { if (tour.on && tour.el) tourRing.style.opacity = '1'; });
-if (START_HASH === 'tour') tourStart(0);
+if (START_HASH === 'tour') {                         // a #tour link opens straight into the site, past the landing
+  // pin stop 1 to the top of the site: on load the browser jumps to the #project anchor the tour writes
+  const jump = () => { if (tour.on && tour.i === 0) window.scrollTo({ top: $('#site').offsetTop, behavior: 'instant' }); };
+  tourStart(0); jump();
+  addEventListener('load', () => { jump(); requestAnimationFrame(jump); setTimeout(jump, 120); }, { once: true });
+}
 
 (async () => {
   if (!window.claude?.use || IS_PUBLIC) return;
