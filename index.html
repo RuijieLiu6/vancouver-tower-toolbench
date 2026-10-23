@@ -2278,16 +2278,17 @@ const REDUCE = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: redu
 const navTop = () => { const h = $('#site'); return h.offsetTop + h.offsetHeight; };
 const toTabs = () => window.scrollTo({ top: navTop() });
 const TABS = ['project', 'research', 'tools', 'feedback'];
-function showTab(id) {
+function showTab(id, keepUrl) {
   if (!TABS.includes(id)) id = 'project';
   for (const t of TABS) { $('#' + t).hidden = t !== id; const b = $('#tab-' + t); b.setAttribute('aria-selected', String(t === id)); b.tabIndex = t === id ? 0 : -1; }
   const g = $('#toolGrid'); if (g) { g.classList.remove('show'); if (id === 'tools') { void g.offsetWidth; g.classList.add('show'); } }
-  try { history.replaceState(null, '', '#' + id); } catch (e) {}
+  if (!keepUrl) try { history.replaceState(null, '', '#' + id); } catch (e) {}
 }
 for (const t of TABS) $('#tab-' + t).addEventListener('click', () => { showTab(t); toTabs(); });
 document.addEventListener('click', e => { const go = e.target.closest('[data-go]'); if (go) { showTab(go.dataset.go); toTabs(); } });
 const START_HASH = (location.hash || '').slice(1);
-showTab(START_HASH);
+// a plain visit (or #tour) keeps its own address: writing #project here made the browser jump past the landing to About us
+showTab(START_HASH, !TABS.includes(START_HASH));
 document.documentElement.lang = 'en';
 /* tabs: arrow keys move between tabs (WAI-ARIA tabs pattern) */
 document.querySelector('[role=tablist]').addEventListener('keydown', e => {
