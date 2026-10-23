@@ -1,10 +1,10 @@
 # Tower Design Toolkit — website
 
-Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA, fall 2026, studio instructor Xun Liu).
+Small tools for designing a high-rise in Downtown Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA, fall 2026, studio instructor Xun Liu).
 
 **Live site:** https://ruijieliu6.github.io/vancouver-tower-toolbench/ (add `#tour` to the address to start the guided tour).
 
-The site opens on an interactive model of downtown Vancouver, then has four tabs: About us, How it works, Try the tools and Give feedback. A guided tour follows the presentation script stop by stop.
+The site opens on an interactive model of Downtown Vancouver, then has four tabs: About us, How it works, Try the tools and Give feedback. A guided tour follows the presentation script stop by stop.
 
 ## How it is built
 

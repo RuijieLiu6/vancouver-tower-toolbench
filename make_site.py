@@ -15,7 +15,7 @@ body = body.replace("const IS_PUBLIC = false;", "const IS_PUBLIC = true;", 1)  #
 body = body.replace("<title>Tower Design Toolkit Presentation Board</title>", "<title>Tower Design Toolkit</title>", 1)
 head = ('<!doctype html><html lang="en"><head><meta charset="utf-8">'
         '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">'
-        '<meta name="description" content="Small tools for designing a high-rise in Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA).">'
+        '<meta name="description" content="Small tools for designing a high-rise in Downtown Vancouver, by Ruijie Liu and Sinnie Choi (ARCH 540, UBC SALA).">'
         '<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}'
         'body{margin:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style></head><body>')
 (site / "index.html").write_text(head + body + "</body></html>", encoding="utf-8")

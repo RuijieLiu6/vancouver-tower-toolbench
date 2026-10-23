@@ -47,7 +47,7 @@
     const X = i => x0 + i * gap + icon / 2;
     const groundY = top + icon + 34, laneY0 = groundY + 110, laneGap = 42;
     const H = laneY0 + laneGap * 7 + 30;
-    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="How a Vancouver tower is designed today: fourteen steps with seven pain-point lanes below">`;
+    let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="How a Downtown Vancouver tower is designed today: fourteen steps with seven pain-point lanes below">`;
     s += `<defs><marker id="v2arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-ink-f"/></marker>
       <marker id="v2arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" class="v2-acc-f"/></marker></defs>`;
     // rework loops (dashed arcs above, like the weather cycle)
