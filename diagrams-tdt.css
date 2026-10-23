@@ -110,8 +110,9 @@ path.tdt-canvas {
 }
 
 /* The drawn isometric pictograms (ISO_ICONS): ink lines, white faces, like the raster pictograms. */
-.iso-f { fill: var(--sheet); stroke: var(--ink); stroke-width: 1.1; stroke-linejoin: round; stroke-linecap: round; }
-.iso-l { fill: none; stroke: var(--ink); stroke-width: .9; stroke-linejoin: round; stroke-linecap: round; }
+/* hairline: one thin stroke that stays 0.75 px whatever size the symbol is drawn at */
+.iso-f { fill: var(--sheet); stroke: var(--ink); stroke-width: .75px; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
+.iso-l { fill: none; stroke: var(--ink); stroke-width: .75px; vector-effect: non-scaling-stroke; stroke-linejoin: round; stroke-linecap: round; }
 .iso-d { stroke-dasharray: 2 1.5; }
 
 /* ---------- node and role treatments ---------- */
